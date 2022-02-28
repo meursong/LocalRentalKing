@@ -18,7 +18,7 @@ module.exports = class Image extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.Image.belongsto(db.Post);
-    db.Image.belongsto(db.User);
+    db.Image.belongsTo(db.Post);
+    db.Image.belongsTo(db.User);
   }
 };

@@ -18,7 +18,7 @@ module.exports = class Comment extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.Comment.belongsto(db.Post);
-    db.Comment.belongsto(db.User);
+    db.Comment.belongsTo(db.Post);
+    db.Comment.belongsTo(db.User);
   }
 };

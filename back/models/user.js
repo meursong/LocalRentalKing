@@ -48,7 +48,7 @@ module.exports = class User extends Sequelize.Model {
     db.User.hasMany(db.Post);
     db.User.hasMany(db.Comment);
     db.User.hasMany(db.Image);
-    db.User.db.User.belongsToMany(db.Post, { through: "Like" }); //유저가 여러개의 게시물에 좋아요를 누를수있고 한 게시글에 여려명이 좋아요를 누를수있으니까 m:n의 관계이다
+    db.User.belongsToMany(db.Post, { through: "Like" }); //유저가 여러개의 게시물에 좋아요를 누를수있고 한 게시글에 여려명이 좋아요를 누를수있으니까 m:n의 관계이다
     //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다.
     //user끼리 서로 좋아요를 누르는 기능도있으니까 셀프조인도 생각해야할듯. 나중에추가?
   }
