@@ -1,18 +1,24 @@
-module.exports = (sequelize, DataTypes) => {
-  const Image = sequelize.define()(
-    //img는 post에도 있고 user에도 있고하니까 따로 이미지 소스만 관리를 하자
-    "Image",
-    {
-      src: { type: DataTypes.STRING(100), allowNull: true }, //이미지가 저장될 경로
-    },
-    {
-      modelName: "Image",
-      tableName: "images",
-      charset: "utf8mb4",
-      collate: "utf8mb4+general_ci", //한글저장
-      sequelize,
-    }
-  );
-  User.associate = (db) => {};
-  return User;
+const Sequelize = require("sequelize");
+module.exports = class Image extends Sequelize.Model {
+  static init(sequelize) {
+    return super.init(
+      {
+        src: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
+        },
+      },
+      {
+        modelName: "Image",
+        tableName: "images",
+        charset: "utf8mb4", //한글도 쓸수있게
+        collate: "utf8mb4_general_ci", //한글 저장
+        sequelize,
+      }
+    );
+  }
+  static associate(db) {
+    db.Image.belongsto(db.Post);
+    db.Image.belongsto(db.User);
+  }
 };

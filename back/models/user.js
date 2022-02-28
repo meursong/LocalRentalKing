@@ -1,50 +1,55 @@
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define()(
-    "User",
-    {
-      //mysql에는 users 테이블이 생성됨
-      //mysql2 -> 노드랑 mysql이랑 연결하는
-      //id가 기본적으로 들어있음 -> primary key가 됨?
-      email: { type: DataTypes.STRING(100), allowNull: false, unique: true }, //우리는 email로 로그인함
-      nickname: { type: DataTypes.STRING(30), allowNull: false },
-      password: { type: DataTypes.STRING(100), allowNull: false }, //패스워드는 100자리까지는 필요없지만 암호화가 필요해서
-      location: { type: DataTypes.STRING(100), allowNull: false }, // 주소필요하니까
-      greeting: { type: DataTypes.STRING(100), allowNull: true }, //자기소개
-      grade: { type: DataTypes.STRING(100), allowNull: false }, //회원등급
-    },
-    {
-      modelName: "User",
-      tableName: "users",
-      charset: "utf8",
-      collate: "utf8+general_ci", //한글저장
-      sequelize,
-    }
-  );
-  User.associate = (db) => {};
-  return User;
+const Sequelize = require("sequelize");
+module.exports = class User extends Sequelize.Model {
+  static init(sequelize) {
+    return super.init(
+      {
+        email: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
+          unique: true,
+        },
+        nickname: {
+          type: Sequelize.STRING(30),
+          allowNull: false,
+        },
+        password: {
+          //비번
+          type: Sequelize.STRING(100), //암호화를 해야하는데 암호화하면 길이가 길어짐 그래서 100
+          allowNull: false, //필수
+        },
+        location: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
+        },
+        greeting: {
+          type: Sequelize.STRING(100),
+          allowNull: true, //널가능
+        },
+        grade: {
+          //이거는 회원등급 근데 가입하면 처음에 일반회원임//수정필요---------------------------------------------
+          type: Sequelize.STRING(20),
+          allowNull: false, //
+        },
+        profileImgSrc: {
+          type: Sequelize.STRING(100),
+          allowNull: true, //
+        },
+      },
+      {
+        modelName: "User",
+        tableName: "users",
+        charset: "utf8", //한글도 쓸수있게
+        collate: "utf8_general_ci", //한글 저장
+        sequelize,
+      }
+    );
+  }
+  static associate(db) {
+    db.User.hasMany(db.Post);
+    db.User.hasMany(db.Comment);
+    db.User.hasMany(db.Image);
+    db.User.db.User.belongsToMany(db.Post, { through: "Like" }); //유저가 여러개의 게시물에 좋아요를 누를수있고 한 게시글에 여려명이 좋아요를 누를수있으니까 m:n의 관계이다
+    //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다.
+    //user끼리 서로 좋아요를 누르는 기능도있으니까 셀프조인도 생각해야할듯. 나중에추가?
+  }
 };
-
-// class User extends Model {}
-
-// User.init(
-//   {
-//     // 컬럼 속성
-//     email: { type: DataTypes.STRING(100), allowNull: false, unique: true },
-//     nickname: { type: DataTypes.STRING(30), allowNull: false },
-//     password: { type: DataTypes.STRING(100), allowNull: false }, //패스워드는 100자리까지는 필요없지만 암호화가 필요해서
-//     location: { type: DataTypes.STRING(100), allowNull: false }, // 주소필요하니까
-//     greeting: { type: DataTypes.STRING(100), allowNull: true }, //자기소개
-//     grade: { type: DataTypes.STRING(100), allowNull: false }, //회원등급
-//   },
-//   {
-//     // 기타 옵션
-//     modelName: "User", // 모델(테이블) 이름
-//     tableName: "users",
-//     charset: "utf8",
-//     collate: "utf8+general_ci", //한글저장
-//     sequelize, // 데이터베이스 커넥션
-//   }
-// );
-
-// // 클래스 자체가 정의한 모델이다
-// console.log(User === sequelize.models.User); // true

@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 const comment = require("./comment");
-const hashtag = require("./category");
 const image = require("./image");
 const post = require("./post");
 const user = require("./user");
@@ -17,7 +16,6 @@ const sequelize = new Sequelize(
 );
 
 db.Comment = comment;
-db.Hashtag = hashtag;
 db.Image = image;
 db.Post = post;
 db.User = user;
