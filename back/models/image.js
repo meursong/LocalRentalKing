@@ -6,8 +6,11 @@ module.exports = (sequelize, DataTypes) => {
       src: { type: DataTypes.STRING(100), allowNull: true }, //이미지가 저장될 경로
     },
     {
+      modelName: "Image",
+      tableName: "images",
       charset: "utf8mb4",
       collate: "utf8mb4+general_ci", //한글저장
+      sequelize,
     }
   );
   User.associate = (db) => {};
