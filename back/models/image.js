@@ -3,6 +3,7 @@ module.exports = class Image extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
+        //이미지가 post의 이미지도 있고 user 프로필이미지도있는데 어떻게 구현하지? 각각의 postId나 userId로 찾아들어가면 되는건가?>
         src: {
           type: Sequelize.STRING(100),
           allowNull: false,

@@ -5,20 +5,20 @@ module.exports = class Comment extends Sequelize.Model {
       {
         content: {
           type: Sequelize.STRING(100),
-          allowNull: false, //필수
+          allowNull: false,
         },
       },
       {
         modelName: "Comment",
         tableName: "comments",
-        charset: "utf8mb4", //한글도 쓸수있게
-        collate: "utf8mb4_general_ci", //한글 저장
+        charset: "utf8mb4",
+        collate: "utf8mb4_general_ci",
         sequelize,
       }
     );
   }
   static associate(db) {
     db.Comment.belongsTo(db.Post);
-    db.Comment.belongsTo(db.User);
+    db.Comment.belongsTo(db.User); //comments 테이블의 로우를 불러올 때 연결된 users 테이블의 로우를 가져온다.
   }
 };
