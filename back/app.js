@@ -11,9 +11,14 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const path = require("path");
 
+const userRouter = require("./routes/user");
+const postRouter = require("./routes/post");
+
 dotenv.config(); // dotenv를 활성화 시키며 dotenv에 들어간 상수들이 import 된다.
 
-const app = express();
+const app = express(); //express() 메소드 호출로 생성되는 익스프레스 서버 객체
+// 이 서버객체는 set(name, value) - 서버설정을 위한 속성지성 , get(name) - 서버 설정으로 지정한 속성을꺼내온다.
+// use([path,] function, [, function...]) - 미들웨어 함수사용 , get([path,] function)특정 경로로 요청된 정보를 처리 등의 메서드를 가지고있다.
 
 db.sequelize
   .sync({ force: false }) // sync메서드를 사용하면 서버 실행 시 MySQL과 연동되도록 할수있다.
@@ -25,7 +30,7 @@ db.sequelize
 
 passportConfig();
 
-app.use(morgan("dev"));
+app.use(morgan("dev")); //미들웨어 함수사용
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -48,8 +53,12 @@ app.use(
   })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize()); //요청 (req 객체) 에 passport 설정을 심는다.
+app.use(passport.session()); //req.session 객체에 passport 정보를 저장
+//req.session 객체는 express-session에서 생성하니까 passport 미들웨어는 express-session 미들웨어보다 뒤에 연결해야한다.
+
+app.use("/user", userRouter);
+app.use("/post", postRouter);
 
 app.listen(3065, () => {
   console.log("서버 실행중");

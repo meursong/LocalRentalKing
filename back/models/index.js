@@ -33,6 +33,6 @@ Object.keys(db).forEach((modelName) => {
 });
 
 db.sequelize = sequelize; //위에서 생성한 연결객체를 재 사용하기위해 db.sequelize에 넣어둔다
-db.Sequelize = Sequelize;
+db.Sequelize = Sequelize; //대문자 시퀄라이즈는 뭐지
 
 module.exports = db;
