@@ -36,7 +36,8 @@ module.exports = class Post extends Sequelize.Model {
   static associate(db) {
     db.Post.hasMany(db.Image);
     db.Post.hasMany(db.Comment);
-    db.Post.belongsTo(db.User);
-    db.Post.belongsToMany(db.User, { through: "Like" });
+    db.Post.belongsTo(db.User); //이건 post의 작성자
+    db.Post.belongsToMany(db.User, { through: "Like", as: "Likers" }); //게시글 좋아요 누른 사람들
+    //나중에 as 따라서 post.getLikers처럼 게시글 좋아요 누른 사람을 가져오게 된다.
   }
 };

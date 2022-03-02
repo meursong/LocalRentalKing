@@ -5,10 +5,10 @@ const post = require("./post");
 const user = require("./user");
 
 const env = process.env.NODE_ENV || "development"; //process.env.NODE_ENV가 기본적으로 development이기 때문에 development의 환결설정을 불러옴 (추후 배포시 "production"으로 설정)
-const config = require("../config/config")[env]; //config/config.json 파일에 있는 설정값들이 담긴다 데이터베이스 설정을 이 파일에서 불러온 후에 (1)
-const db = {};
+const config = require("../config/config")[env]; //config/config.json 파일에 있는 설정값들이 담긴다 데이터베이스 설정을 이 파일에서 불러온 후에 (1) , env안에 development가 담겼으니까 config json중 development부분이 가져와진다
+const db = {}; //빈객체두고
 
-const sequelize = new Sequelize( //(2)여기서 시퀄라이즈를 new해서 mysql연결객체를 생성한다.
+const sequelize = new Sequelize( //(2)여기서 시퀄라이즈를 new해서 mysql연결객체를 생성한다. //이 시퀄라이즈객체에 연결정보가담김
   config.database,
   config.username,
   config.password,
@@ -26,7 +26,7 @@ Object.keys(db).forEach((modelName) => {
 });
 
 Object.keys(db).forEach((modelName) => {
-  //미리 associate
+  //반복문돌면서 미리 associate
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }

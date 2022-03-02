@@ -1,20 +1,25 @@
-const passport = require('passport');
-const local = require('./local');
-const {User} = require('../models');
+const passport = require("passport");
+const local = require("./local");
+const { User } = require("../models");
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
+    //local.js에서 리턴한 req.login의 정보가 첫번째인자로 들어감
     done(null, user.id);
   }); // 쿠키에 user id를 pk로 데이터를 저장
 
   passport.deserializeUser(async (id, done) => {
-    try { // user id를 pk로 데이터 조회
-      const user = await User.findOne({where: {id}});
-      done(null, user);//db에서 꺼내온 데이터를 req.user에 입력
+    try {
+      // user id를 pk로 데이터 조회
+      const user = await User.findOne({ where: { id } });
+      done(null, user); //db에서 꺼내온 데이터를 req.user에 입력
     } catch (error) {
       console.error(error);
       done(error);
     }
   });
-  local(); // 로그인 로직 구현 파일
-}
+  local(); // 로그인 로직 구현 파일, local.js에서 module.export 한 부분
+};
+
+//서버에 사용자 정보를 다 가지고있으면 무거우니까 serializeUser를 통해서 쿠키에 id값만 연결
+//이후 deserializeUser를 통해서 id값으로 db조회해서 사용자 정보 복구

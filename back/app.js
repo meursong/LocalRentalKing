@@ -12,7 +12,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 
 const userRouter = require("./routes/user");
-//const postRouter = require("./routes/post");
+const postRouter = require("./routes/post");
 
 dotenv.config(); // dotenv를 활성화 시키며 dotenv에 들어간 상수들이 import 된다.
 
@@ -24,6 +24,7 @@ db.sequelize
   .sync({ force: false }) // sync메서드를 사용하면 서버 실행 시 MySQL과 연동되도록 할수있다.
   // 괄호안에 { force: true } 옵션을 설정해주면 서버 실행 시마다 테이블을 재생성한다. (테이블을 잘못만든경우 true로 바꿔주자)
   .then(() => {
+    //promise라서 then
     console.log("db 연결 성공");
   })
   .catch(console.error);
@@ -52,13 +53,12 @@ app.use(
     secret: process.env.COOKIE_SECRET,
   })
 );
-
 app.use(passport.initialize()); //요청 (req 객체) 에 passport 설정을 심는다.
 app.use(passport.session()); //req.session 객체에 passport 정보를 저장
 //req.session 객체는 express-session에서 생성하니까 passport 미들웨어는 express-session 미들웨어보다 뒤에 연결해야한다.
 
-app.use("/user", userRouter);
-//app.use("/post", postRouter);
+app.use("/user", userRouter); //user가 prefix로 붙는다
+app.use("/post", postRouter);
 
 app.listen(3065, () => {
   console.log("서버 실행중");

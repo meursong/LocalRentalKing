@@ -7,7 +7,7 @@ module.exports = class Image extends Sequelize.Model {
         //user프로필이미지는 어차피 1:1이니까 관계맺지말고 컬럼화하는식으로 방향을 잡아보자
         src: {
           //이미지 서버에 저장할때 이미지이름으로 저장하면 중복되는 문제가 발생할여지가있으니까 이미지파일의 아이디값을 따서 저장하는 방식으로
-          type: Sequelize.STRING(100),
+          type: Sequelize.STRING(200),
           allowNull: false,
         },
       },
