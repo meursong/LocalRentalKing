@@ -15,7 +15,7 @@ module.exports = class Post extends Sequelize.Model {
           type: Sequelize.STRING(100),
           allowNull: true, //
         },
-        whatCummunity: {
+        whichCummunity: {
           type: Sequelize.STRING(50),
           allowNull: false,
         },

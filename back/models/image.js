@@ -25,3 +25,5 @@ module.exports = class Image extends Sequelize.Model {
     //db.Image.belongsTo(db.User);
   }
 };
+
+//post안에 이미지가 여러개가있으니까 이미지가 post
