@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer"); //멀터는 폼마다 형식들이 다르기 때문에 멀터미들웨어를 사용해서 라우터마다 다르게 세팅필요
+const path = require("path"); //노드에서 제공하는 모듈 http처럼, 설치가 필요없는 모듈
 //const passport = require("passport");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
 const { Post, Image, Comment, User } = require("../models");
@@ -53,7 +55,37 @@ router.post("/write", isLoggedIn, async (req, res, next) => {
   }
 });
 
-//<-- 글쓰기 테스트 -->
+//     <-- 이미지 업로드 -->
+const upload = multer({
+  storage: multer.diskStorage({
+    //어디에 저장할지~ 당장은 컴퓨터 하드디스크에 여기만 나중에 s3로 갈아끼워주면 멀터가 알아서 하드디스크가 아니라 스토리지로 올려줌(배포시)
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      //사진.png
+      const ext = path.extname(file.originalname); //확장자추출(.png, .jpg 등)
+      const basename = path.basename(file.originalname, ext); // 사진
+      done(null, basename + new Date().getTime() + ext); //사진1513515313.png (같은 이름으로 이미지를 업로드하면 노드에서는 덮어씌워버려서 시간까지추가해서 올리는 코드)
+    },
+  }),
+  limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
+});
+router.post(
+  "/images",
+  isLoggedIn,
+  upload.array("image"),
+  async (req, res, next) => {
+    // POST /post/images
+    //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
+    //한장만 올리려면 array대신 single("image")
+    //텍스트만 올리려면 none(),
+    console.log(req.files); //업로드된 이미지 정보
+    res.json(req.files.map((v) => v.filename));
+  }
+);
+
+//    <-- 글쓰기 테스트 -->
 router.post("/writeTest", async (req, res, next) => {
   // POST / post
   try {
