@@ -34,8 +34,8 @@ passportConfig();
 app.use(morgan("dev")); //미들웨어 함수사용
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true,
+    origin: "http://localhost:3000", //Access-Control-Allow-Origin
+    credentials: true, //기본값은 false고 쿠키도 전달하고싶으면 true로 바꿔줘야함
   })
 );
 

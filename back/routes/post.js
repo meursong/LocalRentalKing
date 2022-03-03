@@ -1,7 +1,7 @@
 const express = require("express");
 //const passport = require("passport");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
-const { Post, Comment } = require("../models");
+const { Post, Image, Comment, User } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
@@ -19,7 +19,22 @@ router.post("/write", isLoggedIn, async (req, res, next) => {
       UserId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
       //
     });
-    res.status(201).json(post); //프론트로 돌려줌
+    const fullPost = await Post.findOne({
+      //부족한 정보들(이미지, 댓글,글쓴이 )을 합쳐서 프론트에 보내줌
+      where: { id: post.id },
+      include: [
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+        },
+        {
+          model: User,
+        },
+      ],
+    });
+    res.status(201).json(fullPost); //프론트로 돌려줌
   } catch (error) {
     console.error(error);
     next(error);
