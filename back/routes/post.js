@@ -41,26 +41,26 @@ router.post("/write", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// //<-- 글쓰기 테스트 -->
-// router.get("/writeTest", async (req, res, next) => {
-//   // POST / post
-//   try {
-//     const post = await Post.create({
-//       title: "Test2",
-//       content: "Test1", //프론트와 이름을 맞춰야함
-//       tab: "Test1",
-//       category: "Test1",
-//       price: "Test1",
-//       UserId: 2, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
+//<-- 글쓰기 테스트 -->
+router.post("/writeTest", async (req, res, next) => {
+  // POST / post
+  try {
+    const post = await Post.create({
+      title: req.body.title,
+      content: req.body.content, //프론트와 이름을 맞춰야함
+      tab: req.body.tab,
+      category: req.body.category,
+      price: req.body.price,
+      //serId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
 
-//       //
-//     });
-//     res.status(201).json(post); //프론트로 돌려줌
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// });
+      //
+    });
+    res.status(201).json(post); //프론트로 돌려줌
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 // <----댓글 작성 라우터---->
 router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {

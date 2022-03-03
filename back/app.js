@@ -4,7 +4,7 @@ const db = require("./models");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const morgan = require("morgan");
+const morgan = require("morgan"); //프론트에서 백엔드로 어떤요청들을 보냈는지 로그를 띄워줌
 const passportConfig = require("./passport");
 
 const passport = require("passport");
@@ -12,7 +12,8 @@ const dotenv = require("dotenv");
 const path = require("path");
 
 const userRouter = require("./routes/user");
-const postRouter = require("./routes/post");
+const postRouter = require("./routes/post"); //게시글 1개만 컨트롤하는 라우터 (게시글 1개를 작성하고, 조회하고~)
+const postsRouter = require("./routes/posts"); //게시글 여러개를 컨트롤하기위한 라우터
 
 dotenv.config(); // dotenv를 활성화 시키며 dotenv에 들어간 상수들이 import 된다.
 
@@ -59,6 +60,7 @@ app.use(passport.session()); //req.session 객체에 passport 정보를 저장
 
 app.use("/user", userRouter); //user가 prefix로 붙는다
 app.use("/post", postRouter);
+app.use("/posts", postsRouter);
 
 app.listen(3065, () => {
   console.log("서버 실행중");

@@ -37,7 +37,8 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         },
         include: [
           {
-            model: Post, //내가 쓴 개시물들
+            model: Post, //내가 쓴 게시물들
+            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
           },
         ],
       });
@@ -109,6 +110,24 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
 //       console.log("저장 Error: ", err);
 //     });
 // });
+
+// <------- 사용자 불러오기 (새로고침마다 요청할것)------->
+router.get("/", async (req, res, next) => {
+  // GET / user
+  try {
+    if (req.user) {
+      const user = await User.findOne({
+        where: { id: req.user.id },
+      });
+      res.status(200).json(user);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 //  <------ findAll test ----->
 router.get("/findAll", (req, res) => {
