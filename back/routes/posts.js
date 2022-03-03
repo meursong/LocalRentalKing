@@ -15,17 +15,28 @@ router.get("/", async (req, res, next) => {
 
       where: { id: lastId }, // sql에서 지원하는 offset대신에 우리가 lastId 정보를 만들어서 조회하도록
       limit: 2,
-      order: [["createdAt", "DESC"]],
+      order: [
+        ["createdAt", "DESC"],
+        [Comment, "createdAt", "DESC"], // 여기에서 댓글 내림차순정리
+      ],
       include: [
         //데이터를 가져올때는 항상 완성해서 가져와야한다.
         {
           model: User, //작성자
+          attributes: ["id", "nickname"],
         },
         {
           model: Image, //이미지
         },
         {
           model: Comment, //댓글
+          include: [
+            {
+              model: User, //댓글 작성자
+              attributes: ["id", "nickname"],
+              //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
+            },
+          ],
         },
       ],
     });

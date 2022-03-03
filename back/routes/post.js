@@ -28,9 +28,16 @@ router.post("/write", isLoggedIn, async (req, res, next) => {
         },
         {
           model: Comment,
+          include: [
+            {
+              model: User, //게시글에 단 댓글 작성자
+              attributes: ["id", "nickname"],
+            },
+          ],
         },
         {
-          model: User,
+          model: User, //게시글 작성자
+          attributes: ["id", "nickname"],
         },
       ],
     });
@@ -51,7 +58,7 @@ router.post("/writeTest", async (req, res, next) => {
       tab: req.body.tab,
       category: req.body.category,
       price: req.body.price,
-      //serId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
+      //userId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
 
       //
     });
@@ -80,7 +87,46 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
       PostId: req.params.postId,
       UserId: req.user.id,
     });
-    res.status(201).json(comment);
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+      ],
+    });
+    res.status(201).json(fullComment);
+  } catch (error) {
+    console(error);
+    next(error);
+  }
+});
+
+// <----댓글 작성 라우터 테스트---->
+router.post("/:postId/comment", async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(403).send("존재하지 않는 게시물입니다.");
+    }
+    const comment = await Comment.create({
+      content: req.body.content,
+      PostId: req.params.postId,
+      UserId: req.user.id,
+    });
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+      ],
+    });
+    res.status(201).json(fullComment);
   } catch (error) {
     console(error);
     next(error);
