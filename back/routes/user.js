@@ -1,14 +1,15 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt"); //해쉬화 알고리즘
-const { User } = require("../models"); //User model require 26번라인 User.create를 사용하기위해서 '구조분해할당'
+const { User, Post } = require("../models"); //User model require 26번라인 User.create를 사용하기위해서 '구조분해할당'
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 //const { format } = require("sequelize/types/utils"); //이부분 코드는?
 //원래 db.User로 접근해야 하는데 {User}해놓으면 그냥 유저로 접근 가능
 //const db=require('../models');이렇게 해놨으면 db.User로 접근
 
 const router = express.Router();
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   //이걸 미들웨어 확장이라고 한다. 원래 passport.authenticate는 req,res,next를 쓸수없는 미들웨어인데 그걸 확장해서 쓸수 있게하는 express기법
   passport.authenticate("local", (err, user, info) => {
     //passport전략실행 //passport의 done이 콜백같은거라 이게 여기로 전달됨
@@ -26,13 +27,32 @@ router.post("/login", (req, res, next) => {
         console.log(err);
         return next(loginErr);
       }
+      const fullInfoUserWithoutPassword = await User.findOne({
+        //비밀번호를 제외한 모든 사용자의 정보를 가지고있는 객체
+        where: { id: user.id },
+        attributes: {
+          exclude: ["password"],
+          //비밀번호를 제외한 모든 컬럼 가져옴
+        },
+        include: [
+          {
+            model: Post, //내가 쓴 개시물들
+          },
+        ],
+      });
       //로그인할때 내부적으로 res.setHeader('Cookie','afeaf'(랜덤문자열)) 이런 걸 보내준다, 세션도 연결해주고
-      return res.json(user); // 사용자정보를 프론트로 넘겨줌
+      return res.status(200).json(fullInfoUserWithoutPassword); // 사용자정보를 프론트로 넘겨줌
     });
   });
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/logout", isLoggedIn, (req, res, next) => {
+  req.logout();
+  req._destroy();
+  res.send("ok");
+});
+
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   // 회원가입
   //  '/'와 app.js에 있는 app.use('/user',....)->POST/user/ 사가에서 axios.post('http://localhost:3065/user/')로 요청
   try {

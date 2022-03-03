@@ -59,16 +59,17 @@ module.exports = class User extends Sequelize.Model {
     //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다. //Like라는 through테이블이 생성된다.
     //db.sequelize.models.Like 이런식으로 자동으로 만들어진 모델에 접근할수있다.
     //user끼리 서로 좋아요를 누르는 기능도있으니까 셀프조인도 생각해야할듯. 나중에추가?
-    db.User.belongsToMany(db.User, {
-      through: "Follow",
-      as: "Followers", //부르는 입장에서 불리는 테이블의 알리아스 - 나중에 시퀄라이즈 쿼리문에 사용
-      foreignKey: "FollowingId", //들어가는 컬럼명
-    }); //m:n관계일때는 반드시 through를 지정해줘야함 - 이 이름으로 through테이블이 데이터베이스에 생성됨
 
-    db.User.belongsToMany(db.User, {
-      through: "Follow",
-      as: "Followings",
-      foreignKey: "FollowerId",
-    });
+    // db.User.belongsToMany(db.User, {
+    //   through: "Follow",
+    //   as: "Followers", //부르는 입장에서 불리는 테이블의 알리아스 - 나중에 시퀄라이즈 쿼리문에 사용
+    //   foreignKey: "FollowingId", //들어가는 컬럼명
+    // }); //m:n관계일때는 반드시 through를 지정해줘야함 - 이 이름으로 through테이블이 데이터베이스에 생성됨
+
+    // db.User.belongsToMany(db.User, {
+    //   through: "Follow",
+    //   as: "Followings",
+    //   foreignKey: "FollowerId",
+    // });
   }
 };

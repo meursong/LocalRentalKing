@@ -12,7 +12,7 @@ module.exports = () => {
     try {
       // user id를 pk로 데이터 조회
       const user = await User.findOne({ where: { id } });
-      done(null, user); //db에서 꺼내온 데이터를 req.user에 입력
+      done(null, user); //deserializeUser로 정보를 복구(id로 조회)해서 req.user에 넣어줌
     } catch (error) {
       console.error(error);
       done(error);
