@@ -38,6 +38,10 @@ router.get("/", async (req, res, next) => {
             },
           ],
         },
+        {
+          model: User, //게시글에 좋아요 누른 사람
+          attributes: ["id"],
+        },
       ],
     });
     res.status(200).json(posts);

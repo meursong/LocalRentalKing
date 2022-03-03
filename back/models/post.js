@@ -37,9 +37,11 @@ module.exports = class Post extends Sequelize.Model {
   }
   static associate(db) {
     db.Post.hasMany(db.Image);
-    db.Post.hasMany(db.Comment);
-    db.Post.belongsTo(db.User); //이건 post의 작성자
+    db.Post.hasMany(db.Comment); //post.addComments
+    db.Post.belongsTo(db.User); //이건 post의 작성자 //post.addUser(여기서는 s가 안붙어) hasMany나 belongsToMany는 s가 논리적으로 붙지
     db.Post.belongsToMany(db.User, { through: "Like", as: "Likers" }); //게시글 좋아요 누른 사람들
     //나중에 as 따라서 post.getLikers처럼 게시글 좋아요 누른 사람을 가져오게 된다.
+    //post.addLikers, post.removeLikers등의 관계형 메서드가 생긴다.
+    // add,get,set,remove -- 관계형 메서드
   }
 };
