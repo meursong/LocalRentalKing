@@ -11,7 +11,7 @@ import AppLayout from '../components/AppLayout';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import { LOAD_COOP_POST_REQUEST } from '../reducers/post';
 
-function ObjectRecieve() {
+function Cooperate() {
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
   const { me } = useSelector((state) => state.user);
@@ -66,4 +66,4 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   await context.store.sagaTask.toPromise();
 });
 
-export default ObjectRecieve;
+export default Cooperate;

@@ -120,11 +120,11 @@ function AppLayout({ children }) {
       </div>
       <div style={{ marginTop: 100, zIndex: 5 }}>
         <Row gutter={8}>
-          <Col xs={24} md={7} />
-          <Col xs={24} md={11}>
+          <Col xs={7} md={7} />
+          <Col xs={11} md={11}>
             {children}
           </Col>
-          <Col xs={24} md={6} />
+          <Col xs={6} md={6} />
         </Row>
       </div>
     </div>

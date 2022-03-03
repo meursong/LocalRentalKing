@@ -36,8 +36,8 @@ export const LeftSidebar = styled.div`
   position: fixed;
   float: left;
   top: 0px;
-  left: 10%;
-  width: 200px;
+  left: 9%;
+  width: 220px;
   height: 1000px;
   background: #f3f5fa15;
   padding: 0px 0;

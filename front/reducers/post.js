@@ -3,6 +3,11 @@ import produce from 'immer';
 export const initialState = {
   mainPosts: [],
   imagePaths: [],
+  object_TagsData : ['공구', 'Books', 'Music', 'Sports'],
+  talent_TagsData : ['공구', 'Books', 'Music', 'Sports'],
+  cooperate_tagsData : ['공구', 'Books', 'Music', 'Sports'],
+  play_tagsData : ['공구', 'Books', 'Music', 'Sports'],
+  category:null,
   singlePost: null,
   hasMorePost: true,
   upLoadImagesLoading: false,
