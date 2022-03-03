@@ -15,11 +15,13 @@ module.exports = class Post extends Sequelize.Model {
           type: Sequelize.STRING(100),
           allowNull: true, //
         },
-        whichCummunity: {
+        tab: {
+          //화면왼쪽 물건빌려줘, 힘을빌려줘 등의 탭 구분
           type: Sequelize.STRING(50),
           allowNull: false,
         },
         Category: {
+          //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분
           type: Sequelize.STRING(50),
           allowNull: true,
         },

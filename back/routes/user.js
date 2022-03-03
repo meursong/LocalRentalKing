@@ -9,6 +9,7 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
+// <------ 로그인 ----->
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   //이걸 미들웨어 확장이라고 한다. 원래 passport.authenticate는 req,res,next를 쓸수없는 미들웨어인데 그걸 확장해서 쓸수 있게하는 express기법
   passport.authenticate("local", (err, user, info) => {
@@ -46,14 +47,15 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
   });
 });
 
+// <------ 로그아웃 ----->
 router.post("/logout", isLoggedIn, (req, res, next) => {
   req.logout();
   req._destroy();
   res.send("ok");
 });
 
+// <------ 회원가입 ----->
 router.post("/", isNotLoggedIn, async (req, res, next) => {
-  // 회원가입
   //  '/'와 app.js에 있는 app.use('/user',....)->POST/user/ 사가에서 axios.post('http://localhost:3065/user/')로 요청
   try {
     const exUser = await User.findOne({
@@ -88,25 +90,27 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/signUp", (req, res) => {
-  User.create({
-    //create는 비동기 메서드. async, await는 세트로 비동기 메서드와 같이쓰임 - 공부필요
-    email: "singuptest1@gamil.com",
-    nickname: "singuptest1",
-    password: "singuptest1",
-    location: "singuptest1",
-    greeting: "singuptest1",
-    grade: "normal",
-    profileImgSrc: "singuptest1",
-  })
-    .then((result) => {
-      console.log("저장 성공: ", result);
-    })
-    .catch((err) => {
-      console.log("저장 Error: ", err);
-    });
-});
+// // // <------ 회원가입테스트 ----->
+// router.get("/signUp", (req, res) => {
+//   User.create({
+//     //create는 비동기 메서드. async, await는 세트로 비동기 메서드와 같이쓰임 - 공부필요
+//     email: "singuptest1@gamil.com",
+//     nickname: "singuptest1",
+//     password: "singuptest1",
+//     location: "singuptest1",
+//     greeting: "singuptest1",
+//     grade: "normal",
+//     profileImgSrc: "singuptest1",
+//   })
+//     .then((result) => {
+//       console.log("저장 성공: ", result);
+//     })
+//     .catch((err) => {
+//       console.log("저장 Error: ", err);
+//     });
+// });
 
+//  <------ findAll test ----->
 router.get("/findAll", (req, res) => {
   //axios.get('http://localhost:3065/user/findAll')
   User.findAll().then((result) => {
@@ -116,6 +120,7 @@ router.get("/findAll", (req, res) => {
   });
 });
 
+//  <------ findOne test ----->
 router.get("/findOne", (req, res) => {
   //axios.get('http://localhost:3065/user/findOne')
   User.findAll({
