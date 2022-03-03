@@ -129,6 +129,24 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+//        <----- 유저 정보 수정 (어떤데이터를 수정해야할지 협의 필요)----->
+route.patch("/logout", isLoggedIn, async (req, res, next) => {
+  try {
+    await User.update(
+      {
+        nickname: req.body.nickname, //프론트와 상의해서 넘겨받을 데이터 설정하기
+      },
+      {
+        where: { id: req.user.id },
+      }
+    );
+    res.status(200).json({ nickname: req.body.nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 //  <------ findAll test ----->
 router.get("/findAll", (req, res) => {
   //axios.get('http://localhost:3065/user/findAll')

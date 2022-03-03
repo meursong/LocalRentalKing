@@ -3,6 +3,7 @@ const express = require("express");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
 const { Post, Image, Comment, User } = require("../models");
 const { isLoggedIn } = require("./middlewares");
+const { route } = require("./user");
 
 const router = express.Router();
 
@@ -138,8 +139,9 @@ router.post("/:postId/comment", async (req, res, next) => {
   }
 });
 
-router.patch("/:postId/like", async (req, res, next) => {
-  // PATCH /post/1/like          //좋아요
+// <----- 게시글 좋아요 ----->
+router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+  // PATCH /post/1/like
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {
@@ -153,8 +155,9 @@ router.patch("/:postId/like", async (req, res, next) => {
   }
 });
 
-router.delete("/:postId/like", (req, res, next) => {
-  // DELETE /post/1/like          //좋아요 취소
+// <----- 게시글 좋아요 취소 ----->
+router.delete("/:postId/like", isLoggedIn, (req, res, next) => {
+  // DELETE /post/1/like
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {
@@ -168,9 +171,41 @@ router.delete("/:postId/like", (req, res, next) => {
   }
 });
 
-router.delete("/", (req, res) => {
-  // DELETE /post
-  res.json({ id: 1 });
+// //        <----- 게시글 수정 ----->
+// route.patch("/logout", isLoggedIn, async (req, res, next) => {
+//   try {
+//     await User.update(
+//       {
+//         nickname: req.body.nickname, //프론트와 상의해서 넘겨받을 데이터 설정하기
+//       },
+//       {
+//         where: { id: req.user.id },
+//       }
+//     );
+//     res.status(200).json({ nickname: req.body.nickname });
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
+
+//       <----- 게시글 삭제 ----->
+router.delete("/:postId", isLoggedIn, async (req, res, next) => {
+  // DELETE /post / ?
+  try {
+    await Post.destroy({
+      where: {
+        id: req.params.postId, //게시글 id
+        UserId: req.user.id, //그 게시글을 쓴 유저의 id  ~혹여나 다른사람이 삭제할때 url만바꿔서 요청보내면 다른사람글도 삭제가능하니까
+      },
+    });
+    res.status(200).json({ PostId: parseInt(req.params.postId, 10) }); //params는 문자열로가서 int로 파싱
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
+
+router.patch("/nickname", isLoggedIn, (req, res) => {});
 
 module.exports = router;

@@ -4,6 +4,7 @@ const { Post, User, Image, Comment } = require("../models");
 
 const router = express.Router();
 
+// <--------- 게시물 10개씩 렌더링---------->
 router.get("/", async (req, res, next) => {
   try {
     const posts = await Post.findAll({
@@ -14,7 +15,7 @@ router.get("/", async (req, res, next) => {
       // 실무에서는 pagination구현을 위해 limit과 lastId방식을 많이쓴다
 
       where: { id: lastId }, // sql에서 지원하는 offset대신에 우리가 lastId 정보를 만들어서 조회하도록
-      limit: 2,
+      limit: 2, //테스트때는 우선은 2개씩만 렌더링하자 편의상
       order: [
         ["createdAt", "DESC"],
         [Comment, "createdAt", "DESC"], // 여기에서 댓글 내림차순정리
