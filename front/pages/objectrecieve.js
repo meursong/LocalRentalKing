@@ -9,7 +9,7 @@ import { useInView } from "react-intersection-observer";
 import AppLayout from '../components/AppLayout/AppLayout';
 
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
-import { LOAD_O_RECIEVE_POST_REQUEST } from '../reducers/post';
+import {LOAD_O_RECIEVE_POST_REQUEST, LOAD_POST_REQUEST} from '../reducers/post';
 
 function ObjectRecieve() {
   const dispatch = useDispatch();
@@ -22,10 +22,8 @@ function ObjectRecieve() {
       if (inView && hasMorePost && !loadPostLoading) {
         const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
         dispatch({
-          type: LOAD_O_RECIEVE_POST_REQUEST,
-          lastId, // 게시물 10개를 요청하고 인피니트 스크롤 구현을 위해 lastId를 전송하여 lastId 기준으로 10개를 잘라 받아온다.
-          category, // 매개변수로 어떤 카테고리의 게시물을 들고올지까지 정해준다면??
-
+          type: LOAD_POST_REQUEST,
+          lastId, // 게시물 10개를 요청하고 인피니트 스크롤 구현을 위해 lastId를 전송하여 lastId 기준으로 10개를 잘라 받아온다
           // 태그 버튼을 클릭함에 따라 post 리듀서의 카테고리 변수를 변경시키고 그에 따라 useEffect가 발동하게 하여
           // 해당 카테고리에 해당하는 포스트를 들고 오게 한다.
           // 이럼 게시글의 종류를 분류하는 변수가 두개가 필요하게됨. 해당 게시판 / 해당 카테고리
@@ -45,16 +43,6 @@ function ObjectRecieve() {
         <title>물건을 빌려줘 | 우리동네 렌탈대장</title>
       </Head>
       <AppLayout>
-        <span style={{ marginRight: 8 }}>Categories:</span>
-        {tagsData.map(tag => (
-          <CheckableTag
-            key={tag}
-            checked={selectedTags.indexOf(tag) > -1}
-            onChange={checked => handleChange(tag, checked)}
-          >
-            {tag}
-          </CheckableTag>
-        ))}
         {me && <PostForm />}
         {mainPosts.map((post) => <PostCard key={post.id} post={post} />)}
         <div ref={hasMorePost && !loadPostLoading ? ref : undefined} />
@@ -75,7 +63,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     type: LOAD_MY_INFO_REQUEST,
   });
   context.store.dispatch({
-    type: LOAD_O_RECIEVE_POST_REQUEST,
+    type: LOAD_POST_REQUEST,
   });
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();

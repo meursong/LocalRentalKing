@@ -107,13 +107,21 @@ function* removePost(action) {
   }
 }
 
-function loadPostAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
+function loadPostAPI(data) {
+  // 스위치 문을 통해서 각 카테고리들을 코드로 변경하여 넣어주자!
+  let category = null;
+  switch (data.category){
+    case "전체":
+      break;
+    default: category = "a0";
+    break;
+  }
+  return axios.post(`/posts?lastId=${data.lastId || 0}`,data);
 }
 
-function* loadPost(action) {
+function* loadPost(action) { // 일반게시물 불러오기
   try {
-    const result = yield call(loadPostAPI, action.lastId);
+    const result = yield call(loadPostAPI, action.data);
     yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
       type: LOAD_POST_SUCCESS,
       data: result.data,
@@ -450,7 +458,7 @@ function* watchAddComment() {
 }
 
 function* watchLoadPost() {
-  yield throttle(2000, LOAD_POST_REQUEST, loadPost);
+  yield takeLatest( LOAD_POST_REQUEST, loadPost);
 }
 
 function* watchLikePost() {
