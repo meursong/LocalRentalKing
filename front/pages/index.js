@@ -22,7 +22,7 @@ import HotTags from "../components/HotTags";
 function Home() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePost, loadPostLoading, reTweetError, id } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePost, loadPostLoading, reTweetError, id , object_TagsData } = useSelector((state) => state.post);
   const [ref, inView] = useInView();
   const [login,setLogin] = useState(false);
 
@@ -30,18 +30,18 @@ function Home() {
     setLogin(false);
   }, []);
 
-  useEffect( // 화면 사이즈에 따라 버그가 발생중 fix1
-    () => {
-      if (inView && hasMorePost && !loadPostLoading) {
-        const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
-        dispatch({
-          type: LOAD_POST_REQUEST,
-          lastId, // 게시물 10개를 요청하고 인피니트 스크롤 구현을 위해 lastId를 전송하여 lastId 기준으로 10개를 잘라 받아온다.
-        });
-      }
-    },
-    [inView, hasMorePost, loadPostLoading, mainPosts, id],
-  );
+  // useEffect( // 화면 사이즈에 따라 버그가 발생중 fix1
+  //   () => {
+  //     if (inView && hasMorePost && !loadPostLoading) {
+  //       const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
+  //       dispatch({
+  //         type: LOAD_POST_REQUEST,
+  //         lastId, // 게시물 10개를 요청하고 인피니트 스크롤 구현을 위해 lastId를 전송하여 lastId 기준으로 10개를 잘라 받아온다.
+  //       });
+  //     }
+  //   },
+  //   [inView, hasMorePost, loadPostLoading, mainPosts, id],
+  // );
 
   return (
 
@@ -49,7 +49,7 @@ function Home() {
       <AppLayout>
         <Button onClick={onLogOut}> 로그아웃</Button>
         {me && <ObjectRecieve />}
-        <HotTags/>
+        <HotTags tagsData={object_TagsData}/>
         <div ref={hasMorePost && !loadPostLoading ? ref : undefined} />
       {/* 아직 게시물을 전부 열람하지 않았고 && 게시물을 요청하는 중이 아닐경우 인피니트 스크롤 동작 : 아닐경우 undefined */}
       </AppLayout>

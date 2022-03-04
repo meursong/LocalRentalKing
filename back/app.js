@@ -11,6 +11,12 @@ const passport = require('passport');
 const dotenv = require('dotenv');
 const path = require('path');
 
+const postsRouter = require('./routes/posts');
+const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
+const hashtagRouter = require('./routes/hashtag');
+const likedRouter = require('./routes/likers');
+
 dotenv.config(); // dotenv를 활성화 시키며 dotenv에 들어간 상수들이 import 된다.
 
 const app = express();
@@ -45,6 +51,16 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.get('/',(req,res) => {
+  res.send('hello');
+});
+
+app.use('/post', postRouter);
+app.use('/posts', postsRouter);
+app.use('/user', userRouter);
+app.use('/hashtag' , hashtagRouter);
+app.use('/liked',likedRouter);
 
 app.listen(3065, () => {
   console.log('서버 실행중');
