@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { Op } = require("sequelize");
 const { Post, User, Image, Comment } = require("../models");
 
 const router = express.Router();
@@ -7,6 +7,12 @@ const router = express.Router();
 // <--------- 게시물 10개씩 렌더링---------->
 router.get("/", async (req, res, next) => {
   try {
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) {
+      //초기 로딩이 아닐 때
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // Op.lt ~보다작은 *operator
+    }
+
     const posts = await Post.findAll({
       //   limit: 10, // 10개만 가져와라
       //   offset: 0, // 시작인덱스. 0이면 1~10(limit)번 게시물까지 가져옴
@@ -14,8 +20,8 @@ router.get("/", async (req, res, next) => {
       // limit과 offset은 실무에서는 잘 안쓰는 방법, 중간에 게시글이 추가되거나 삭제되면 꼬여버리기때문에
       // 실무에서는 pagination구현을 위해 limit과 lastId방식을 많이쓴다
 
-      where: { id: lastId }, // sql에서 지원하는 offset대신에 우리가 lastId 정보를 만들어서 조회하도록
-      limit: 2, //테스트때는 우선은 2개씩만 렌더링하자 편의상
+      where, // sql에서 지원하는 offset대신에 우리가 lastId 정보를 만들어서 조회하도록
+      limit: 10, //테스트때는 우선은 2개씩만 렌더링하자 편의상
       order: [
         ["createdAt", "DESC"],
         [Comment, "createdAt", "DESC"], // 여기에서 댓글 내림차순정리

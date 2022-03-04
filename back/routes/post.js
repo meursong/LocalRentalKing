@@ -109,6 +109,16 @@ router.post(
   }
 );
 
+//     <-- 이미지 업로드 테스트 -->
+router.post("/imagesTest", upload.array("image"), async (req, res, next) => {
+  // POST /post/images
+  //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
+  //한장만 올리려면 array대신 single("image")
+  //텍스트만 올리려면 none(),
+  console.log(req.files); //업로드된 이미지 정보
+  res.json(req.files.map((v) => v.filename));
+});
+
 //    <-- 글쓰기 테스트 -->
 router.post("/writeTest", async (req, res, next) => {
   // POST / post
