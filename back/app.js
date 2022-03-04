@@ -45,7 +45,7 @@ app.use("/", express.static(path.join(__dirname, "uploads")));
 // 폴더명(경로)을 각OS에 최적화 하기 위해 - windows는 경로가 '\' , mac은 '/'
 // join으로 주소를 결합한다.
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); //url방식 폼 요청 들어오면 파싱
 
 app.use(cookieParser());
 app.use(
