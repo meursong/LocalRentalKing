@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer"); //멀터는 폼마다 형식들이 다르기 때문에 멀터미들웨어를 사용해서 라우터마다 다르게 세팅필요
 const path = require("path"); //노드에서 제공하는 모듈 http처럼, 설치가 필요없는 모듈
+const fs = require("fs"); //file system을 조작할수있는 모듈. 폴더같은 걸 만들어줄수도있음
 //const passport = require("passport");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
 const { Post, Image, Comment, User } = require("../models");
@@ -9,8 +10,33 @@ const { route } = require("./user");
 
 const router = express.Router();
 
-// <----게시글 작성 라우터---->
-router.post("/write", isLoggedIn, async (req, res, next) => {
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log("uploads 폴더가 없으므로 생성합니다.");
+  fs.mkdirSync("uploads");
+}
+
+// <--------- 게시물 이미지업로드를 위한 multer생성  -------->
+// <--------- 게시물 작성에서도 쓰기위해서 위치는 위로 올려줌 ------->
+const upload = multer({
+  storage: multer.diskStorage({
+    //어디에 저장할지~ 당장은 컴퓨터 하드디스크에 여기만 나중에 s3로 갈아끼워주면 멀터가 알아서 하드디스크가 아니라 스토리지로 올려줌(배포시)
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      //사진.png
+      const ext = path.extname(file.originalname); //확장자추출(.png, .jpg 등)
+      const basename = path.basename(file.originalname, ext); // 사진
+      done(null, basename + "_" + new Date().getTime() + ext); //사진_1513515313.png (같은 이름으로 이미지를 업로드하면 노드에서는 덮어씌워버려서 시간까지추가해서 올리는 코드)
+    },
+  }),
+  limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
+});
+
+// <----게시글 작성---->
+router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST / post
   try {
     const post = await Post.create({
@@ -22,33 +48,46 @@ router.post("/write", isLoggedIn, async (req, res, next) => {
       UserId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
       //
     });
-    const fullPost = await Post.findOne({
-      //부족한 정보들(이미지, 댓글,글쓴이 )을 합쳐서 프론트에 보내줌
-      where: { id: post.id },
-      include: [
-        {
-          model: Image,
-        },
-        {
-          model: Comment,
-          include: [
-            {
-              model: User, //게시글에 단 댓글 작성자
-              attributes: ["id", "nickname"],
-            },
-          ],
-        },
-        {
-          model: User, //게시글 작성자
-          attributes: ["id", "nickname"],
-        },
-        {
-          model: User, //게시글에 좋아요 누른 사람
-          attributes: ["id"],
-        },
-      ],
-    });
-    res.status(201).json(fullPost); //프론트로 돌려줌
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image })) //프로미스배열
+        );
+        await post.addImages(images);
+      } else {
+        //이미지가 하나만 올라오면 image : 사진.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
+    // const fullPost = await Post.findOne({
+    //   //부족한 정보들(이미지, 댓글,글쓴이 )을 합쳐서 프론트에 보내줌
+    //   where: { id: post.id },
+    //   include: [
+    //     {
+    //       model: Image,
+    //     },
+    //     {
+    //       model: Comment,
+    //       include: [
+    //         {
+    //           model: User, //게시글에 단 댓글 작성자
+    //           attributes: ["id", "nickname"],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: User, //게시글 작성자
+    //       attributes: ["id", "nickname"],
+    //     },
+    //     {
+    //       model: User, //게시글에 좋아요 누른 사람
+    //       attributes: ["id"],
+    //     },
+    //   ],
+    // });
+    res.status(201).json(post); //프론트로 돌려줌
   } catch (error) {
     console.error(error);
     next(error);
@@ -56,21 +95,6 @@ router.post("/write", isLoggedIn, async (req, res, next) => {
 });
 
 //     <-- 이미지 업로드 -->
-const upload = multer({
-  storage: multer.diskStorage({
-    //어디에 저장할지~ 당장은 컴퓨터 하드디스크에 여기만 나중에 s3로 갈아끼워주면 멀터가 알아서 하드디스크가 아니라 스토리지로 올려줌(배포시)
-    destination(req, file, done) {
-      done(null, "uploads");
-    },
-    filename(req, file, done) {
-      //사진.png
-      const ext = path.extname(file.originalname); //확장자추출(.png, .jpg 등)
-      const basename = path.basename(file.originalname, ext); // 사진
-      done(null, basename + new Date().getTime() + ext); //사진1513515313.png (같은 이름으로 이미지를 업로드하면 노드에서는 덮어씌워버려서 시간까지추가해서 올리는 코드)
-    },
-  }),
-  limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
-});
 router.post(
   "/images",
   isLoggedIn,
@@ -188,7 +212,7 @@ router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
 });
 
 // <----- 게시글 좋아요 취소 ----->
-router.delete("/:postId/like", isLoggedIn, (req, res, next) => {
+router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
   // DELETE /post/1/like
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });

@@ -130,7 +130,7 @@ router.get("/", async (req, res, next) => {
 });
 
 //        <----- 유저 정보 수정 (어떤데이터를 수정해야할지 협의 필요)----->
-route.patch("/logout", isLoggedIn, async (req, res, next) => {
+router.patch("/update", isLoggedIn, async (req, res, next) => {
   try {
     await User.update(
       {

@@ -34,15 +34,16 @@ router.get("/", async (req, res, next) => {
           include: [
             {
               model: User, //댓글 작성자
-              attributes: ["id", "nickname"],
+              attributes: ["id"], //댓글 수만 표시하면 되니까
               //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
             },
           ],
         },
-        {
-          model: User, //게시글에 좋아요 누른 사람
-          attributes: ["id"],
-        },
+        // //게시글이 몇개의 좋아요를 받고있는지 표시해주는부분. 구현미정, 구현방법미정
+        // {
+        //   model: User,
+        //   attributes: ["id"],
+        // },
       ],
     });
     res.status(200).json(posts);

@@ -41,7 +41,8 @@ app.use(
 );
 
 app.use("/", express.static(path.join(__dirname, "uploads")));
-// localhost3065 = 백서버의 도메인을 위해 '/' 을 붙여주고 각OS에 경로를 최적화 하기 위해
+// "/" =  localhost3065 = 백서버의 도메인
+// 폴더명(경로)을 각OS에 최적화 하기 위해 - windows는 경로가 '\' , mac은 '/'
 // join으로 주소를 결합한다.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
