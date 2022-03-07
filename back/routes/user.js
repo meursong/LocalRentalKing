@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt"); //해쉬화 알고리즘
-const { User, Post } = require("../models"); //User model require 26번라인 User.create를 사용하기위해서 '구조분해할당'
+const { User, ProdPost, PowerPost, TogetherPost } = require("../models"); //User model require 26번라인 User.create를 사용하기위해서 '구조분해할당'
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 //const { format } = require("sequelize/types/utils"); //이부분 코드는?
 //원래 db.User로 접근해야 하는데 {User}해놓으면 그냥 유저로 접근 가능

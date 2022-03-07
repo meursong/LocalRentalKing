@@ -3,14 +3,14 @@ module.exports = class ProdPost extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
-        tab: {
-          //화면왼쪽 물건빌려줘, 힘을빌려줘 등의 탭 구분
+        boardNum: {
+          //화면왼쪽 물건빌려줘, 힘을빌려줘 등의 탭 구분 ~ 숫자로
           type: Sequelize.INTEGER,
           allowNull: false,
         },
         category: {
-          //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분
-          type: Sequelize.STRING(50),
+          //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분 // 글자로
+          type: Sequelize.STRING(20),
           allowNull: true,
         },
         title: {

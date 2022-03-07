@@ -4,7 +4,19 @@ const path = require("path"); //노드에서 제공하는 모듈 http처럼, 설
 const fs = require("fs"); //file system을 조작할수있는 모듈. 폴더같은 걸 만들어줄수도있음
 //const passport = require("passport");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
-const { Post, Image, Comment, User, Rental, Together } = require("../models");
+const {
+  Post,
+  User,
+  ProdPost,
+  ProdPostImage,
+  ProdPostComment,
+  PowerPost,
+  PowerPostImage,
+  PowerPostComment,
+  TogetherPost,
+  TogetherPostImage,
+  TogetherPostComment,
+} = require("../models");
 const { isLoggedIn } = require("./middlewares");
 //const { route } = require("./user");
 
@@ -35,138 +47,168 @@ const upload = multer({
   limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
 });
 
-// <------------------------  rental 빌려줘/빌려줄게 글쓰기   ---------------------------->
-router.post("/rental", isLoggedIn, upload.none(), async (req, res, next) => {
+// <------------------------   글쓰기   ---------------------------->
+router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST / post
-  try {
-    const post = await Post.create({
-      communityNum: req.body.communityNum,
-      category: req.body.category,
-      title: req.body.title,
-      content: req.body.content, //프론트와 이름을 맞춰야함
-      UserId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
-      user_nickname: req.user.nickname, //  ***프론트에 넘겨달라고 부탁하기
-    });
-    await Rental.create({
-      rentalPrice: req.body.rentalPrice,
-    });
-    if (req.body.image) {
-      if (Array.isArray(req.body.image)) {
-        //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
-        const images = await Promise.all(
-          req.body.image.map((image) => Image.create({ src: image })) //프로미스배열
-        );
-        await post.addImages(images);
-      } else {
-        //이미지가 하나만 올라오면 image : 사진.png
-        const image = await Image.create({ src: req.body.image });
-        await post.addImages(image);
+  const boardNum = req.body.boardNum;
+  if (boardNum == 1 || boardNum == 2) {
+    //1:물건빌려줘, 2:물건 빌려줄게
+    try {
+      const prodPost = await ProdPost.create({
+        boardNum: boardNum,
+        category: req.body.category, // 공구, 의류, 전자기기, 서적 등등 //
+        title: req.body.title,
+        content: req.body.content,
+        price: req.body.price,
+        UserId: req.body.userid,
+        user_nickname: req.body.nickname,
+        user_location: req.body.location,
+      });
+      if (req.body.image) {
+        if (Array.isArray(req.body.image)) {
+          //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
+          const images = await Promise.all(
+            req.body.image.map((image) => ProdPostImage.create({ src: image })) //프로미스배열
+          );
+          await prodPost.addProdPostImages(images);
+        } else {
+          //이미지가 하나만 올라오면 image : 사진.png
+          const image = await ProdPostImage.create({ src: req.body.image });
+          await prodPost.addProdPostImages(image);
+        }
       }
+      // const fullPost = await Post.findOne({
+      //   //부족한 정보들(이미지, 댓글,글쓴이 )을 합쳐서 프론트에 보내줌
+      //   where: { id: post.id },
+      //   include: [
+      //     {
+      //       model: Image,
+      //     },
+      //     {
+      //       model: Comment,
+      //       include: [
+      //         {
+      //           model: User, //게시글에 단 댓글 작성자
+      //           attributes: ["id", "nickname"],
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       model: User, //게시글 작성자
+      //       attributes: ["id", "nickname"],
+      //     },
+      //     {
+      //       model: User, //게시글에 좋아요 누른 사람
+      //       attributes: ["id"],
+      //     },
+      //   ],
+      // });
+      res.status(201).json(prodPost); //프론트로 돌려줌
+    } catch (error) {
+      console.error(error);
+      next(error);
     }
-    // const fullPost = await Post.findOne({
-    //   //부족한 정보들(이미지, 댓글,글쓴이 )을 합쳐서 프론트에 보내줌
-    //   where: { id: post.id },
-    //   include: [
-    //     {
-    //       model: Image,
-    //     },
-    //     {
-    //       model: Comment,
-    //       include: [
-    //         {
-    //           model: User, //게시글에 단 댓글 작성자
-    //           attributes: ["id", "nickname"],
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       model: User, //게시글 작성자
-    //       attributes: ["id", "nickname"],
-    //     },
-    //     {
-    //       model: User, //게시글에 좋아요 누른 사람
-    //       attributes: ["id"],
-    //     },
-    //   ],
-    // });
-    res.status(201).json(post); //프론트로 돌려줌
-  } catch (error) {
-    console.error(error);
-    next(error);
+  } else if (boardNum == 3 || boardNum == 4) {
+    //3:힘을빌려줘, 4:힘을 빌려줄게
+    try {
+      const powerPost = await PowerPost.create({
+        boardNum: boardNum,
+        category: req.body.category, //
+        title: req.body.title,
+        content: req.body.content,
+        price: req.body.price,
+        UserId: req.body.userid,
+        user_nickname: req.body.nickname,
+        user_location: req.body.location,
+      });
+      if (req.body.image) {
+        if (Array.isArray(req.body.image)) {
+          //이미지 여러개
+          const images = await Promise.all(
+            req.body.image.map((image) => PowerPostImage.create({ src: image }))
+          );
+          await powerPost.addPowerPostImages(images);
+        } else {
+          //이미지 하나
+          const image = await PowerPostImage.create({ src: req.body.image });
+          await powerPost.addPowerPostImages(image);
+        }
+      }
+      res.status(201).json(powerPost);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 5) {
+    //5:같이하자
+    try {
+      const togetherPost = await TogetherPost.create({
+        boardNum: boardNum,
+        category: req.body.category, //
+        title: req.body.title,
+        content: req.body.content,
+        originalPrice: req.body.originalPrice,
+        sharedPrice: req.body.sharedPrice,
+        UserId: req.body.userid,
+        user_nickname: req.body.nickname,
+        user_location: req.body.location,
+      });
+      if (req.body.image) {
+        if (Array.isArray(req.body.image)) {
+          //이미지 여러개
+          const images = await Promise.all(
+            req.body.image.map((image) =>
+              TogetherPostImage.create({ src: image })
+            )
+          );
+          await togetherPost.addTogetherPosTImages(images);
+        } else {
+          //이미지 하나
+          const image = await TogetherPostImage.create({ src: req.body.image });
+          await togetherPost.addPTogetherPostImages(image);
+        }
+      }
+      res.status(201).json(togetherPost);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
   }
 });
 
-// <------------------------  community2 같이하자   ---------------------------->
-router.post("/together", isLoggedIn, upload.none(), async (req, res, next) => {
-  // POST / post
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+// <------------------------  together 같이하자 글쓰기 테스트  ---------------------------->
+router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
   try {
-    const post = await Post.create({
-      communityNum: req.body.communityNum,
-      category: req.body.category,
-      title: req.body.title,
-      content: req.body.content, //프론트와 이름을 맞춰야함
-      UserId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
-      user_nickname: req.user.nickname, //  ***프론트에 넘겨달라고 부탁하기
-    });
-    await Together.create({
-      price: req.body.rentalPrice,
-      sharedPrice: req.body.sharedPrice,
-    });
-    if (req.body.image) {
-      if (Array.isArray(req.body.image)) {
-        //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
-        const images = await Promise.all(
-          req.body.image.map((image) => Image.create({ src: image })) //프로미스배열
-        );
-        await post.addImages(images);
-      } else {
-        //이미지가 하나만 올라오면 image : 사진.png
-        const image = await Image.create({ src: req.body.image });
-        await post.addImages(image);
-      }
-    }
-    res.status(201).json(post); //프론트로 돌려줌
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-// <------------------------  together 빌려줘/빌려줄게 테스트   ---------------------------->
-router.post("/togetherTest", upload.none(), async (req, res, next) => {
-  // POST / post
-  try {
-    const post = await Post.create({
-      communityNum: req.body.communityNum, //프론트와 이름을 맞춰야함
-      category: req.body.category,
+    const togetherPost = await TogetherPost.create({
+      tab: req.body.tab,
+      category: req.body.category, //1+1,배달,공구
       title: req.body.title,
       content: req.body.content,
-      user_nickname: req.body.user_nickname, //  ***프론트에 넘겨달라고 부탁하기
-      user_location: req.body.user_location,
-      UserId: req.body.UserId, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨 //
-    });
-    await Together.create({
-      price: req.body.price,
+      originalPrice: req.body.originalPrice,
       sharedPrice: req.body.sharedPrice,
+      UserId: req.body.id,
+      user_nickname: req.body.nickname,
     });
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
-        //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
+        //이미지 여러개
         const images = await Promise.all(
-          req.body.image.map((image) => Image.create({ src: image })) //프로미스배열
+          req.body.image.map((image) =>
+            TogetherPostImage.create({ src: image })
+          )
         );
-        await post.addImages(images);
+        await togetherPost.addTogetherPostImages(images);
       } else {
-        //이미지가 하나만 올라오면 image : 사진.png
-        const image = await Image.create({ src: req.body.image });
-        await post.addImages(image);
+        //이미지 하나만
+        const image = await TogetherPostImage.create({ src: req.body.image });
+        await togetherPost.addTogetherPostImages(image);
       }
     }
-    res.status(201).json(post); //프론트로 돌려줌
+    res.status(201).json(togetherPost);
   } catch (error) {
     console.error(error);
     next(error);
@@ -177,9 +219,39 @@ router.post("/togetherTest", upload.none(), async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-//     <-- 이미지 업로드 -->
+//     <------ 물건빌려줘/빌려줄게 이미지 업로드 ------>
 router.post(
-  "/images",
+  "/prodImages",
+  isLoggedIn,
+  upload.array("image"),
+  async (req, res, next) => {
+    // POST /post/images
+    //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
+    //한장만 올리려면 array대신 single("image")
+    //텍스트만 올리려면 none(),
+    console.log(req.files); //업로드된 이미지 정보
+    res.json(req.files.map((v) => v.filename));
+  }
+);
+
+//     <------ 힘을 빌려줘/빌려줄게 이미지 업로드 ------>
+router.post(
+  "/powerImages",
+  isLoggedIn,
+  upload.array("image"),
+  async (req, res, next) => {
+    // POST /post/images
+    //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
+    //한장만 올리려면 array대신 single("image")
+    //텍스트만 올리려면 none(),
+    console.log(req.files); //업로드된 이미지 정보
+    res.json(req.files.map((v) => v.filename));
+  }
+);
+
+//     <------ 같이하자 이미지 업로드 ------>
+router.post(
+  "/togetherImages",
   isLoggedIn,
   upload.array("image"),
   async (req, res, next) => {
@@ -193,35 +265,9 @@ router.post(
 );
 
 //     <-- 이미지 업로드 테스트 -->
-router.post("/imagesTest", upload.array("image"), async (req, res, next) => {
-  // POST /post/images
-  //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
-  //한장만 올리려면 array대신 single("image")
-  //텍스트만 올리려면 none(),
+router.post("/prodImages", upload.array("image"), async (req, res, next) => {
   console.log(req.files); //업로드된 이미지 정보
   res.json(req.files.map((v) => v.filename));
-});
-
-//    <-- 글쓰기 테스트 -->
-router.post("/writeTest", async (req, res, next) => {
-  // POST / post
-  try {
-    const post = await Post.create({
-      title: req.body.title,
-      content: req.body.content, //프론트와 이름을 맞춰야함
-      tab: req.body.tab,
-      category: req.body.category,
-      price: req.body.price,
-      //userId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
-      //userId를 프론트에서 숨김으로 보내줌 hidden? form태그 안에 userId의 정보가 있고 그걸 브라우저단에 안보이게만 해서 서브밋할때 같이 넘엉오게
-
-      //
-    });
-    res.status(201).json(post); //프론트로 돌려줌
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
 });
 
 // <----댓글 작성 라우터---->

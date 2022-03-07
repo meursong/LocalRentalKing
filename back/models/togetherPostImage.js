@@ -16,6 +16,7 @@ module.exports = class TogetherPostImage extends Sequelize.Model {
         tableName: "togetherPostImages",
         charset: "utf8mb4", //한글도 쓸수있게
         collate: "utf8mb4_general_ci", //한글 저장
+        timestamps: false,
         sequelize,
       }
     );
