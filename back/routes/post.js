@@ -182,6 +182,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////////
 // <------------------------  together 같이하자 글쓰기 테스트  ---------------------------->
 router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
+  const boardNum = req.body.boardNum;
   try {
     const togetherPost = await TogetherPost.create({
       boardNum: boardNum,
@@ -190,9 +191,9 @@ router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
       content: req.body.content,
       originalPrice: req.body.originalPrice,
       sharedPrice: req.body.sharedPrice,
-      UserId: req.body.userid,
       user_nickname: req.body.nickname,
       user_location: req.body.location,
+      UserId: req.body.userid,
     });
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
@@ -220,9 +221,9 @@ router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-//     <------ 물건빌려줘/빌려줄게 이미지 업로드 ------>
+//     <------ 이미지 업로드 ------>  //이건 라우터가 하나만있어도 될듯?
 router.post(
-  "/prodImages",
+  "/images",
   isLoggedIn,
   upload.array("image"),
   async (req, res, next) => {
@@ -235,38 +236,38 @@ router.post(
   }
 );
 
-//     <------ 힘을 빌려줘/빌려줄게 이미지 업로드 ------>
-router.post(
-  "/powerImages",
-  isLoggedIn,
-  upload.array("image"),
-  async (req, res, next) => {
-    // POST /post/images
-    //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
-    //한장만 올리려면 array대신 single("image")
-    //텍스트만 올리려면 none(),
-    console.log(req.files); //업로드된 이미지 정보
-    res.json(req.files.map((v) => v.filename));
-  }
-);
+// //     <------ 힘을 빌려줘/빌려줄게 이미지 업로드 ------>
+// router.post(
+//   "/powerImages",
+//   isLoggedIn,
+//   upload.array("image"),
+//   async (req, res, next) => {
+//     // POST /post/images
+//     //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
+//     //한장만 올리려면 array대신 single("image")
+//     //텍스트만 올리려면 none(),
+//     console.log(req.files); //업로드된 이미지 정보
+//     res.json(req.files.map((v) => v.filename));
+//   }
+// );
 
-//     <------ 같이하자 이미지 업로드 ------>
-router.post(
-  "/togetherImages",
-  isLoggedIn,
-  upload.array("image"),
-  async (req, res, next) => {
-    // POST /post/images
-    //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
-    //한장만 올리려면 array대신 single("image")
-    //텍스트만 올리려면 none(),
-    console.log(req.files); //업로드된 이미지 정보
-    res.json(req.files.map((v) => v.filename));
-  }
-);
+// //     <------ 같이하자 이미지 업로드 ------>
+// router.post(
+//   "/togetherImages",
+//   isLoggedIn,
+//   upload.array("image"),
+//   async (req, res, next) => {
+//     // POST /post/images
+//     //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
+//     //한장만 올리려면 array대신 single("image")
+//     //텍스트만 올리려면 none(),
+//     console.log(req.files); //업로드된 이미지 정보
+//     res.json(req.files.map((v) => v.filename));
+//   }
+// );
 
 //     <-- 이미지 업로드 테스트 -->
-router.post("/prodImages", upload.array("image"), async (req, res, next) => {
+router.post("/imagesTest", upload.array("image"), async (req, res, next) => {
   console.log(req.files); //업로드된 이미지 정보
   res.json(req.files.map((v) => v.filename));
 });
