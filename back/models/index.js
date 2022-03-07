@@ -3,8 +3,8 @@ const comment = require("./comment");
 const image = require("./image");
 const post = require("./post");
 const user = require("./user");
-const community1 = require("./community1");
-const community2 = require("./community2");
+const rental = require("./rental");
+const together = require("./together");
 const community3 = require("./community3");
 const community4 = require("./community4");
 
@@ -23,8 +23,8 @@ db.Comment = comment; //db객체에 각각의 모델들을 저장ㅡ 앞으로 d
 db.Image = image;
 db.Post = post;
 db.User = user;
-db.Community1 = community1;
-db.Community2 = community2;
+db.Rental = rental;
+db.Together = together;
 db.Community3 = community3;
 db.Community4 = community4;
 

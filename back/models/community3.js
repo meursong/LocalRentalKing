@@ -18,6 +18,7 @@ module.exports = class Community3 extends Sequelize.Model {
         tableName: "communities3",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci",
+        timestamps: false,
         sequelize,
       }
     );

@@ -17,11 +17,12 @@ module.exports = class Community4 extends Sequelize.Model {
         tableName: "communities4",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci",
+        timestamps: false,
         sequelize,
       }
     );
   }
   static associate(db) {
-    db.Comment.belongsTo(db.Post);
+    db.Community4.belongsTo(db.Post);
   }
 };

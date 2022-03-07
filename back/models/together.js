@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-module.exports = class Community2 extends Sequelize.Model {
+module.exports = class Together extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -14,15 +14,16 @@ module.exports = class Community2 extends Sequelize.Model {
         },
       },
       {
-        modelName: "Community2",
-        tableName: "communities2",
+        modelName: "Together",
+        tableName: "togethers",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci",
+        timestamps: false,
         sequelize,
       }
     );
   }
   static associate(db) {
-    db.Comment.belongsTo(db.Post);
+    db.Together.belongsTo(db.Post);
   }
 };

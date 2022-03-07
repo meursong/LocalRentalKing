@@ -47,8 +47,8 @@ module.exports = class Post extends Sequelize.Model {
     //나중에 as 따라서 post.getLikers처럼 게시글 좋아요 누른 사람을 가져오게 된다.
     //post.addLikers, post.removeLikers등의 관계형 메서드가 생긴다.
     // add,get,set,remove -- 관계형 메서드
-    db.Post.hasMany(db.Community1);
-    db.Post.hasMany(db.Community2);
+    db.Post.hasMany(db.Rental);
+    db.Post.hasMany(db.Together);
     db.Post.hasMany(db.Community3);
     db.Post.hasMany(db.Community4);
   }

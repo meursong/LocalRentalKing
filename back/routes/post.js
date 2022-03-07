@@ -4,9 +4,9 @@ const path = require("path"); //노드에서 제공하는 모듈 http처럼, 설
 const fs = require("fs"); //file system을 조작할수있는 모듈. 폴더같은 걸 만들어줄수도있음
 //const passport = require("passport");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
-const { Post, Image, Comment, User } = require("../models");
+const { Post, Image, Comment, User, Rental, Together } = require("../models");
 const { isLoggedIn } = require("./middlewares");
-const { route } = require("./user");
+//const { route } = require("./user");
 
 const router = express.Router();
 
@@ -35,18 +35,20 @@ const upload = multer({
   limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
 });
 
-// <----게시글 작성---->
-router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
+// <------------------------  rental 빌려줘/빌려줄게 글쓰기   ---------------------------->
+router.post("/rental", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST / post
   try {
     const post = await Post.create({
+      communityNum: req.body.communityNum,
+      category: req.body.category,
       title: req.body.title,
       content: req.body.content, //프론트와 이름을 맞춰야함
-      tab: req.body.tab,
-      category: req.body.category,
-      price: req.body.price,
       UserId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
-      //
+      user_nickname: req.user.nickname, //  ***프론트에 넘겨달라고 부탁하기
+    });
+    await Rental.create({
+      rentalPrice: req.body.rentalPrice,
     });
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
@@ -93,6 +95,87 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
     next(error);
   }
 });
+
+// <------------------------  community2 같이하자   ---------------------------->
+router.post("/together", isLoggedIn, upload.none(), async (req, res, next) => {
+  // POST / post
+  try {
+    const post = await Post.create({
+      communityNum: req.body.communityNum,
+      category: req.body.category,
+      title: req.body.title,
+      content: req.body.content, //프론트와 이름을 맞춰야함
+      UserId: req.user.id, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨
+      user_nickname: req.user.nickname, //  ***프론트에 넘겨달라고 부탁하기
+    });
+    await Together.create({
+      price: req.body.rentalPrice,
+      sharedPrice: req.body.sharedPrice,
+    });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image })) //프로미스배열
+        );
+        await post.addImages(images);
+      } else {
+        //이미지가 하나만 올라오면 image : 사진.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
+    res.status(201).json(post); //프론트로 돌려줌
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+// <------------------------  together 빌려줘/빌려줄게 테스트   ---------------------------->
+router.post("/togetherTest", upload.none(), async (req, res, next) => {
+  // POST / post
+  try {
+    const post = await Post.create({
+      communityNum: req.body.communityNum, //프론트와 이름을 맞춰야함
+      category: req.body.category,
+      title: req.body.title,
+      content: req.body.content,
+      user_nickname: req.body.user_nickname, //  ***프론트에 넘겨달라고 부탁하기
+      user_location: req.body.user_location,
+      UserId: req.body.UserId, //로그인 한 이후로는 라우터 접근할때 deserealizeUser가 실행됨 //
+    });
+    await Together.create({
+      price: req.body.price,
+      sharedPrice: req.body.sharedPrice,
+    });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        //이미지가 여러개올라오면 image:[사진1.png, 사진2.png]  ~배열
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image })) //프로미스배열
+        );
+        await post.addImages(images);
+      } else {
+        //이미지가 하나만 올라오면 image : 사진.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
+    res.status(201).json(post); //프론트로 돌려줌
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 
 //     <-- 이미지 업로드 -->
 router.post(
