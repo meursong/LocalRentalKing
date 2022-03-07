@@ -3,6 +3,10 @@ const comment = require("./comment");
 const image = require("./image");
 const post = require("./post");
 const user = require("./user");
+const community1 = require("./community1");
+const community2 = require("./community2");
+const community3 = require("./community3");
+const community4 = require("./community4");
 
 const env = process.env.NODE_ENV || "development"; //process.env.NODE_ENV가 기본적으로 development이기 때문에 development의 환결설정을 불러옴 (추후 배포시 "production"으로 설정)
 const config = require("../config/config")[env]; //config/config.json 파일에 있는 설정값들이 담긴다 데이터베이스 설정을 이 파일에서 불러온 후에 (1) , env안에 development가 담겼으니까 config json중 development부분이 가져와진다
@@ -19,6 +23,10 @@ db.Comment = comment; //db객체에 각각의 모델들을 저장ㅡ 앞으로 d
 db.Image = image;
 db.Post = post;
 db.User = user;
+db.Community1 = community1;
+db.Community2 = community2;
+db.Community3 = community3;
+db.Community4 = community4;
 
 Object.keys(db).forEach((modelName) => {
   //db에 모델들 담았고 foreach로 model 갯수만큼 for문돌아서 각각의 모델의 static.init 메서드를 호출하는건가?  - init이 실행되어야 테이블이 모델로 연결된다.

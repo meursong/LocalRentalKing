@@ -12,13 +12,13 @@ module.exports = class User extends Sequelize.Model {
           allowNull: false,
           unique: true,
         },
-        nickname: {
-          type: Sequelize.STRING(30),
-          allowNull: false,
-        },
         password: {
           type: Sequelize.STRING(100), //암호화를 해야하는데 암호화하면 길이가 길어짐 그래서 100으로 넉넉하게 잡고
           allowNull: false, //
+        },
+        nickname: {
+          type: Sequelize.STRING(30),
+          allowNull: false,
         },
         location: {
           type: Sequelize.STRING(100),
@@ -31,8 +31,9 @@ module.exports = class User extends Sequelize.Model {
         grade: {
           type: Sequelize.STRING(20),
           allowNull: false, //
+          defaultValue: "Normal",
         },
-        profileImgSrc: {
+        profileImg: {
           //프로필 파일 저장할때 이름을 어떻게 저장할지에 대한 고민 (중복의 여지가있으니 새로운 id값을 매번 생성해서 저장하는 방식으로 AI?)
           type: Sequelize.STRING(100),
           allowNull: true, //

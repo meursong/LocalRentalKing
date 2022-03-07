@@ -3,27 +3,31 @@ module.exports = class Post extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
-        content: {
-          type: Sequelize.STRING(500),
+        communityNum: {
+          //화면왼쪽 물건빌려줘, 힘을빌려줘 등의 탭 구분
+          type: Sequelize.STRING(50),
           allowNull: false,
+        },
+        category: {
+          //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분
+          type: Sequelize.STRING(50),
+          allowNull: true,
         },
         title: {
           type: Sequelize.STRING(50),
           allowNull: false,
         },
-        price: {
-          type: Sequelize.STRING(100),
-          allowNull: true, //
-        },
-        tab: {
-          //화면왼쪽 물건빌려줘, 힘을빌려줘 등의 탭 구분
-          type: Sequelize.STRING(50),
+        content: {
+          type: Sequelize.STRING(500),
           allowNull: false,
         },
-        Category: {
-          //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분
-          type: Sequelize.STRING(50),
-          allowNull: true,
+        user_nickname: {
+          type: Sequelize.STRING(30),
+          allowNull: false,
+        },
+        user_location: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
         },
       },
       {
@@ -43,5 +47,9 @@ module.exports = class Post extends Sequelize.Model {
     //나중에 as 따라서 post.getLikers처럼 게시글 좋아요 누른 사람을 가져오게 된다.
     //post.addLikers, post.removeLikers등의 관계형 메서드가 생긴다.
     // add,get,set,remove -- 관계형 메서드
+    db.Post.hasMany(db.Community1);
+    db.Post.hasMany(db.Community2);
+    db.Post.hasMany(db.Community3);
+    db.Post.hasMany(db.Community4);
   }
 };
