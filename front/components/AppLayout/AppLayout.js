@@ -1,49 +1,49 @@
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { Menu, Input, Row, Col, Button } from 'antd';
+import {Button, Col, Menu, Row} from 'antd';
 import 'antd/dist/antd.css';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import useInput from '../../hooks/useInput';
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import Router from 'next/router';
 
-import {LeftSidebar, Navbar, RightSidebar, SearchInput, SidebarDiv, SidebarImg, SidebarLi, SidebarUl} from './styles';
+import {LeftSidebar, Navbar, RightSidebar, SearchInput, SidebarDiv, SidebarLi, SidebarUl, WriteButton} from './styles';
 
-import { logoutRequestAction } from '../../reducers/user';
-
-import icon4 from '../../public/bookmark.png';
+import {logoutRequestAction} from '../../reducers/user';
 
 function AppLayout({ children }) {
   const [searchInput, onChangeSearchInput] = useInput('');
-  const { me, logOutLoading } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
+
+  const writeButtonStyle = {
+    left:"70%",
+    top:"2%",
+    zIndex:20,
+  };
 
   const onSearch = useCallback(() => {
     Router.push(`/hashtag/${searchInput}`);
   }, [searchInput]);
 
+  const onWrite = useCallback(() => {
+    Router.push('/write');
+  }, []);
+
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
   }, []);
 
-  // const const {isLoggedIn} = useSelector((state)=>state.user);
   return (
     <div>
       <div style={{ position: 'relative' }}>
         <Navbar>
           <Menu mode="horizontal">
-            <Menu.Item>
+            <Menu.Item key={1}>
               <Link href="/">
                 <a><h2>홈</h2></a>
               </Link>
             </Menu.Item>
-
-            {/* <Menu.Item> */}
-            {/*  <Link href="/signup"> */}
-            {/*    <a>회원가입</a> */}
-            {/*  </Link> */}
-            {/* </Menu.Item> */}
           </Menu>
         </Navbar>
         <div>
@@ -95,9 +95,6 @@ function AppLayout({ children }) {
                     <a> 프로필</a>
                   </SidebarLi>
                 </Link>
-                {/*<SidebarLi>*/}
-                {/*  <p><br /></p>*/}
-                {/*</SidebarLi>*/}
                 <div onClick={onLogOut}>
                   <SidebarLi>
                     <a> 로그아웃</a>
@@ -116,6 +113,7 @@ function AppLayout({ children }) {
               onSearch={onSearch}
             />
           </RightSidebar>
+            <Button style={writeButtonStyle} onClick={onWrite}>글쓰기</Button>
         </div>
       </div>
       <div style={{ marginTop: 100, zIndex: 5 }}>

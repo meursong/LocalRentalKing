@@ -14,9 +14,8 @@ const FormWrapper = styled(Form)`
   padding: 10px !important;
 `;
 
-function LoginForm({setLogin}) {
+function LoginForm() {
   const dispatch = useDispatch();
-  const { me } = useSelector((state)=>state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const { logInLoading, logInError } = useSelector((state) => state.user);
@@ -29,8 +28,7 @@ function LoginForm({setLogin}) {
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
-    // dispatch(loginRequestAction({ email, password }));
-    setLogin(true);
+     dispatch(loginRequestAction({ email, password }));
   }, [email, password]);
 
   return (

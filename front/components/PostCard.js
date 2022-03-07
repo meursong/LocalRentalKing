@@ -6,10 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import moment from 'moment';
 import PostImages from './PostImages';
-import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
-import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST, RETWEET_REQUEST, MODIFY_POST_REQUEST } from '../reducers/post';
-import FollowButton from './FollowButton';
+import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST, MODIFY_POST_REQUEST } from '../reducers/post';
 
 moment.locale('ko');
 
@@ -55,16 +53,6 @@ function PostCard({ post }) {
     });
   });
 
-  const onRetweet = useCallback(() => {
-    if (!id) {
-      return alert('로그인이 필요합니다.');
-    }
-    return dispatch({
-      type: RETWEET_REQUEST,
-      data: post.id,
-    });
-  }, [id]);
-
   const onChangePost = useCallback((editText) => () => dispatch({
     type: MODIFY_POST_REQUEST,
     data: {
@@ -86,7 +74,6 @@ function PostCard({ post }) {
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
-          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked
             ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onUnlike} />
             : <HeartOutlined key="heart" onClick={onLike} />,
@@ -110,7 +97,6 @@ function PostCard({ post }) {
           </Popover>,
         ]}
         title={post.RetweetId ? `${post.User.nickname}님이 리트윗 하셨습니다.` : null}
-        extra={id && <FollowButton post={post} />}
       >
         {post.RetweetId && post.Retweet
           ? (
@@ -168,8 +154,6 @@ function PostCard({ post }) {
         />
       </div>
       )}
-      {/* <CommentForm/> */}
-      {/* <Comments/> */}
     </div>
   );
 }

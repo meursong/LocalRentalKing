@@ -1,16 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Head from 'next/head';
-import { Button, Checkbox, Form, Input } from 'antd';
+import {Button, Checkbox, Form, Input} from 'antd';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Router from 'next/router';
-import axios from 'axios';
-import { END } from 'redux-saga';
 import useInput from '../hooks/useInput';
 import AppLayout from '../components/AppLayout/AppLayout';
-import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from '../reducers/user';
-import wrapper from '../store/configureStore';
-import { LOAD_POST_REQUEST } from '../reducers/post';
+import {SIGN_UP_REQUEST} from '../reducers/user';
 
 const ErrorMessage = styled.div`
 color:red`;
@@ -58,17 +54,17 @@ function Signup() {
     if (password !== password2) return setPassword2Error(true);
     if (!term) return setTermError(true);
     console.log(email, nickname, password);
-    // dispatch({
-    //   type: SIGN_UP_REQUEST,
-    //   data: { email, password, nickname },
-    // });
+    dispatch({
+      type: SIGN_UP_REQUEST,
+      data: { email, password, nickname },
+    });
     Router.push('/'); // 임시로 완료된거로 치고 메인으로 돌려보낸다
   }, [email, password, password2, term]);
 
   return (
     <AppLayout>
       <Head>
-        <title>회원가입 | Thewitter</title>
+        <title>회원가입 | 우리동네 렌탈대장</title>
       </Head>
       <Form onFinish={onSubmit}>
         <div>
