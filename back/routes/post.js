@@ -5,7 +5,6 @@ const fs = require("fs"); //file system을 조작할수있는 모듈. 폴더같�
 //const passport = require("passport");
 //const bcrypt = require("bcrypt"); //해쉬화 알고리즘
 const {
-  Post,
   User,
   ProdPost,
   ProdPostImage,
@@ -216,6 +215,13 @@ router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
     next(error);
   }
 });
+
+//     <-- 이미지 업로드 테스트 -->
+router.post("/imagesTest", upload.array("image"), async (req, res, next) => {
+  console.log(req.files); //업로드된 이미지 정보
+  res.json(req.files.map((v) => v.filename));
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -236,48 +242,12 @@ router.post(
   }
 );
 
-// //     <------ 힘을 빌려줘/빌려줄게 이미지 업로드 ------>
-// router.post(
-//   "/powerImages",
-//   isLoggedIn,
-//   upload.array("image"),
-//   async (req, res, next) => {
-//     // POST /post/images
-//     //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
-//     //한장만 올리려면 array대신 single("image")
-//     //텍스트만 올리려면 none(),
-//     console.log(req.files); //업로드된 이미지 정보
-//     res.json(req.files.map((v) => v.filename));
-//   }
-// );
-
-// //     <------ 같이하자 이미지 업로드 ------>
-// router.post(
-//   "/togetherImages",
-//   isLoggedIn,
-//   upload.array("image"),
-//   async (req, res, next) => {
-//     // POST /post/images
-//     //array인 이유는 이미지를 여러장 올릴수도있으니까.  하나의 인풋태그에서 여러개올릴때는 array고 2개이상의 인풋에서 이미지 올릴때는 fields로 대체
-//     //한장만 올리려면 array대신 single("image")
-//     //텍스트만 올리려면 none(),
-//     console.log(req.files); //업로드된 이미지 정보
-//     res.json(req.files.map((v) => v.filename));
-//   }
-// );
-
-//     <-- 이미지 업로드 테스트 -->
-router.post("/imagesTest", upload.array("image"), async (req, res, next) => {
-  console.log(req.files); //업로드된 이미지 정보
-  res.json(req.files.map((v) => v.filename));
-});
-
 // <----댓글 작성 라우터---->
 router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   // POST / post / ? /comment
   //주소는 프론트와 백사이의 약속
   //주소에서 :postId는 요청만 보더라도 몇번 게시물에 댓글을 다는거구나~하고 한눈에 알수있게하려고
-  //그런데 몇번 게시물에 요청할건지는 가변적. :postId로 파라미터로 받아서처리
+  //그런데 몇번 게시물에 요청할건지는 가변적. :postId를 파라미터로 받아서처리
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId },
@@ -306,67 +276,37 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// <----댓글 작성 라우터 테스트---->
-router.post("/:postId/comment", async (req, res, next) => {
-  try {
-    const post = await Post.findOne({
-      where: { id: req.params.postId },
-    });
-    if (!post) {
-      return res.status(403).send("존재하지 않는 게시물입니다.");
-    }
-    const comment = await Comment.create({
-      content: req.body.content,
-      PostId: req.params.postId,
-      UserId: req.user.id,
-    });
-    const fullComment = await Comment.findOne({
-      where: { id: comment.id },
-      include: [
-        {
-          model: User,
-          attributes: ["id", "nickname"],
-        },
-      ],
-    });
-    res.status(201).json(fullComment);
-  } catch (error) {
-    console(error);
-    next(error);
-  }
-});
+// // <----- 게시글 좋아요 ----->
+// router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+//   // PATCH /post/1/like
+//   try {
+//     const post = await Post.findOne({ where: { id: req.params.postId } });
+//     if (!post) {
+//       return res.status(403).send("게시글이 존재하지 않습니다");
+//     }
+//     await post.addLikers(req.user.id);
+//     res.json({ PostId: post.id, UserId: req.user.id });
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
 
-// <----- 게시글 좋아요 ----->
-router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
-  // PATCH /post/1/like
-  try {
-    const post = await Post.findOne({ where: { id: req.params.postId } });
-    if (!post) {
-      return res.status(403).send("게시글이 존재하지 않습니다");
-    }
-    await post.addLikers(req.user.id);
-    res.json({ PostId: post.id, UserId: req.user.id });
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-// <----- 게시글 좋아요 취소 ----->
-router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
-  // DELETE /post/1/like
-  try {
-    const post = await Post.findOne({ where: { id: req.params.postId } });
-    if (!post) {
-      return res.status(403).send("게시글이 존재하지 않습니다");
-    }
-    await post.removeLikers(req.user.id);
-    res.json({ PostId: post.id, UserId: req.user.id });
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
+// // <----- 게시글 좋아요 취소 ----->
+// router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
+//   // DELETE /post/1/like
+//   try {
+//     const post = await Post.findOne({ where: { id: req.params.postId } });
+//     if (!post) {
+//       return res.status(403).send("게시글이 존재하지 않습니다");
+//     }
+//     await post.removeLikers(req.user.id);
+//     res.json({ PostId: post.id, UserId: req.user.id });
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
 
 // //        <----- 게시글 수정 ----->
 // route.patch("/edit", isLoggedIn, async (req, res, next) => {
@@ -386,23 +326,23 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
 //   }
 // });
 
-//       <----- 게시글 삭제 ----->
-router.delete("/:postId", isLoggedIn, async (req, res, next) => {
-  // DELETE /post / ?
-  try {
-    await Post.destroy({
-      where: {
-        id: req.params.postId, //게시글 id
-        UserId: req.user.id, //그 게시글을 쓴 유저의 id  ~혹여나 다른사람이 삭제할때 url만바꿔서 요청보내면 다른사람글도 삭제가능하니까
-      },
-    });
-    res.status(200).json({ PostId: parseInt(req.params.postId, 10) }); //params는 문자열로가서 int로 파싱
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
+// //       <----- 게시글 삭제 ----->
+// router.delete("/:postId", isLoggedIn, async (req, res, next) => {
+//   // DELETE /post / ?
+//   try {
+//     await Post.destroy({
+//       where: {
+//         id: req.params.postId, //게시글 id
+//         UserId: req.user.id, //그 게시글을 쓴 유저의 id  ~혹여나 다른사람이 삭제할때 url만바꿔서 요청보내면 다른사람글도 삭제가능하니까
+//       },
+//     });
+//     res.status(200).json({ PostId: parseInt(req.params.postId, 10) }); //params는 문자열로가서 10진수 int로 파싱
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
 
-router.patch("/nickname", isLoggedIn, (req, res) => {});
+//router.patch("/nickname", isLoggedIn, (req, res) => {});
 
 module.exports = router;
