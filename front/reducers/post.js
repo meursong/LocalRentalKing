@@ -60,6 +60,10 @@ export const initialState = {
   addCommentError: null,
 };
 
+export const SEND_DUMMYPOST_REQUEST = 'SEND_DUMMYPOST_REQUEST';
+export const SEND_DUMMYPOST_SUCCESS = 'SEND_DUMMYPOST_SUCCESS';
+export const SEND_DUMMYPOST_FAILURE = 'SEND_DUMMYPOST_FAILURE';
+
 export const LOAD_SEARCH_POSTS_REQUEST = 'LOAD_SEARCH_POSTS_REQUEST';
 export const LOAD_SEARCH_POSTS_SUCCESS = 'LOAD_SEARCH_POSTS_SUCCESS';
 export const LOAD_SEARCH_POSTS_FAILURE = 'LOAD_SEARCH_POSTS_FAILURE';
@@ -296,17 +300,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.loadPostError = action.error;
       draft.loadPostLoading = false;
       break;
+    case SEND_DUMMYPOST_REQUEST:
     case ADD_POST_REQUEST:
       draft.addPostLoading = true;
       draft.addPostDone = false;
       draft.addPostError = null;
       break;
+    case SEND_DUMMYPOST_SUCCESS:
     case ADD_POST_SUCCESS:
       draft.mainPosts.unshift(action.data);
       draft.addPostLoading = false;
       draft.addPostDone = true;
       draft.imagePaths = [];
       break;
+    case SEND_DUMMYPOST_FAILURE:
     case ADD_POST_FAILURE:
       draft.addPostError = action.error;
       draft.addPostLoading = false;

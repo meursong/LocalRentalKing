@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import Head from 'next/head';
 import {useDispatch, useSelector} from 'react-redux';
 import {useInView} from "react-intersection-observer";
@@ -9,6 +9,7 @@ import {Button, Form, Input, Modal, Select, Upload} from "antd";
 // import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import {PlusOutlined} from "@ant-design/icons";
+import {SEND_DUMMYPOST_REQUEST} from "../reducers/post";
 
 const {TextArea} = Input;
 
@@ -76,6 +77,8 @@ function Write() {
     },
   ]);
 
+  const dispatch = useDispatch();
+
   const handleCancel = () => setPreviewVisible(false);
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -100,6 +103,40 @@ function Write() {
   const onSecondCityChange = (value) => {
     setSecondCity(value);
   };
+
+  // const onSubmit = useCallback(() => {
+  //   if (!text || !text.trim()) {
+  //     return alert('게시글을 작성하세요.');
+  //   }
+  //   const formData = new FormData();
+  //   imagePaths.forEach((i) => {
+  //     formData.append('image', i);
+  //   });
+  //   formData.append('content', text);
+  //   return dispatch({
+  //     type: ADD_POST_REQUEST,
+  //     data: formData,
+  //   });
+  // }, [text, imagePaths]);
+
+  const sendDummyPost1 = useCallback(() => { // 이걸 기반으로 다양한 유형의 글쓰기를 테스트 할 예정
+    const formData = new FormData();
+    formData.append('userid',"3");
+    formData.append('location',"광주");
+    formData.append('nickname',"TheON2");
+    formData.append('boardNum',"1");
+    formData.append('category',"공구");
+    formData.append('title',"테스트 글 1번의 제목");
+    formData.append('content',"제발 무사히 글이 올라가게 해주세요!!!");
+    formData.append('price',3000);
+
+    dispatch({
+      type:SEND_DUMMYPOST_REQUEST,
+      data:formData,
+    });
+  },[]);
+
+
   const uploadButton = (
     <div>
       <PlusOutlined/>
@@ -115,6 +152,7 @@ function Write() {
         initialValues={{
           layout: 'horizontal',
         }}
+        onFinish={sendDummyPost1}
       >
         <Form.Item>
           <Input.Group compact>

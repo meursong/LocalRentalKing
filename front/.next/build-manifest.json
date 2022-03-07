@@ -29,10 +29,10 @@
       "static/chunks/webpack.js",
       "static/chunks/pages/_error.js"
     ],
-    "/talentsend": [
+    "/write": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
-      "static/chunks/pages/talentsend.js"
+      "static/chunks/pages/write.js"
     ]
   },
   "ampFirstPages": []

@@ -46,7 +46,6 @@ function ObjectRecieve() {
       </Head>
       <AppLayout>
         <Tags tagsData={object_TagsData} boardNum={1}/>
-        {mainPosts.map((post) => <PostCard key={post.id} post={post} />)}
         <div ref={hasMorePost && !loadPostLoading ? ref : undefined} />
         {/* 아직 게시물을 전부 열람하지 않았고 && 게시물을 요청하는 중이 아닐경우 인피니트 스크롤 동작 : 아닐경우 undefined */}
       </AppLayout>

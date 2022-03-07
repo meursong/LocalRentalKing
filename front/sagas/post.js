@@ -72,6 +72,29 @@ function* addPost(action) {
   }
 }
 
+function sendDummyPostAPI(data) {
+  return axios.post('/write', data); // formdata 전송
+}
+
+function* sendDummyPost(action) {
+  try {
+    const result = yield call(sendDummyPostAPI, action.data);
+    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
+      type: ADD_POST_SUCCESS,
+      data: result.data,
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: result.data.id,
+    });
+  } catch (err) {
+    yield put({
+      type: ADD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function removePostAPI(data) {
   return axios.delete(`/post/${data}`); // delete는 데이터를 가져갈 수 없다 data는 postId
 }
@@ -440,6 +463,10 @@ function* watchLoadSearchPost() {
   yield takeLatest(LOAD_SEARCH_POSTS_REQUEST, loadSearchPost);
 }
 
+function* watchSendDummyPost() {
+  yield takeLatest(LOAD_SEARCH_POSTS_REQUEST, sendDummyPost);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -458,5 +485,6 @@ export default function* postSaga() {
     fork(watchLoadRentalPost),
     fork(watchLoadWritePost),
     fork(watchLoadSearchPost),
+    fork(watchSendDummyPost),
   ]);
 }
