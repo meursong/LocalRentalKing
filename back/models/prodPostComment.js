@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-module.exports = class Comment extends Sequelize.Model {
+module.exports = class ProdPostComment extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -13,8 +13,8 @@ module.exports = class Comment extends Sequelize.Model {
         },
       },
       {
-        modelName: "Comment",
-        tableName: "comments",
+        modelName: "ProdPostComment",
+        tableName: "prodPostComments",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci",
         sequelize,
@@ -22,7 +22,7 @@ module.exports = class Comment extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.Comment.belongsTo(db.Post);
-    db.Comment.belongsTo(db.User); //comments 테이블의 로우를 불러올 때 연결된 users 테이블의 로우를 가져온다.
+    db.ProdPostComment.belongsTo(db.ProdPost);
+    db.ProdPostComment.belongsTo(db.User); //comments 테이블의 로우를 불러올 때 연결된 users 테이블의 로우를 가져온다.
   }
 };

@@ -1,11 +1,11 @@
 const Sequelize = require("sequelize");
-module.exports = class Post extends Sequelize.Model {
+module.exports = class ProdPost extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
-        communityNum: {
+        tab: {
           //화면왼쪽 물건빌려줘, 힘을빌려줘 등의 탭 구분
-          type: Sequelize.STRING(50),
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
         category: {
@@ -21,6 +21,10 @@ module.exports = class Post extends Sequelize.Model {
           type: Sequelize.STRING(500),
           allowNull: false,
         },
+        price: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+        },
         user_nickname: {
           type: Sequelize.STRING(30),
           allowNull: false,
@@ -31,8 +35,8 @@ module.exports = class Post extends Sequelize.Model {
         },
       },
       {
-        modelName: "Post",
-        tableName: "posts",
+        modelName: "ProdPost",
+        tableName: "prodPosts",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", //한글 저장
         sequelize,
@@ -40,16 +44,12 @@ module.exports = class Post extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.Post.hasMany(db.Image);
-    db.Post.hasMany(db.Comment); //post.addComments
-    db.Post.belongsTo(db.User); //이건 post의 작성자 //post.addUser(여기서는 s가 안붙어) hasMany나 belongsToMany는 s가 논리적으로 붙지
-    db.Post.belongsToMany(db.User, { through: "Like", as: "Likers" }); //게시글 좋아요 누른 사람들
+    db.ProdPost.belongsTo(db.User); //이건 post의 작성자 //post.addUser(여기서는 s가 안붙어) hasMany나 belongsToMany는 s가 논리적으로 붙지
+    db.ProdPost.belongsToMany(db.User, { through: "Like", as: "Likers" }); //게시글 좋아요 누른 사람들
     //나중에 as 따라서 post.getLikers처럼 게시글 좋아요 누른 사람을 가져오게 된다.
     //post.addLikers, post.removeLikers등의 관계형 메서드가 생긴다.
     // add,get,set,remove -- 관계형 메서드
-    db.Post.hasMany(db.Rental);
-    db.Post.hasMany(db.Together);
-    db.Post.hasMany(db.Community3);
-    db.Post.hasMany(db.Community4);
+    db.ProdPost.hasMany(db.ProdPostImage);
+    db.ProdPost.hasMany(db.ProdPostComment); //post.addProdPostComment
   }
 };

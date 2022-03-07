@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-module.exports = class Image extends Sequelize.Model {
+module.exports = class TogetherPostImage extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -12,8 +12,8 @@ module.exports = class Image extends Sequelize.Model {
         },
       },
       {
-        modelName: "Image",
-        tableName: "images",
+        modelName: "TogetherPostImage",
+        tableName: "togetherPostImages",
         charset: "utf8mb4", //한글도 쓸수있게
         collate: "utf8mb4_general_ci", //한글 저장
         sequelize,
@@ -21,9 +21,6 @@ module.exports = class Image extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.Image.belongsTo(db.Post);
-    //db.Image.belongsTo(db.User);
+    db.TogetherPostImage.belongsTo(db.TogetherPost);
   }
 };
-
-//post안에 이미지가 여러개가있으니까 이미지가 post

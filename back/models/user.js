@@ -52,10 +52,16 @@ module.exports = class User extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.User.hasMany(db.Post); //foreignKey를 따로 지정하지 않는다면 이름이 모델명+기본 키인 컬럼이 모델에 생성된다
-    db.User.hasMany(db.Comment); //users 테이블의 로우 하나를 불러올 때 연결된 comments 테이블의 로우들도 같이 불러올 수 있다.
-    //db.User.hasMany(db.Image); //user는 어차피 프로필사진을 하나만가지니까 hasone으로 하고, 포스트사진은 유저가 여러개 가질수도있으니까 hasMany로 하면어떨까? 관계를 두번맺는방법으로?
-    db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" }); //유저가 좋아요를 누른 게시물들
+    db.User.hasMany(db.ProdPost); //foreignKey를 따로 지정하지 않는다면 이름이 모델명+기본 키인 컬럼이 모델에 생성된다
+    db.User.hasMany(db.PowerPost);
+    db.User.hasMany(db.TogetherPost);
+    db.User.hasMany(db.TogetherPostComment); //users 테이블의 로우 하나를 불러올 때 연결된 comments 테이블의 로우들도 같이 불러올 수 있다.
+    db.User.hasMany(db.PowerPostComment);
+    db.User.hasMany(db.ProdPostComment);
+
+    //image는 유저하나당 프로필사진 1개뿐이므로 따로 테이블로 빼지않고 컬럼화
+
+    //db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" }); //유저가 좋아요를 누른 게시물들
     //유저가 여러개의 게시물에 좋아요를 누를수있고 한 게시글에 여려명이 좋아요를 누를수있으니까 m:n의 관계이다
     //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다. //Like라는 through테이블이 생성된다.
     //db.sequelize.models.Like 이런식으로 자동으로 만들어진 모델에 접근할수있다.
