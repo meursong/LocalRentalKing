@@ -184,14 +184,15 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
 router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
   try {
     const togetherPost = await TogetherPost.create({
-      tab: req.body.tab,
-      category: req.body.category, //1+1,배달,공구
+      boardNum: boardNum,
+      category: req.body.category, //
       title: req.body.title,
       content: req.body.content,
       originalPrice: req.body.originalPrice,
       sharedPrice: req.body.sharedPrice,
-      UserId: req.body.id,
+      UserId: req.body.userid,
       user_nickname: req.body.nickname,
+      user_location: req.body.location,
     });
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
@@ -201,11 +202,11 @@ router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
             TogetherPostImage.create({ src: image })
           )
         );
-        await togetherPost.addTogetherPostImages(images);
+        await togetherPost.addTogetherPosTImages(images);
       } else {
-        //이미지 하나만
+        //이미지 하나
         const image = await TogetherPostImage.create({ src: req.body.image });
-        await togetherPost.addTogetherPostImages(image);
+        await togetherPost.addPTogetherPostImages(image);
       }
     }
     res.status(201).json(togetherPost);
@@ -230,7 +231,7 @@ router.post(
     //한장만 올리려면 array대신 single("image")
     //텍스트만 올리려면 none(),
     console.log(req.files); //업로드된 이미지 정보
-    res.json(req.files.map((v) => v.filename));
+    res.json(req.files.map((v) => v.filename)); //어디로 업로드되었는지에 대한 정보를 프론트에 전달
   }
 );
 
@@ -367,14 +368,14 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
 });
 
 // //        <----- 게시글 수정 ----->
-// route.patch("/logout", isLoggedIn, async (req, res, next) => {
+// route.patch("/edit", isLoggedIn, async (req, res, next) => {
 //   try {
 //     await User.update(
 //       {
 //         nickname: req.body.nickname, //프론트와 상의해서 넘겨받을 데이터 설정하기
 //       },
 //       {
-//         where: { id: req.user.id },
+//         where: { id: req.user.id, UserId: req.user.id, },
 //       }
 //     );
 //     res.status(200).json({ nickname: req.body.nickname });
