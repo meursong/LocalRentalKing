@@ -28,13 +28,15 @@ router.get("/", async (req, res, next) => {
   try {
     const where = {};
     const boardNum = req.query.boardNum;
+    const category = req.query.category;
+    let posts = {};
     if (parseInt(req.query.lastId, 10)) {
       //초기 로딩이 아닐 때
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // sequelize operator
     }
     // <------- 물건을~ 조회 ------->
     if (boardNum == 1 || boardNum == 2) {
-      const posts = await ProdPost.findAll({
+      posts = await ProdPost.findAll({
         //   limit: 10, // 10개만 가져와라
         //   offset: 0, // 시작인덱스. 0이면 1~10(limit)번 게시물까지 가져옴
         //   order : [['createdAt','DESC']] //최신게시물부터 가져옴. 2차원 배열인 이유는 여러 기준으로 정렬할수있기때문에
@@ -77,7 +79,7 @@ router.get("/", async (req, res, next) => {
     }
     // <------- 힘을~ 조회 ------->
     if (boardNum == 3 || boardNum == 4) {
-      const posts = await PowerPost.findAll({
+      posts = await PowerPost.findAll({
         where: {
           boardNum: boardNum,
         },
@@ -111,11 +113,11 @@ router.get("/", async (req, res, next) => {
     }
     // <------- 같이하자 조회 ------->
     if (boardNum == 5) {
-      const posts = await TogetherPost.findAll({
+      posts = await TogetherPost.findAll({
         where: {
           boardNum: boardNum,
         },
-        limit: 3, //테스트때는 우선은 2개씩만 렌더링하자 편의상
+        limit: 10, //테스트때는 우선은 2개씩만 렌더링하자 편의상
         order: [
           ["createdAt", "DESC"],
           [TogetherPostComment, "createdAt", "DESC"],
