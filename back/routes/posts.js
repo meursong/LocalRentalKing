@@ -26,7 +26,7 @@ router.get("/", async (req, res, next) => {
   //                            카테고리명 한글로         //lastId 없으면 0         //boardNum없으면 0
   //const category = decodeURIComponent(data);
   try {
-    const where = {};
+    let where = {};
     const boardNum = req.query.boardNum;
     const category = req.query.category;
     let posts = {};
@@ -34,6 +34,7 @@ router.get("/", async (req, res, next) => {
       //초기 로딩이 아닐 때
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // sequelize operator
     }
+
     // <------- 물건을~ 조회 ------->
     if (boardNum == 1 || boardNum == 2) {
       posts = await ProdPost.findAll({
@@ -45,6 +46,7 @@ router.get("/", async (req, res, next) => {
         // sql에서 지원하는 offset대신에 우리가 lastId 정보를 만들어서 조회하도록
         where: {
           boardNum: boardNum,
+          category: category,
         },
         limit: 3, //테스트때는 우선은 2개씩만 렌더링하자 편의상
         order: [
@@ -82,6 +84,7 @@ router.get("/", async (req, res, next) => {
       posts = await PowerPost.findAll({
         where: {
           boardNum: boardNum,
+          category: category,
         },
         limit: 3, //테스트때는 우선은 2개씩만 렌더링하자 편의상
         order: [
@@ -118,7 +121,7 @@ router.get("/", async (req, res, next) => {
           boardNum: boardNum,
           category: category,
         },
-        limit: 10, //테스트때는 우선은 2개씩만 렌더링하자 편의상
+        limit: 2, //테스트때는 우선은 2개씩만 렌더링하자 편의상
         order: [
           ["createdAt", "DESC"],
           [TogetherPostComment, "createdAt", "DESC"],

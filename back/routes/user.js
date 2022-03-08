@@ -119,27 +119,27 @@ router.get("/", async (req, res, next) => {
 
 // <------- 특정유저 조회 by nickname ------>
 // 게시물에 통해 유저의 닉네임을
-router.get("/:userid", isLoggedIn, async (req, res, next) => {
+router.get("/userInfo/:nickname", async (req, res, next) => {
   // GET / user
   try {
-    if (req.user) {
+    if (true) {
       const user = await User.findOne({
-        where: { id: req.params.id },
+        where: { nickname: req.params.nickname },
         attributes: {
           exclude: ["password"],
         },
         include: [
           {
-            model: ProdPost, //내가 쓴 게시물들
-            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+            model: ProdPost, //유저가 쓴 게시물들
+            //attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요  //  전체데이터 전달 필요
           },
           {
             model: PowerPost,
-            attributes: ["id"],
+            //attributes: ["id"],
           },
           {
             model: TogetherPost,
-            attributes: ["id"],
+            //attributes: ["id"],
           },
         ],
       });
