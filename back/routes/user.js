@@ -1,6 +1,8 @@
 const express = require("express");
+const multer = require("multer");
 const passport = require("passport");
 const bcrypt = require("bcrypt"); //해쉬화 알고리즘
+const fs = require("fs");
 const { User, ProdPost, PowerPost, TogetherPost } = require("../models"); //User model require 26번라인 User.create를 사용하기위해서 '구조분해할당'
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 //const { format } = require("sequelize/types/utils"); //이부분 코드는?
@@ -8,6 +10,28 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 //const db=require('../models');이렇게 해놨으면 db.User로 접근
 
 const router = express.Router();
+
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log("uploads 폴더가 없으므로 생성합니다.");
+  fs.mkdirSync("uploads");
+}
+// <--------- 프로필 이미지업로드를 위한 multer생성  -------->
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      //사진.png
+      const ext = path.extname(file.originalname); //확장자추출(.png, .jpg 등)
+      const basename = path.basename(file.originalname, ext); // 사진
+      done(null, basename + "_" + new Date().getTime() + ext); //사진_1513515313.png (같은 이름으로 이미지를 업로드하면 노드에서는 기존파일에 덮어씌워버려서 시간까지추가해서 올리는 코드)
+    },
+  }),
+  limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
+});
 
 // <------ 로그인 ----->
 router.post("/login", isNotLoggedIn, (req, res, next) => {
@@ -171,6 +195,30 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+//-----------------------유저의 프로필 이미지 수정 ------------------------------
+router.patch("/profileImage", isLoggedIn, async (req, res, next) => {
+  //닉네임 수정
+  try {
+    const image = await User.update({ src: req.body.image });
+    //await User.addUserImages(image);
+    res.status(201).json(image);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+//  <------ 이미지 업로드 ------>  //이건 라우터가 하나만있어도 될듯?
+router.post(
+  "/images",
+  isLoggedIn,
+  upload.single("image"),
+  async (req, res, next) => {
+    console.log(req.files); //업로드된 이미지 정보
+    res.json(req.files.map((v) => v.filename)); //어디로 업로드되었는지에 대한 정보를 프론트에 전달
+  }
+);
 
 //  <------ findAll test ----->
 router.get("/findAll", (req, res) => {
