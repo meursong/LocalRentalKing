@@ -39,7 +39,7 @@ import {
   MODIFY_POST_SUCCESS,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
-  REMOVE_POST_SUCCESS,
+  REMOVE_POST_SUCCESS, SEND_DUMMYPOST_FAILURE, SEND_DUMMYPOST_REQUEST, SEND_DUMMYPOST_SUCCESS,
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
@@ -73,23 +73,23 @@ function* addPost(action) {
 }
 
 function sendDummyPostAPI(data) {
-  return axios.post('/write', data); // formdata 전송
+  return axios.post('/post/write', data); // formdata 전송
 }
 
 function* sendDummyPost(action) {
   try {
     const result = yield call(sendDummyPostAPI, action.data);
     yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: ADD_POST_SUCCESS,
+      type: SEND_DUMMYPOST_SUCCESS,
       data: result.data,
     });
     yield put({
       type: ADD_POST_TO_ME,
-      data: result.data.id,
+      data: result.data,
     });
   } catch (err) {
     yield put({
-      type: ADD_POST_FAILURE,
+      type: SEND_DUMMYPOST_FAILURE,
       error: err.response.data,
     });
   }
@@ -464,7 +464,7 @@ function* watchLoadSearchPost() {
 }
 
 function* watchSendDummyPost() {
-  yield takeLatest(LOAD_SEARCH_POSTS_REQUEST, sendDummyPost);
+  yield takeLatest(SEND_DUMMYPOST_REQUEST, sendDummyPost);
 }
 
 export default function* postSaga() {

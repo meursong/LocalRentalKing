@@ -14,8 +14,8 @@ const gridStyle = {
 const PostCard1 = ({post}) => {
 
   const onPage = useCallback(()=>{
-    Router.push(`/post/${post.Id}`);
-  },[post.Id]);
+    Router.push(`/post/${post.id}`);
+  },[post.id]);
 
   return (
     <div onClick={onPage}>

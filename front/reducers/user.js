@@ -170,7 +170,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.changeNicknameError = action.error;
       break;
     case ADD_POST_TO_ME:
-      draft.me.Posts.unshift({ id: action.data });
+      console.log(action.data);
+      if(action.data.boardNum===1||2) {
+        console.log("1/2");
+        //console.log(draft.me);
+        draft.me.ProdPosts.push({id:action.data.id});
+      }
+      else if(action.data.boardNum===3||4){
+        console.log("3/4");
+        draft.me.PowerPosts.push({id: action.data.id});
+      }
+      else if(action.data.boardNum===5){
+        console.log("5");
+        draft.me.TogetherPosts.push({id: action.data.id});
+      }
       break;
     case REMOVE_POST_OF_ME:
       draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);

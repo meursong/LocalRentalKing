@@ -47,7 +47,6 @@ function logOutAPI(data) {
   return axios.post('/user/logout', data);
 }
 
-
 function* loadMyInfo(action) {
   try {
     const result = yield call(loadMyInfoAPI, action.data);

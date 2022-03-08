@@ -16,6 +16,7 @@ function Signup() {
   const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
+  const [location, onChangeLocation] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [password2, setPassword2] = useState('');
   const [password2Error, setPassword2Error] = useState(false);
@@ -56,7 +57,7 @@ function Signup() {
     console.log(email, nickname, password);
     dispatch({
       type: SIGN_UP_REQUEST,
-      data: { email, password, nickname },
+      data: { email, password, nickname , location },
     });
     Router.push('/'); // 임시로 완료된거로 치고 메인으로 돌려보낸다
   }, [email, password, password2, term]);
@@ -76,6 +77,11 @@ function Signup() {
           <label htmlFor="user-nick">닉네임</label>
           <br />
           <Input name="user-nick" value={nickname} onChange={onChangeNickname} required />
+        </div>
+        <div>
+          <label htmlFor="user-location">지역</label>
+          <br />
+          <Input name="user-location" value={location} onChange={onChangeLocation} required />
         </div>
         <div>
           <label htmlFor="user-password">비밀번호</label>

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Head from 'next/head';
 import {useDispatch, useSelector} from 'react-redux';
 import {useInView} from "react-intersection-observer";
@@ -10,6 +10,7 @@ import {Button, Form, Input, Modal, Select, Upload} from "antd";
 import 'antd/dist/antd.css';
 import {PlusOutlined} from "@ant-design/icons";
 import {SEND_DUMMYPOST_REQUEST} from "../reducers/post";
+import Router from "next/router";
 
 const {TextArea} = Input;
 
@@ -63,6 +64,7 @@ function getBase64(file) {
 }
 
 function Write() {
+  const { me } = useSelector((state)=>state.user);
   const [cities, setCities] = useState(cityData[provinceData[0]]);
   const [secondCity, setSecondCity] = useState(cityData[provinceData[0]][0]);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -78,6 +80,16 @@ function Write() {
   ]);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!(me && me.id)) {
+      Router.push('/');
+    }
+  }, [me && me.id]);
+
+  if (!me) {
+    return '내 정보 로딩중...';
+  }
 
   const handleCancel = () => setPreviewVisible(false);
   const handlePreview = async (file) => {
@@ -121,15 +133,16 @@ function Write() {
 
   const sendDummyPost1 = useCallback(() => { // 이걸 기반으로 다양한 유형의 글쓰기를 테스트 할 예정
     const formData = new FormData();
-    formData.append('userid',"3");
+    formData.append('userid',1);
     formData.append('location',"광주");
     formData.append('nickname',"TheON2");
-    formData.append('boardNum',"1");
+    formData.append('boardNum',1);
     formData.append('category',"공구");
     formData.append('title',"테스트 글 1번의 제목");
     formData.append('content',"제발 무사히 글이 올라가게 해주세요!!!");
     formData.append('price',3000);
-
+    //임의로 폼데이터와 매개변수를 조정해서 각 기능들을 테스트 해주세요.
+    // 라이트 폼에서 submit 버튼을 누르면 이 메서드가 실행됩니다.
     dispatch({
       type:SEND_DUMMYPOST_REQUEST,
       data:formData,

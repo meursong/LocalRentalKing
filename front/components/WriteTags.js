@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 
 import {Tag} from 'antd';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {LOAD_RENTAL_POST_REQUEST, LOAD_WRITE_POST_REQUEST} from "../reducers/post";
 
 function WriteTags({id}) {

@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import AppLayout from '../../components/AppLayout/AppLayout';
 
-function SearchResult() {
+function PostPage() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = router.query; // [tag].js 파일 명의 [] 부분이 들어간다
@@ -17,4 +17,4 @@ function SearchResult() {
   );
 }
 
-export default SearchResult;
+export default PostPage;
