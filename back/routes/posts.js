@@ -116,6 +116,7 @@ router.get("/", async (req, res, next) => {
       posts = await TogetherPost.findAll({
         where: {
           boardNum: boardNum,
+          category: category,
         },
         limit: 10, //테스트때는 우선은 2개씩만 렌더링하자 편의상
         order: [
