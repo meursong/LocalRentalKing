@@ -19,6 +19,9 @@ const router = express.Router();
 //router.get("/", async (req, res, next) => {
 router.get("/", async (req, res, next) => {
   //카테고리별 조회 //요청을 프론트에서 어떻게 받을지 상의필요, req.param으로 받을지, req.query로 받을지
+  //return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&boardNum=${boardNum || 0}`); 프론트 요청 예시
+  //                            카테고리명 한글로         //lastId 없으면 0         //boardNum없으면 0
+  //const category = decodeURIComponent(data);
   try {
     const where = {};
     const boardNum = req.query.boardNum;

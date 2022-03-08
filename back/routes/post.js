@@ -40,7 +40,7 @@ const upload = multer({
       //사진.png
       const ext = path.extname(file.originalname); //확장자추출(.png, .jpg 등)
       const basename = path.basename(file.originalname, ext); // 사진
-      done(null, basename + "_" + new Date().getTime() + ext); //사진_1513515313.png (같은 이름으로 이미지를 업로드하면 노드에서는 덮어씌워버려서 시간까지추가해서 올리는 코드)
+      done(null, basename + "_" + new Date().getTime() + ext); //사진_1513515313.png (같은 이름으로 이미지를 업로드하면 노드에서는 기존파일에 덮어씌워버려서 시간까지추가해서 올리는 코드)
     },
   }),
   limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한

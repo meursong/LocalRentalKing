@@ -37,15 +37,23 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         },
         include: [
           {
-            model: Post, //내가 쓴 게시물들
+            model: ProdPost, //내가 쓴 게시물들
             attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+          },
+          {
+            model: PowerPost,
+            attributes: ["id"],
+          },
+          {
+            model: TogetherPost,
+            attributes: ["id"],
           },
         ],
       });
       //로그인할때 내부적으로 res.setHeader('Cookie','afeaf'(랜덤문자열)) 이런 걸 보내준다, 세션도 연결해주고
       return res.status(200).json(fullInfoUserWithoutPassword); // 사용자정보를 프론트로 넘겨줌
     });
-  });
+  })(req, res, next);
 });
 
 // <------ 로그아웃 ----->
@@ -79,9 +87,9 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
       nickname: req.body.nickname,
       password: hashedPassword,
       location: req.body.location,
-      greeting: req.body.greeting,
       grade: req.body.grade,
-      profileImgSrc: req.body.profileImgSrc,
+      //greeting: req.body.greeting,
+      //profileImgSrc: req.body.profileImgSrc,
     });
     res.status(200).send("ok");
     //res.json(); //제이슨으로 보내줌
@@ -90,26 +98,6 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
-
-// // // <------ 회원가입테스트 ----->
-// router.get("/signUp", (req, res) => {
-//   User.create({
-//     //create는 비동기 메서드. async, await는 세트로 비동기 메서드와 같이쓰임 - 공부필요
-//     email: "singuptest1@gamil.com",
-//     nickname: "singuptest1",
-//     password: "singuptest1",
-//     location: "singuptest1",
-//     greeting: "singuptest1",
-//     grade: "normal",
-//     profileImgSrc: "singuptest1",
-//   })
-//     .then((result) => {
-//       console.log("저장 성공: ", result);
-//     })
-//     .catch((err) => {
-//       console.log("저장 Error: ", err);
-//     });
-// });
 
 // <------- 사용자 불러오기 (새로고침마다 요청할것)------->
 router.get("/", async (req, res, next) => {
@@ -130,6 +118,7 @@ router.get("/", async (req, res, next) => {
 });
 
 //        <----- 유저 정보 수정 (어떤데이터를 수정해야할지 협의 필요)----->
+//  인사말, 프로필사진, 주소
 router.patch("/update", isLoggedIn, async (req, res, next) => {
   try {
     await User.update(
