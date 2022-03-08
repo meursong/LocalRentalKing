@@ -117,7 +117,43 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-//        <----- 유저 정보 수정 (어떤데이터를 수정해야할지 협의 필요)----->
+// <------- 특정유저 조회 by nickname ------>
+// 게시물에 통해 유저의 닉네임을
+router.get("/:userid", isLoggedIn, async (req, res, next) => {
+  // GET / user
+  try {
+    if (req.user) {
+      const user = await User.findOne({
+        where: { id: req.params.id },
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: ProdPost, //내가 쓴 게시물들
+            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+          },
+          {
+            model: PowerPost,
+            attributes: ["id"],
+          },
+          {
+            model: TogetherPost,
+            attributes: ["id"],
+          },
+        ],
+      });
+      res.status(200).json(user);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+//<----- 유저 정보 수정 (어떤데이터를 수정해야할지 협의 필요)----->
 //  인사말, 프로필사진, 주소
 router.patch("/update", isLoggedIn, async (req, res, next) => {
   try {

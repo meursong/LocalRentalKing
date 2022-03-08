@@ -16,6 +16,9 @@ const {
 const router = express.Router();
 
 // <--------- 게시물 10개씩 렌더링---------->
+
+// ** 지역별 검색 조건 추가 필요
+
 //router.get("/", async (req, res, next) => {
 router.get("/", async (req, res, next) => {
   //카테고리별 조회 //요청을 프론트에서 어떻게 받을지 상의필요, req.param으로 받을지, req.query로 받을지
@@ -60,7 +63,8 @@ router.get("/", async (req, res, next) => {
             include: [
               {
                 model: User, //댓글 작성자
-                attributes: ["id"], //댓글 수만 표시하면 되니까
+                attributes: ["id", "nickname"],
+                //attributes: ["id"], //댓글 수만 표시하면 되니까 // 따로 상세보기 요청이 없이 포스트카드 애초에 모든데이터를 프론트에 전달해야함
                 //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
               },
             ],
@@ -95,7 +99,7 @@ router.get("/", async (req, res, next) => {
             include: [
               {
                 model: User, //댓글 작성자
-                attributes: ["id"],
+                //attributes: ["id"],
               },
             ],
           },
@@ -129,7 +133,7 @@ router.get("/", async (req, res, next) => {
             include: [
               {
                 model: User, //댓글 작성자
-                attributes: ["id"],
+                //attributes: ["id"],
               },
             ],
           },
