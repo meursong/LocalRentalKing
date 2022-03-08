@@ -11,6 +11,7 @@ import 'antd/dist/antd.css';
 import {PlusOutlined} from "@ant-design/icons";
 import {SEND_DUMMYPOST_REQUEST} from "../reducers/post";
 import Router from "next/router";
+import useInput from "../hooks/useInput";
 
 const {TextArea} = Input;
 
@@ -78,6 +79,7 @@ function Write() {
       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     },
   ]);
+  const [name,onChangeName]=useInput('');
 
   const dispatch = useDispatch();
 
@@ -149,6 +151,10 @@ function Write() {
     });
   },[]);
 
+  const Test = useCallback(() => { // 이걸 기반으로 다양한 유형의 글쓰기를 테스트 할 예정
+   console.log(name);
+  },[]);
+
 
   const uploadButton = (
     <div>
@@ -165,11 +171,11 @@ function Write() {
         initialValues={{
           layout: 'horizontal',
         }}
-        onFinish={sendDummyPost1}
+        onFinish={Test}
       >
         <Form.Item>
           <Input.Group compact>
-            <Input style={{width: '69%'}} placeholder="제목을 입력해주세요."/>{' '}
+            <Input.TextArea style={{width: '69%'}} value={name} placeholder="제목을 입력해주세요." onChange={onChangeName}/>{' '}
             <Input
               style={{width: '30%'}}
               placeholder="렌탈비를 입력해주세요."

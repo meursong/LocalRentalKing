@@ -8,6 +8,7 @@ import Link from 'next/link';
 import AppLayout from '../components/AppLayout/AppLayout';
 import {LOAD_MY_INFO_REQUEST, LOAD_USERS_REQUEST} from '../reducers/user';
 import wrapper from '../store/configureStore';
+import axios from "axios";
 
 function Profile() {
   const { me , usersInfo } = useSelector((state) => state.user);
@@ -63,6 +64,12 @@ function Profile() {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = cookie;
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
+    axios.defaults.headers.Cookie = cookie;
+  }
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });

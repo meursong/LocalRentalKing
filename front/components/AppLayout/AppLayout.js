@@ -32,6 +32,7 @@ function AppLayout({ children }) {
 
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
+    Router.push('/');
   }, []);
 
   return (

@@ -18,12 +18,6 @@ function Home() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePost, loadPostLoading, reTweetError, id , object_TagsData , selectedTag } = useSelector((state) => state.post);
-  const [ref, inView] = useInView();
-
-  const string = "abc*def*123";
-  const split = string.split("*");
-
-  console.log(split);
 
   useEffect(() => {
     const onScroll = () => {
@@ -49,12 +43,10 @@ function Home() {
   return (
     <div>{me ? (
       <AppLayout>
-        {/*<Button onClick={}> 로그아웃</Button>*/}
+
         <Tags tagsData={object_TagsData} boardNum={1}/>
-        {/*{post1.map((post) => <PostCard1 key={post.Id} post={post}/>)}*/}
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-        {/*<div ref={hasMorePost && !loadPostLoading ? ref : undefined} />*/}
-      {/* 아직 게시물을 전부 열람하지 않았고 && 게시물을 요청하는 중이 아닐경우 인피니트 스크롤 동작 : 아닐경우 undefined */}
+
       </AppLayout>
     ) : (
       <Row gutter={8}>
