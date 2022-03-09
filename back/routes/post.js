@@ -175,59 +175,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   }
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-// <------------------------  together 같이하자 글쓰기 테스트  ---------------------------->
-router.post("/togetherPostTest", upload.none(), async (req, res, next) => {
-  const boardNum = req.body.boardNum;
-  try {
-    const togetherPost = await TogetherPost.create({
-      boardNum: boardNum,
-      category: req.body.category, //
-      title: req.body.title,
-      content: req.body.content,
-      originalPrice: req.body.originalPrice,
-      sharedPrice: req.body.sharedPrice,
-      user_nickname: req.body.nickname,
-      user_location: req.body.location,
-      UserId: req.body.userid,
-    });
-    if (req.body.image) {
-      if (Array.isArray(req.body.image)) {
-        //이미지 여러개
-        const images = await Promise.all(
-          req.body.image.map((image) =>
-            TogetherPostImage.create({ src: image })
-          )
-        );
-        await togetherPost.addTogetherPosTImages(images);
-      } else {
-        //이미지 하나
-        const image = await TogetherPostImage.create({ src: req.body.image });
-        await togetherPost.addPTogetherPostImages(image);
-      }
-    }
-    res.status(201).json(togetherPost);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-//     <-- 이미지 업로드 테스트 -->
-router.post("/imagesTest", upload.array("image"), async (req, res, next) => {
-  console.log(req.files); //업로드된 이미지 정보
-  res.json(req.files.map((v) => v.filename));
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-//  <------ 이미지 업로드 ------>  //이건 라우터가 하나만있어도 될듯?
+//  <------ 이미지 업로드 ------>  //
 router.post(
   "/images",
   isLoggedIn,
@@ -243,36 +191,89 @@ router.post(
 );
 
 // <----댓글 작성 라우터---->
-router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
-  // POST / post / ? /comment
-  //주소는 프론트와 백사이의 약속
-  //주소에서 :postId는 요청만 보더라도 몇번 게시물에 댓글을 다는거구나~하고 한눈에 알수있게하려고
-  //그런데 몇번 게시물에 요청할건지는 가변적. :postId를 파라미터로 받아서처리
-  try {
-    const post = await Post.findOne({
-      where: { id: req.params.postId },
-    });
-    if (!post) {
-      return res.status(403).send("존재하지 않는 게시물입니다.");
+router.post("/writeComment", isLoggedIn, async (req, res, next) => {
+  const boardNum = req.body.boardNum;
+  if (boardNum == 1 || boardNum == 2) {
+    try {
+      const post = await ProdPost.findOne({
+        where: { id: req.body.postId },
+      });
+      if (!post) {
+        return res.status(403).send("존재하지 않는 게시물입니다.");
+      }
+      const comment = await ProdPostComment.create({
+        content: req.body.content,
+        PostId: req.body.postId,
+        UserId: req.body.id,
+      });
+      const fullComment = await ProdPostComment.findOne({
+        where: { id: comment.id },
+        include: [
+          {
+            model: User,
+            attributes: ["id", "nickname"],
+          },
+        ],
+      });
+      res.status(201).json(fullComment);
+    } catch (error) {
+      console(error);
+      next(error);
     }
-    const comment = await Comment.create({
-      content: req.body.content,
-      PostId: req.params.postId,
-      UserId: req.user.id,
-    });
-    const fullComment = await Comment.findOne({
-      where: { id: comment.id },
-      include: [
-        {
-          model: User,
-          attributes: ["id", "nickname"],
-        },
-      ],
-    });
-    res.status(201).json(fullComment);
-  } catch (error) {
-    console(error);
-    next(error);
+  } else if (boardNum == 3 || boardNum == 4) {
+    try {
+      const post = await PowerPost.findOne({
+        where: { id: req.body.postId },
+      });
+      if (!post) {
+        return res.status(403).send("존재하지 않는 게시물입니다.");
+      }
+      const comment = await PowerPostComment.create({
+        content: req.body.content,
+        PostId: req.body.postId,
+        UserId: req.body.id,
+      });
+      const fullComment = await PowerPostComment.findOne({
+        where: { id: comment.id },
+        include: [
+          {
+            model: User,
+            attributes: ["id", "nickname"],
+          },
+        ],
+      });
+      res.status(201).json(fullComment);
+    } catch (error) {
+      console(error);
+      next(error);
+    }
+  } else if (boardNum == 5) {
+    try {
+      const post = await TogetherPost.findOne({
+        where: { id: req.body.postId },
+      });
+      if (!post) {
+        return res.status(403).send("존재하지 않는 게시물입니다.");
+      }
+      const comment = await TogetherPostComment.create({
+        content: req.body.content,
+        PostId: req.body.postId,
+        UserId: req.body.id,
+      });
+      const fullComment = await TogetherPostComment.findOne({
+        where: { id: comment.id },
+        include: [
+          {
+            model: User,
+            attributes: ["id", "nickname"],
+          },
+        ],
+      });
+      res.status(201).json(fullComment);
+    } catch (error) {
+      console(error);
+      next(error);
+    }
   }
 });
 
