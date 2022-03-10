@@ -22,6 +22,8 @@ module.exports = class ProdPostImage extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.ProdPostImage.belongsTo(db.ProdPost);
+    db.ProdPostImage.belongsTo(db.ProdPost, {
+      onDelete: "CASCADE",
+    });
   }
 };

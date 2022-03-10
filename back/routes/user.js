@@ -103,6 +103,15 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
       //exUser가 null인지를 체크해야하는거아냐? findOne의 반환이 promise객체아닌가?
       return res.status(403).send("이미 사용중인 아이디입니다"); //return이 없다면 밑에 res.send가 있어서 응답을 2번보내는셈이 돼버림
     }
+    const exNickname = await User.findOne({
+      //닉네임 중복체크
+      where: {
+        email: req.body.nickname,
+      },
+    });
+    if (exNickname) {
+      return res.status(403).send("이미 사용중인 닉네임입니다");
+    }
     const hashedPassword = await bcrypt.hash(req.body.password, 10); //bcrypt로 패스워드 해쉬화, 2번째 인자는 saltRound로 높아질수록 보안은 올라가지만 속도는 느려진다.
     await User.create({
       //await이 없다면 뒤에 res.json()이 먼저 실행돼 버리기때문에 없어도 데이터는 들어가지만 순서를 맞춰주기위한 코드 await을 쓰려면 함수가 async함수여야함.
@@ -112,8 +121,6 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
       password: hashedPassword,
       location: req.body.location,
       grade: req.body.grade,
-      //greeting: req.body.greeting,
-      //profileImgSrc: req.body.profileImgSrc,
     });
     res.status(200).send("ok");
     //res.json(); //제이슨으로 보내줌

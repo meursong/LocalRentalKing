@@ -49,7 +49,11 @@ module.exports = class ProdPost extends Sequelize.Model {
     //나중에 as 따라서 post.getFavoriters처럼 게시글 좋아요 누른 사람을 가져오게 된다.
     //post.addFavoriters, post.removeFavoriters등의 관계형 메서드가 생긴다.
     // add,get,set,remove -- 관계형 메서드
-    db.ProdPost.hasMany(db.ProdPostImage);
-    db.ProdPost.hasMany(db.ProdPostComment); //post.addProdPostComment
+    db.ProdPost.hasMany(db.ProdPostImage, {
+      onDelete: "CASCADE",
+    });
+    db.ProdPost.hasMany(db.ProdPostComment, {
+      onDelete: "CASCADE",
+    }); //post.addProdPostComment
   }
 };

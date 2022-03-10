@@ -344,6 +344,27 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
 //   }
 // });
 
+//       <----- 게시글 삭제 ----->
+router.delete("/delete", async (req, res, next) => {
+  // DELETE /post / ?
+  const boardNum = req.query.boardNum;
+  console.log(boardNum);
+  if (boardNum == 5) {
+    try {
+      await TogetherPost.destroy({
+        where: {
+          id: req.query.postId,
+          UserId: req.query.id,
+        },
+      });
+      res.status(200).send("삭제 성공");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+});
+
 //router.patch("/nickname", isLoggedIn, (req, res) => {});
 
 module.exports = router;
