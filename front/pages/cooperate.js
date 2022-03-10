@@ -11,8 +11,7 @@ import AppLayout from '../components/AppLayout/AppLayout';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import {LOAD_PLAY_POST_REQUEST, LOAD_POST_REQUEST, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
-import PostCard from "../components/PostCard";
-import PostCard1 from "../components/DH/PostCard1";
+import PostCard1 from "../components/PostCard1";
 
 function Cooperate() {
   const dispatch = useDispatch();

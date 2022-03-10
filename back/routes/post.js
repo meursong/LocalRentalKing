@@ -95,8 +95,8 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
     console.log("2번에 걸렸음");
     try {
       const powerPost = await PowerPost.create({
-        boardNum: boardNum,
-        category: req.body.category, //
+        boardNum: req.body.boardNum,
+        category: req.body.category,
         title: req.body.title,
         content: req.body.content,
         price: req.body.price,
@@ -125,9 +125,12 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   } else if (boardNum == 5) {
     //5:같이하자
     console.log("3번에 걸렸음");
+    console.log(req.body.originalPrice);
+    console.log(req.body.sharedPrice);
+
     try {
       const togetherPost = await TogetherPost.create({
-        boardNum: boardNum,
+        boardNum: req.body.boardNum,
         category: req.body.category, //
         title: req.body.title,
         content: req.body.content,
@@ -157,6 +160,105 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
       console.error(error);
       next(error);
     }
+  }
+});
+
+//====================글 하나 찾아오기===========================
+router.get("/singlepost", async (req, res, next) => {
+  console.log('싱글포스트 진입');
+  try {
+    const boardNum = req.query.postBoardNum;
+    const postId = req.query.postId;
+    if (boardNum == 1 || boardNum == 2) {
+      //들어온 보드넘이 1혹은 2라면
+      const prodpost = await ProdPost.findOne({
+        //ProdPost테이블에서 찾을거임
+        where: {
+          id: postId,
+        },
+        include: [
+          //데이터를 가져올때는 항상 완성해서 가져와야한다.
+          {
+            model: User, //작성자
+            attributes: ["id", "nickname"],
+          },
+          {
+            model: ProdPostImage, //이미지
+          },
+          {
+            model: ProdPostComment, //댓글
+            include: [
+              {
+                model: User, //댓글 작성자
+                attributes: ["id"], //댓글 수만 표시하면 되니까
+                //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
+              },
+            ],
+          },
+        ],
+      });
+      console.log(prodpost);
+      res.status(200).json(prodpost);
+    } else if (boardNum == 3 || boardNum == 4) {
+      const powerpost = await PowerPost.findOne({
+        where: {
+          id: postId,
+        },
+        include: [
+          //데이터를 가져올때는 항상 완성해서 가져와야한다.
+          {
+            model: User, //작성자
+            attributes: ["id", "nickname"],
+          },
+          {
+            model: PowerPostImage, //이미지
+          },
+          {
+            model: PowerPostComment, //댓글
+            include: [
+              {
+                model: User, //댓글 작성자
+                attributes: ["id"], //댓글 수만 표시하면 되니까
+                //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
+              },
+            ],
+          },
+        ],
+      });
+      console.log(powerpost);
+      res.status(200).json(powerpost);
+    } else if (boardNum == 5) {
+      const togetherpost = await TogetherPost.findOne({
+        where: {
+          id: postId,
+        },
+        include: [
+          //데이터를 가져올때는 항상 완성해서 가져와야한다.
+          {
+            model: User, //작성자
+            attributes: ["id", "nickname"],
+          },
+          {
+            model: TogetherPostImage, //이미지
+          },
+          {
+            model: TogetherPostComment, //댓글
+            include: [
+              {
+                model: User, //댓글 작성자
+                attributes: ["id"], //댓글 수만 표시하면 되니까
+                //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
+              },
+            ],
+          },
+        ],
+      });
+      console.log(togetherpost);
+      res.status(200).json(togetherpost);
+    }
+  } catch {
+    console.error(error);
+    next(error);
   }
 });
 
@@ -236,7 +338,7 @@ router.post(
 
 //     <------ 같이하자 이미지 업로드 ------>
 router.post(
-  "/togetherImages",
+  "/images",
   isLoggedIn,
   upload.array("image"),
   async (req, res, next) => {

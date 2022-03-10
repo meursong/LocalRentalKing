@@ -12,8 +12,8 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import {LOAD_O_RECIEVE_POST_REQUEST, LOAD_POST_REQUEST, UPDATE_TAG} from '../reducers/post';
 import {Button} from "antd";
 import Tags from "../components/Tags";
-import PostCard from "../components/PostCard";
-import PostCard1 from "../components/DH/PostCard1";
+import PostCard1 from "../components/PostCard1";
+import Router from "next/router";
 
 
 function ObjectRecieve() {
@@ -22,8 +22,14 @@ function ObjectRecieve() {
   const { selectedTag,mainPosts, hasMorePost, loadPostLoading, id , object_TagsData } = useSelector((state) => state.post);
 
   useEffect(() => {
+    if (!(me && me.id)) {
+      Router.replace('/'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
     const onScroll = () => {
-      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
         if (hasMorePost && !loadPostLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
           console.log(selectedTag);
