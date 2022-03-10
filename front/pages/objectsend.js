@@ -10,9 +10,10 @@ import AppLayout from '../components/AppLayout/AppLayout';
 import {LOAD_MY_INFO_REQUEST} from '../reducers/user';
 import {LOAD_POST_REQUEST, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
-import PostCard from "../components/PostCard";
-import PostCard1 from "../components/DH/PostCard1";
+import PostCard1 from "../components/PostCard1";
 import axios from "axios";
+import Router from "next/router";
+import Layout from "../components/Layout";
 
 function ObjectSend() {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ function ObjectSend() {
 
   useEffect(() => {
     const onScroll = () => {
-      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
         if (hasMorePost && !loadPostLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
           console.log(selectedTag);
@@ -49,10 +50,10 @@ function ObjectSend() {
       <Head>
         <title>물건을 빌려줄게 | 우리동네 렌탈대장</title>
       </Head>
-      <AppLayout>
+      <Layout>
         <Tags tagsData={object_TagsData} boardNum={2}/>
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </AppLayout>
+      </Layout>
     </>
   );
 }

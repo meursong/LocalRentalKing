@@ -11,8 +11,8 @@ import AppLayout from '../components/AppLayout/AppLayout';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import {LOAD_PLAY_POST_REQUEST, LOAD_POST_REQUEST, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
-import PostCard from "../components/PostCard";
-import PostCard1 from "../components/DH/PostCard1";
+import PostCard1 from "../components/PostCard1";
+import Layout from "../components/Layout";
 
 function Cooperate() {
   const dispatch = useDispatch();
@@ -50,10 +50,10 @@ function Cooperate() {
       <Head>
         <title>같이 하자 | 우리동네 렌탈대장</title>
       </Head>
-      <AppLayout>
+      <Layout>
         <Tags tagsData={cooperate_tagsData} boardNum={5}/>
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </AppLayout>
+      </Layout>
     </>
   );
 }
