@@ -6,6 +6,7 @@ import 'antd/dist/antd.css';
 import {REMOVE_IMAGE, SEND_DUMMYPOST_REQUEST, UPLOAD_IMAGES_REQUEST} from "../reducers/post";
 import Router from "next/router";
 import useInput from "../hooks/useInput";
+import Layout from "../components/Layout";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -16,9 +17,9 @@ function Write() {
   const {object_TagsData , talent_TagsData , cooperate_tagsData , play_tagsData , imagePaths, addPostDone} = useSelector((state) => state.post);
   const [title, onTitle, setTitle] = useInput('');
   const [content, onContent, setContent] = useInput('');
-  const [price, onPrice, setPrice] = useInput('');
-  const [originalPrice, onOriginalPrice, setOriginalPrice] = useInput('');
-  const [sharedPrice, onSharedPrice, setSharedPrice] = useInput('');
+  const [price, onPrice, setPrice] = useInput(0);
+  const [originalPrice, onOriginalPrice, setOriginalPrice] = useInput(0);
+  const [sharedPrice, onSharedPrice, setSharedPrice] = useInput(0);
 
   const provinceData = ['물건빌려줘', '물건빌려줄게', '힘을빌려줘', '힘을빌려줄게', '같이하자', '동네놀이터',];
   const tags1 = object_TagsData.filter((e,i) => i > 0); // 전체 태그를 제외한 나머지 태그들을 불러옴
@@ -41,9 +42,16 @@ function Write() {
     }
   }, [addPostDone]);
 
+  useEffect(() => {
+    setPrice(null);
+    setOriginalPrice(null);
+    setSharedPrice(null);
+  }, []);
+
   if (!me) {
     return '내 정보 로딩중...';
   }
+
 
     const [form] = Form.useForm();
 
@@ -52,7 +60,7 @@ function Write() {
       setBoard(value);
     }, []);
 
-    const [category, setCategory] = useState(object_TagsData[0]);
+    const [category, setCategory] = useState(tags1[0]);
     const onCategory = useCallback((value) => {
       setCategory(value);
     }, []);
@@ -84,6 +92,11 @@ function Write() {
     if (!content || !content.trim()) {
       return alert('게시글을 작성하세요.');
     }
+
+    if(!price)setPrice(0);
+    if(!originalPrice)setOriginalPrice(0);
+    if(!sharedPrice)setSharedPrice(0);
+
     const formData = new FormData();
     imagePaths.forEach((i) => {
       formData.append('image', i);
@@ -116,7 +129,8 @@ function Write() {
   }, []);
 
   return (
-    <AppLayout>
+    <Layout>
+      <div><br/></div>
       <Form
         layout="horizontal"
         form={form}
@@ -127,7 +141,7 @@ function Write() {
       >
 
         <Form.Item>
-          <Input.Group compact>
+          <Input.Group compact >
             <Input style={{width: '69%'}} placeholder="제목을 입력해주세요." value={title} onChange={onTitle}/>{' '}
             {board === provinceData[0] &&
             <Input style={{width: '30%'}} placeholder="렌탈비를 입력해주세요." value={price} onChange={onPrice}/>}
@@ -167,7 +181,6 @@ function Write() {
               />
             </Input.Group>
             }
-
 
             {board === provinceData[4] && category == tags5[2] &&
             <Input.Group>
@@ -309,7 +322,7 @@ function Write() {
           <Button type="primary" onClick={onCancel}>취소</Button>
         </Form.Item>
       </Form>
-    </AppLayout>
+    </Layout>
   );
 };
 

@@ -3,6 +3,7 @@ import 'antd/dist/antd.css';
 import { PropTypes } from 'prop-types';
 import Head from 'next/head';
 import wrapper from '../store/configureStore';
+import '../components/card.css';
 
 // eslint-disable-next-line react/prop-types
 function LocalRentalKing({ Component }) {

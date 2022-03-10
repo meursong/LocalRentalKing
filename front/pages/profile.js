@@ -9,6 +9,8 @@ import AppLayout from '../components/AppLayout/AppLayout';
 import {LOAD_MY_INFO_REQUEST, LOAD_USERS_REQUEST} from '../reducers/user';
 import wrapper from '../store/configureStore';
 import axios from "axios";
+import Layout from "../components/Layout";
+import PostCard2 from "../components/PostCard2";
 
 function Profile() {
   const { me , usersInfo } = useSelector((state) => state.user);
@@ -20,8 +22,8 @@ function Profile() {
 
   useEffect(() => {
     if (!(me && me.id)) {
-      Router.push('/');
-      alert("로그인 후 이용해주세요");
+      alert('로그인 후 이용 가능 합니다.');
+      Router.replace('/loginpage'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
     }
   }, [me && me.id]);
 
@@ -34,8 +36,7 @@ function Profile() {
       <Head>
         <title>내 프로필 | 우리동네 렌탈대장</title>
       </Head>
-      <AppLayout>
-
+      <Layout>
 
         <Card>
           <Card.Meta
@@ -44,21 +45,23 @@ function Profile() {
           />
         </Card>
 
-        {usersInfo.map((c) => (
-          <Link href={`/user/${c.id}`} prefetch={false}>
-            <Card style={style}>
-              <Card.Meta
-                avatar={(
-                  <a><Avatar>{c.nickname[0]}</Avatar></a>
-                )}
-                title={c.nickname}
-              />
-              <br />
-            </Card>
-          </Link>
-        ))}
+        <PostCard2/>
 
-      </AppLayout>
+        {/*{usersInfo.map((c) => (*/}
+        {/*  <Link href={`/user/${c.id}`} prefetch={false}>*/}
+        {/*    <Card style={style}>*/}
+        {/*      <Card.Meta*/}
+        {/*        avatar={(*/}
+        {/*          <a><Avatar>{c.nickname[0]}</Avatar></a>*/}
+        {/*        )}*/}
+        {/*        title={c.nickname}*/}
+        {/*      />*/}
+        {/*      <br />*/}
+        {/*    </Card>*/}
+        {/*  </Link>*/}
+        {/*))}*/}
+
+      </Layout>
     </>
   );
 }
@@ -73,9 +76,9 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });
-  context.store.dispatch({
-    type: LOAD_USERS_REQUEST,
-  });
+  // context.store.dispatch({
+  //   type: LOAD_USERS_REQUEST,
+  // });
   // context.store.dispatch({
   //   type: LOAD_POST_REQUEST,
   // });

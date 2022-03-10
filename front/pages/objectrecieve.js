@@ -14,18 +14,13 @@ import {Button} from "antd";
 import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import Router from "next/router";
+import Layout from "../components/Layout";
 
 
 function ObjectRecieve() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { selectedTag,mainPosts, hasMorePost, loadPostLoading, id , object_TagsData } = useSelector((state) => state.post);
-
-  useEffect(() => {
-    if (!(me && me.id)) {
-      Router.replace('/'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
-    }
-  }, [me && me.id]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -46,7 +41,7 @@ function ObjectRecieve() {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [ hasMorePost, loadPostLoading]);
+  }, [ hasMorePost, loadPostLoading , selectedTag]);
 
   if (!me) {
     return '내 정보 로딩중...';
@@ -57,10 +52,10 @@ function ObjectRecieve() {
       <Head>
         <title>물건을 빌려줘 | 우리동네 렌탈대장</title>
       </Head>
-      <AppLayout>
+      <Layout>
         <Tags tagsData={object_TagsData} boardNum={1}/>
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </AppLayout>
+      </Layout>
     </>
   );
 }

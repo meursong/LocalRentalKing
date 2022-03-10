@@ -22,6 +22,8 @@ module.exports = class PowerPostImage extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.PowerPostImage.belongsTo(db.PowerPost);
+    db.PowerPostImage.belongsTo(db.PowerPost, {
+      onDelete: "CASCADE",
+    });
   }
 };

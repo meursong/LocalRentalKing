@@ -61,10 +61,21 @@ module.exports = class User extends Sequelize.Model {
 
     //image는 유저하나당 프로필사진 1개뿐이므로 따로 테이블로 빼지않고 컬럼화
 
-    //db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" }); //유저가 좋아요를 누른 게시물들
-    //유저가 여러개의 게시물에 좋아요를 누를수있고 한 게시글에 여려명이 좋아요를 누를수있으니까 m:n의 관계이다
-    //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다. //Like라는 through테이블이 생성된다.
-    //db.sequelize.models.Like 이런식으로 자동으로 만들어진 모델에 접근할수있다.
+    db.User.belongsToMany(db.ProdPost, {
+      through: "Favorite",
+      as: "ProdFavorited",
+    }); //유저가 찜하기를 누른 게시물들
+    db.User.belongsToMany(db.PowerPost, {
+      through: "Favorite",
+      as: "PowerFavorited",
+    }); //유저가 찜하기를 누른 게시물들
+    db.User.belongsToMany(db.TogetherPost, {
+      through: "Favorite",
+      as: "TogetherFavorited",
+    }); //유저가 찜하기를 누른 게시물들
+    //유저가 여러개의 게시물에 찜하기를 누를수있고 한 게시글에 여려명이 찜하기를 누를수있으니까 m:n의 관계이다
+    //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다. //Favorite through테이블이 생성된다.
+    //db.sequelize.models.Favorite 이런식으로 자동으로 만들어진 모델에 접근할수있다.
     //user끼리 서로 좋아요를 누르는 기능도있으니까 셀프조인도 생각해야할듯. 나중에추가?
 
     // db.User.belongsToMany(db.User, {

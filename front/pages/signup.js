@@ -7,6 +7,7 @@ import Router from 'next/router';
 import useInput from '../hooks/useInput';
 import AppLayout from '../components/AppLayout/AppLayout';
 import {SIGN_UP_REQUEST} from '../reducers/user';
+import Layout from "../components/Layout";
 
 const ErrorMessage = styled.div`
 color:red`;
@@ -63,7 +64,7 @@ function Signup() {
   }, [email, password, password2, term]);
 
   return (
-    <AppLayout>
+    <Layout>
       <Head>
         <title>회원가입 | 우리동네 렌탈대장</title>
       </Head>
@@ -115,7 +116,7 @@ function Signup() {
         </div>
       </Form>
 
-    </AppLayout>
+    </Layout>
   );
 }
 

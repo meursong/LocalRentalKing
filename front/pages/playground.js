@@ -13,6 +13,7 @@ import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import axios from "axios";
 import Router from "next/router";
+import Layout from "../components/Layout";
 
 function PlayGround() {
   const dispatch = useDispatch();
@@ -21,7 +22,8 @@ function PlayGround() {
 
   useEffect(() => {
     if (!(me && me.id)) {
-      Router.replace('/'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
+      alert('로그인 후 이용 가능 합니다.');
+      Router.replace('/loginpage'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
     }
   }, [me && me.id]);
 
@@ -55,10 +57,10 @@ function PlayGround() {
       <Head>
         <title>동네 놀이터 | 우리동네 렌탈대장</title>
       </Head>
-      <AppLayout>
+      <Layout>
         <Tags tagsData={play_tagsData} boardNum={6}/>
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </AppLayout>
+      </Layout>
     </>
   );
 }

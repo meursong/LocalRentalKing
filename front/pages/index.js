@@ -13,6 +13,7 @@ import {LOAD_POST_REQUEST, TEST, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import axios from "axios";
+import Layout from "../components/Layout";
 
 function Home() {
   const dispatch = useDispatch();
@@ -24,7 +25,6 @@ function Home() {
       if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
         if (hasMorePost && !loadPostLoading ) {
           const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
-          console.log(selectedTag);
           dispatch({
             type: LOAD_POST_REQUEST,
             data:selectedTag,
@@ -41,27 +41,27 @@ function Home() {
   }, [ hasMorePost, loadPostLoading]);
 
   return (
-    <div>{me ? (
-      <AppLayout>
+    <div>
+      <Layout>
 
         <Tags tagsData={object_TagsData} boardNum={1}/>
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
 
-      </AppLayout>
+      </Layout>
 
-    ) : (
-      <Row gutter={8}>
-        <Col xs={24} md={10}>
-          <img src="main.png" style={{ height: 950 }}/>
-        </Col>
-        <Col xs={24} md={10}>
-          <h1>우리동네 렌탈대장을 지금 이용해 보세요!</h1>
-          <LoginForm style={{ marginTop: 300 }} />
-        </Col>
-        <Col xs={24} md={4}>
-        </Col>
-      </Row>
-    )}
+
+      {/*<Row gutter={8}>*/}
+      {/*  <Col xs={24} md={10}>*/}
+      {/*    <img src="main.png" style={{ height: 950 }}/>*/}
+      {/*  </Col>*/}
+      {/*  <Col xs={24} md={10}>*/}
+      {/*    <h1>우리동네 렌탈대장을 지금 이용해 보세요!</h1>*/}
+      {/*    <LoginForm style={{ marginTop: 300 }} />*/}
+      {/*  </Col>*/}
+      {/*  <Col xs={24} md={4}>*/}
+      {/*  </Col>*/}
+      {/*</Row>*/}
+    }
     </div>
   );
 }

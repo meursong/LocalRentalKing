@@ -13,17 +13,12 @@ import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import axios from "axios";
 import Router from "next/router";
+import Layout from "../components/Layout";
 
 function ObjectSend() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { selectedTag,object_TagsData, mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
-
-  useEffect(() => {
-    if (!(me && me.id)) {
-      Router.replace('/'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
-    }
-  }, [me && me.id]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -55,10 +50,10 @@ function ObjectSend() {
       <Head>
         <title>물건을 빌려줄게 | 우리동네 렌탈대장</title>
       </Head>
-      <AppLayout>
+      <Layout>
         <Tags tagsData={object_TagsData} boardNum={2}/>
         {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </AppLayout>
+      </Layout>
     </>
   );
 }

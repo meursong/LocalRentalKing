@@ -218,6 +218,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       break;
     case UPDATE_TAG:
       draft.selectedTag = action.data;
+      draft.hasMorePost = true;
       break;
     case REMOVE_IMAGE:
       draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);

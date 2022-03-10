@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import { loginRequestAction } from '../reducers/user';
+import Router from "next/router";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -18,13 +19,19 @@ function LoginForm() {
   const dispatch = useDispatch();
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const { logInLoading, logInError } = useSelector((state) => state.user);
+  const { logInLoading, logInError , logInDone } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (logInError) {
       alert(logInError);
     }
   }, [logInError]); // 로그인 에러 화면처리
+
+  useEffect(() => {
+    if (logInDone) {
+      Router.push('/');
+    }
+  }, [logInDone]); // 로그인 에러 화면처리
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);

@@ -148,11 +148,11 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
               TogetherPostImage.create({ src: image })
             )
           );
-          await togetherPost.addTogetherPosTImages(images);
+          await togetherPost.addTogetherPostImages(images);
         } else {
           //이미지 하나
           const image = await TogetherPostImage.create({ src: req.body.image });
-          await togetherPost.addPTogetherPostImages(image);
+          await togetherPost.addTogetherPostImages(image);
         }
       }
       res.status(201).json(togetherPost);

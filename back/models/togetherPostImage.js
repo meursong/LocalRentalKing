@@ -22,6 +22,8 @@ module.exports = class TogetherPostImage extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.TogetherPostImage.belongsTo(db.TogetherPost);
+    db.TogetherPostImage.belongsTo(db.TogetherPost, {
+      onDelete: "CASCADE",
+    });
   }
 };
