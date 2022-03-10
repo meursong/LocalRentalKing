@@ -379,24 +379,164 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
 //   }
 // });
 
-//        <----- 게시글 수정 ----->
-router.patch("/edit", isLoggedIn, async (req, res, next) => {
+//        <----- 게시글 내용 수정 ----->
+router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
   const boardNum = req.query.boardNum;
-  try {
-    await User.update(
-      {
-        content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
-      },
-      {
-        where: { id: req.body.id, UserId: req.body.id },
-      }
-    );
-    res.status(200).json("게시글 수정 완료");
-  } catch (error) {
-    console.error(error);
-    next(error);
+  const userid = req.body.userid;
+  const postid = req.body.id;
+  if (boardNum == 1 || boardNum == 2) {
+    try {
+      await ProdPost.update(
+        {
+          content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+        },
+        {
+          where: { id: postid, UserId: userid },
+        }
+      );
+      res.status(200).json("게시글 수정 완료");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 3 || boardNum == 4) {
+    try {
+      await PowerPost.update(
+        {
+          content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+        },
+        {
+          where: { id: postid, UserId: userid },
+        }
+      );
+      res.status(200).json("게시글 수정 완료");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 5) {
+    try {
+      await TogetherPost.update(
+        {
+          content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+        },
+        {
+          where: { id: postid, UserId: userid },
+        }
+      );
+      res.status(200).json("게시글 수정 완료");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
   }
 });
+
+// //        <----- 게시글 내용 수정 ----->
+// router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
+//   const boardNum = req.query.boardNum;
+//   const userid = req.body.userid;
+//   const postid = req.body.id;
+//   if (boardNum == 1 || boardNum == 2) {
+//     try {
+//       await ProdPost.update(
+//         {
+//           content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("게시글 수정 완료");
+//     } catch (error) {
+//       console.error(error);
+//       next(error);
+//     }
+//   } else if (boardNum == 3 || boardNum == 4) {
+//     try {
+//       await PowerPost.update(
+//         {
+//           content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("게시글 수정 완료");
+//     } catch (error) {
+//       console.error(error);
+//       next(error);
+//     }
+//   } else if (boardNum == 5) {
+//     try {
+//       await TogetherPost.update(
+//         {
+//           content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("게시글 수정 완료");
+//     } catch (error) {
+//       console.error(error);
+//       next(error);
+//     }
+//   }
+// });
+
+// //        <----- 게시글 가격 수정 ----->
+// router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
+//   const boardNum = req.query.boardNum;
+//   const userid = req.body.userid;
+//   const postid = req.body.id;
+//   if (boardNum == 1 || boardNum == 2) {
+//     try {
+//       await ProdPost.update(
+//         {
+//           price: req.body.price,
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("게시글 수정 완료");
+//     } catch (error) {
+//       console.error(error);
+//       next(error);
+//     }
+//   } else if (boardNum == 3 || boardNum == 4) {
+//     try {
+//       await PowerPost.update(
+//         {
+//           price: req.body.price,
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("게시글 수정 완료");
+//     } catch (error) {
+//       console.error(error);
+//       next(error);
+//     }
+//   } else if (boardNum == 5) {
+//     try {
+//       await TogetherPost.update(
+//         {
+//           price: req.body.price,
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("게시글 수정 완료");
+//     } catch (error) {
+//       console.error(error);
+//       next(error);
+//     }
+//   }
+// });
 
 //       <----- 게시글 삭제 ----->
 router.delete("/delete", isLoggedIn, async (req, res, next) => {

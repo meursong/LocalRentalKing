@@ -167,28 +167,28 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-// // <------- 특정유저 조회 by nickname ------>
-// // 게시물을 통해 유저의 닉네임을
-// router.get("/userInfo", async (req, res, next) => {
-//   // GET / user
-//   const queryNickname = req.query.nickname;
-//   try {
-//     const user = await User.findOne({
-//       where: { nickname: queryNickname },
-//       attributes: {
-//         exclude: ["password"],
-//       },
-//     });
-//     if (user) {
-//       res.status(200).json(user);
-//     } else {
-//       res.status(401).json("존재하지 않는 닉네임입니다.");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// });
+// <------- 특정유저 조회 by nickname ------>
+// 게시물을 통해 유저의 닉네임을
+router.get("/userInfo", async (req, res, next) => {
+  // GET / user
+  const queryNickname = req.query.nickname;
+  try {
+    const user = await User.findOne({
+      where: { nickname: queryNickname },
+      attributes: {
+        exclude: ["password"],
+      },
+    });
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(401).json("존재하지 않는 닉네임입니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 //=============================유저의 닉네임 수정=================================
 router.patch("/nickname", isLoggedIn, async (req, res, next) => {
