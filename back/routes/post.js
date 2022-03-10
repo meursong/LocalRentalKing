@@ -2,8 +2,6 @@ const express = require("express");
 const multer = require("multer"); //멀터는 폼마다 형식들이 다르기 때문에 멀터미들웨어를 사용해서 라우터마다 다르게 세팅필요
 const path = require("path"); //노드에서 제공하는 모듈 http처럼, 설치가 필요없는 모듈
 const fs = require("fs"); //file system을 조작할수있는 모듈. 폴더같은 걸 만들어줄수도있음
-//const passport = require("passport");
-//const bcrypt = require("bcrypt"); //해쉬화 알고리즘
 const {
   User,
   ProdPost,
@@ -17,7 +15,6 @@ const {
   TogetherPostComment,
 } = require("../models");
 const { isLoggedIn } = require("./middlewares");
-//const { route } = require("./user");
 
 const router = express.Router();
 
@@ -52,6 +49,11 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   const boardNum = req.body.boardNum;
   if (boardNum == 1 || boardNum == 2) {
     //1:물건빌려줘, 2:물건 빌려줄게
+    console.log("1번에 걸렸음");
+    console.log(req.body.category);
+    console.log(req.body.title);
+    console.log(req.body.content);
+
     try {
       const prodPost = await ProdPost.create({
         boardNum: boardNum,
@@ -76,33 +78,8 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
           await prodPost.addProdPostImages(image);
         }
       }
-      // const fullPost = await Post.findOne({
-      //   //부족한 정보들(이미지, 댓글,글쓴이 )을 합쳐서 프론트에 보내줌
-      //   where: { id: post.id },
-      //   include: [
-      //     {
-      //       model: Image,
-      //     },
-      //     {
-      //       model: Comment,
-      //       include: [
-      //         {
-      //           model: User, //게시글에 단 댓글 작성자
-      //           attributes: ["id", "nickname"],
-      //         },
-      //       ],
-      //     },
-      //     {
-      //       model: User, //게시글 작성자
-      //       attributes: ["id", "nickname"],
-      //     },
-      //     {
-      //       model: User, //게시글에 좋아요 누른 사람
-      //       attributes: ["id"],
-      //     },
-      //   ],
-      // });
-      res.status(201).json(prodPost); //프론트로 돌려줌
+      const fullPost = await ProdPost.findOne({ where: { id: prodPost.id } });
+      res.status(201).json(fullPost); //프론트로 돌려줌
     } catch (error) {
       console.error(error);
       next(error);
@@ -172,6 +149,99 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
       console.error(error);
       next(error);
     }
+  }
+});
+
+//====================글 하나 찾아오기===========================
+router.get("/singlepost", async (req, res, next) => {
+  console.log("싱글포스트 진입");
+  try {
+    const boardNum = req.query.postBoardNum;
+    const postId = req.query.postId;
+    if (boardNum == 1 || boardNum == 2) {
+      const prodpost = await ProdPost.findOne({
+        where: {
+          id: postId,
+        },
+        include: [
+          {
+            model: User, //작성자
+            attributes: ["id", "nickname"],
+          },
+          {
+            model: ProdPostImage, //이미지
+          },
+          {
+            model: ProdPostComment, //댓글
+            include: [
+              {
+                model: User, //댓글 작성자
+                attributes: ["id", "nickname"],
+              },
+            ],
+          },
+        ],
+      });
+      console.log(prodpost);
+      res.status(200).json(prodpost);
+    } else if (boardNum == 3 || boardNum == 4) {
+      const powerpost = await PowerPost.findOne({
+        where: {
+          id: postId,
+        },
+        include: [
+          {
+            model: User, //작성자
+            attributes: ["id", "nickname"],
+          },
+          {
+            model: PowerPostImage, //이미지
+          },
+          {
+            model: PowerPostComment, //댓글
+            include: [
+              {
+                model: User, //댓글 작성자
+                attributes: ["id", "nickname"],
+              },
+            ],
+          },
+        ],
+      });
+      console.log(powerpost);
+      res.status(200).json(powerpost);
+    } else if (boardNum == 5) {
+      const togetherpost = await TogetherPost.findOne({
+        where: {
+          id: postId,
+        },
+        include: [
+          //데이터를 가져올때는 항상 완성해서 가져와야한다.
+          {
+            model: User, //작성자
+            attributes: ["id", "nickname"],
+          },
+          {
+            model: TogetherPostImage, //이미지
+          },
+          {
+            model: TogetherPostComment, //댓글
+            include: [
+              {
+                model: User, //댓글 작성자
+                attributes: ["id"], //댓글 수만 표시하면 되니까
+                //댓글들 정렬할때도 여기다가 order정렬을 하는게아니라
+              },
+            ],
+          },
+        ],
+      });
+      console.log(togetherpost);
+      res.status(200).json(togetherpost);
+    }
+  } catch {
+    console.error(error);
+    next(error);
   }
 });
 
@@ -373,7 +443,5 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
     }
   }
 });
-
-//router.patch("/nickname", isLoggedIn, (req, res) => {});
 
 module.exports = router;

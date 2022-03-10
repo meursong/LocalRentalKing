@@ -33,6 +33,45 @@ const upload = multer({
   limits: { fileSize: 28 * 1024 * 1024 }, //20mb로 파일 업로드 크기 제한
 });
 
+// <------- 사용자 불러오기 (새로고침마다 요청할것)------->
+router.get("/", async (req, res, next) => {
+  // GET /user
+  console.log(req.headers);
+  console.log("들어오긴함");
+  try {
+    if (req.user) {
+      const fullInfoUserWithoutPassword = await User.findOne({
+        //비밀번호를 제외한 모든 사용자의 정보를 가지고있는 객체
+        where: { id: req.user.id },
+        attributes: {
+          exclude: ["password"],
+          //비밀번호를 제외한 모든 컬럼 가져옴
+        },
+        include: [
+          {
+            model: ProdPost, //내가 쓴 게시물들
+            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+          },
+          {
+            model: PowerPost, //내가 쓴 게시물들
+            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+          },
+          {
+            model: TogetherPost, //내가 쓴 게시물들
+            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+          },
+        ],
+      });
+      res.status(200).json(fullInfoUserWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // <------ 로그인 ----->
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   //이걸 미들웨어 확장이라고 한다. 원래 passport.authenticate는 req,res,next를 쓸수없는 미들웨어인데 그걸 확장해서 쓸수 있게하는 express기법
@@ -99,8 +138,6 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
       },
     });
     if (exUser) {
-      //exUser가 true는 중복된 유저가 있다는 이야기
-      //exUser가 null인지를 체크해야하는거아냐? findOne의 반환이 promise객체아닌가?
       return res.status(403).send("이미 사용중인 아이디입니다"); //return이 없다면 밑에 res.send가 있어서 응답을 2번보내는셈이 돼버림
     }
     const exNickname = await User.findOne({
@@ -130,73 +167,90 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-// <------- 사용자 불러오기 (새로고침마다 요청할것)------->
-router.get("/", async (req, res, next) => {
-  // GET / user
-  try {
-    if (req.user) {
-      const user = await User.findOne({
-        where: { id: req.user.id },
-      });
-      res.status(200).json(user);
-    } else {
-      res.status(200).json(null);
-    }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
+// // <------- 특정유저 조회 by nickname ------>
+// // 게시물을 통해 유저의 닉네임을
+// router.get("/userInfo", async (req, res, next) => {
+//   // GET / user
+//   const queryNickname = req.query.nickname;
+//   try {
+//     const user = await User.findOne({
+//       where: { nickname: queryNickname },
+//       attributes: {
+//         exclude: ["password"],
+//       },
+//     });
+//     if (user) {
+//       res.status(200).json(user);
+//     } else {
+//       res.status(401).json("존재하지 않는 닉네임입니다.");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
 
-// <------- 특정유저 조회 by nickname ------>
-// 게시물에 통해 유저의 닉네임을
-router.get("/userInfo/:nickname", async (req, res, next) => {
-  // GET / user
+//=============================유저의 닉네임 수정=================================
+router.patch("/nickname", isLoggedIn, async (req, res, next) => {
+  //닉네임 수정
   try {
-    if (true) {
-      const user = await User.findOne({
-        where: { nickname: req.params.nickname },
-        attributes: {
-          exclude: ["password"],
-        },
-        include: [
-          {
-            model: ProdPost, //유저가 쓴 게시물들
-            //attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요  //  전체데이터 전달 필요
-          },
-          {
-            model: PowerPost,
-            //attributes: ["id"],
-          },
-          {
-            model: TogetherPost,
-            //attributes: ["id"],
-          },
-        ],
-      });
-      res.status(200).json(user);
-    } else {
-      res.status(200).json(null);
+    const exNick = await User.findOne({
+      //들어온 닉네임이 중복인지 확인
+      where: {
+        nickname: req.body.nickname,
+      },
+    });
+    if (exNick) {
+      //엑스Nick 있다면 이미 사용중인 닉네임이라는
+      return res.status(403).send("이미 사용중인 닉네임 입니다");
     }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-//<----- 유저 정보 수정 (어떤데이터를 수정해야할지 협의 필요)----->
-//  인사말, 프로필사진, 주소
-router.patch("/update", isLoggedIn, async (req, res, next) => {
-  try {
     await User.update(
       {
-        nickname: req.body.nickname, //프론트와 상의해서 넘겨받을 데이터 설정하기
+        nickname: req.body.nickname, //프론트에서 받아온 닉네임으로 디비에 저장되어있는 닉네임이랑 바꿈
       },
       {
-        where: { id: req.user.id },
+        where: { id: req.query.id }, //user의 id와 나의 id가 일치해야지 바꿀수있음
       }
     );
     res.status(200).json({ nickname: req.body.nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+//=================================유저의 소개글 수정=================================
+router.patch("/greeting", isLoggedIn, async (req, res, next) => {
+  //닉네임 수정
+  try {
+    await User.update(
+      {
+        greeting: req.body.greeting, //프론트에서 받아온 닉네임으로 디비에 저장되어있는 닉네임이랑 바꿈
+      },
+      {
+        where: { id: req.query.id }, //user의 id와 나의 id가 일치해야지 바꿀수있음
+      }
+    );
+    res.status(200).json({ greeting: req.body.greeting });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+//==============================유저의 로케이션 수정==================================
+router.patch("/location", isLoggedIn, async (req, res, next) => {
+  //닉네임 수정
+  try {
+    await User.update(
+      {
+        location: req.body.location, //프론트에서 받아온 닉네임으로 디비에 저장되어있는 닉네임이랑 바꿈
+      },
+      {
+        where: { id: req.query.id }, //user의 id와 나의 id가 일치해야지 바꿀수있음
+      }
+    );
+    res.status(200).json({ location: req.body.location });
   } catch (error) {
     console.error(error);
     next(error);
@@ -207,7 +261,12 @@ router.patch("/update", isLoggedIn, async (req, res, next) => {
 router.patch("/profileImage", isLoggedIn, async (req, res, next) => {
   //닉네임 수정
   try {
-    const image = await User.update({ src: req.body.image });
+    const image = await User.update(
+      { profileImg: req.body.image },
+      {
+        where: { id: req.query.id }, //user의 id와 나의 id가 일치해야지 바꿀수있음
+      }
+    );
     //await User.addUserImages(image);
     res.status(201).json(image);
   } catch (error) {
@@ -227,39 +286,27 @@ router.post(
   }
 );
 
-//  <------ findAll test ----->
-router.get("/findAll", (req, res) => {
-  //axios.get('http://localhost:3065/user/findAll')
-  User.findAll().then((result) => {
-    //findAll메서드 인자에 { raw : true }옵션을 추가하면 dataValues만 리턴 - 이러면 result가 비어있는 어레이객체로 반환됨
-    console.log(result);
-    //res.send(result); 이렇게 보내니까  postman에서 json배열로 받아지는데?
-  });
-});
-
-//  <------ findOne test ----->
-router.get("/findOne", (req, res) => {
-  //axios.get('http://localhost:3065/user/findOne')
-  User.findAll({
-    where: {
-      id: 2,
-    },
-  }).then((result) => {
-    // then이란건 promise가 정상적으로 잘수행이 되어서 최종적으로 resolve라는 콜백함수로 전달한 값이 들어가있음
-    //만약에 error가 발생했다면 rejected라는 함수를 통해서 new한 error객체를 보내준다
-    //promise객체에 then이 호출이되면 다시 promise가 반환되기때문에 이 뒤로 catch같은 체이닝을 걸어줄수있음
-    console.log(result);
-    res.send(result);
-  });
+//======================  모든 유저 불러오기   -===========================
+router.get("/alluser", isLoggedIn, async (req, res, next) => {
+  // GET / user
+  // 관리자 계정일 경우만 조회되게하는 코드 추가 작성 필요
+  try {
+    if (req.user) {
+      const user = await User.findAll({
+        attributes: {
+          exclude: ["password"],
+          //비밀번호를 제외한 모든 유저의 정보 가져옴
+        },
+        //여기서 유저들에 대한 추가 정보 필요시 요청하시면 코드 추가하겠습니다.
+      });
+      res.status(200).json(user);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 module.exports = router;
-
-// 특정 필드(Column) [attributes 옵션 사용]
-// /* SQL */
-// SELECT name, married FROM users;
-// ​
-// /* 시퀄라이즈 */
-// User.findAll({
-//   attributes: ['name', 'married']
-// });
