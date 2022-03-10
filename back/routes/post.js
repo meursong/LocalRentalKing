@@ -327,29 +327,38 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
 //   }
 // });
 
-// //       <----- 게시글 삭제 ----->
-// router.delete("/:postId", isLoggedIn, async (req, res, next) => {
-//   // DELETE /post / ?
-//   try {
-//     await Post.destroy({
-//       where: {
-//         id: req.params.postId, //게시글 id
-//         UserId: req.user.id, //그 게시글을 쓴 유저의 id  ~혹여나 다른사람이 삭제할때 url만바꿔서 요청보내면 다른사람글도 삭제가능하니까
-//       },
-//     });
-//     res.status(200).json({ PostId: parseInt(req.params.postId, 10) }); //params는 문자열로가서 10진수 int로 파싱
-//   } catch (error) {
-//     console.error(error);
-//     next(error);
-//   }
-// });
-
 //       <----- 게시글 삭제 ----->
-router.delete("/delete", async (req, res, next) => {
+router.delete("/delete", isLoggedIn, async (req, res, next) => {
   // DELETE /post / ?
   const boardNum = req.query.boardNum;
   console.log(boardNum);
-  if (boardNum == 5) {
+  if (boardNum == 1 || boardNum == 2) {
+    try {
+      await ProdPost.destroy({
+        where: {
+          id: req.query.postId,
+          UserId: req.query.id,
+        },
+      });
+      res.status(200).send("삭제 성공");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 3 || boardNum == 4) {
+    try {
+      await PowerPost.destroy({
+        where: {
+          id: req.query.postId,
+          UserId: req.query.id,
+        },
+      });
+      res.status(200).send("삭제 성공");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 5) {
     try {
       await TogetherPost.destroy({
         where: {
