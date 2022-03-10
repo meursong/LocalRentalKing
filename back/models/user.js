@@ -22,7 +22,7 @@ module.exports = class User extends Sequelize.Model {
         },
         location: {
           type: Sequelize.STRING(100),
-          allowNull: false,
+          allowNull: true,
         },
         greeting: {
           type: Sequelize.STRING(100),
