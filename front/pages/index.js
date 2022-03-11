@@ -20,12 +20,6 @@ function Home() {
   const { mainPosts, hasMorePost, loadPostLoading, reTweetError, id } = useSelector((state) => state.post);
   const [ref, inView] = useInView();
 
-  // useEffect(() => {
-  //   if (reTweetError) {
-  //     alert(reTweetError);
-  //   }
-  // }, [reTweetError]);
-  //
   useEffect( // 화면 사이즈에 따라 버그가 발생중 fix1
     () => {
       if (inView && hasMorePost && !loadPostLoading) {

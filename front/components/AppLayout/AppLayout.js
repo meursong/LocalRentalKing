@@ -13,7 +13,6 @@ import { logoutRequestAction } from '../../reducers/user';
 
 import icon4 from '../../public/bookmark.png';
 
-
 function AppLayout({ children }) {
   const [searchInput, onChangeSearchInput] = useInput('');
   const { me, logOutLoading } = useSelector((state) => state.user);
@@ -53,47 +52,52 @@ function AppLayout({ children }) {
               <SidebarUl>
                 <Link href="/">
                   <SidebarLi>
-
+                    <a> 우리동네 렌탈대장</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/">
+                <Link href="/objectrecieve">
                   <SidebarLi>
                     <a> 물건을 빌려줘</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/related">
+                <Link href="/objectsend">
                   <SidebarLi>
                     <a> 물건을 빌려줄게</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/list">
+                <Link href="/talentrecieve">
                   <SidebarLi>
                     <a> 힘을 빌려줘</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/profile">
+                <Link href="/talentsend">
                   <SidebarLi>
                     <a> 힘을 빌려줄게</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/">
+                <Link href="/cooperate">
                   <SidebarLi>
                     <a> 같이 하자</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/">
+                <Link href="/playground">
                   <SidebarLi>
                     <a> 동네 놀이터</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/">
+                <Link href="/search">
                   <SidebarLi>
                     <a> 동네 친구 찾기</a>
                   </SidebarLi>
                 </Link>
-                <SidebarLi>
-                  <p><br /></p>
-                </SidebarLi>
+                <Link href="/profile">
+                  <SidebarLi>
+                    <a> 프로필</a>
+                  </SidebarLi>
+                </Link>
+                {/*<SidebarLi>*/}
+                {/*  <p><br /></p>*/}
+                {/*</SidebarLi>*/}
                 <div onClick={onLogOut}>
                   <SidebarLi>
                     <a> 로그아웃</a>

@@ -10,7 +10,7 @@ function LocalRentalKing({ Component }) {
     <>
       <Head>
         <meate charSet="utf-8" />
-        <title>LocalRentalKing</title>
+        <title>우리동네 렌탈대장</title>
       </Head>
       <Component />
     </>
