@@ -11,6 +11,7 @@ import wrapper from '../store/configureStore';
 import axios from "axios";
 import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
+import {UPDATE_BOARD} from "../reducers/post";
 
 function Profile() {
   const { me , usersInfo } = useSelector((state) => state.user);
@@ -78,6 +79,10 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   }
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
+  });
+  context.store.dispatch({
+    type: UPDATE_BOARD,
+    data: 7,
   });
   // context.store.dispatch({
   //   type: LOAD_USERS_REQUEST,

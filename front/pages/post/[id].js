@@ -6,6 +6,7 @@ import {LOAD_SPOST_REQUEST} from "../../reducers/post";
 import {Avatar, Card, Form} from "antd";
 import PostImages from "../../components/PostImages";
 import Link from 'next/link';
+import Layout from "../../components/Layout";
 
 function PostPage() {
   const dispatch = useDispatch();
@@ -29,25 +30,114 @@ function PostPage() {
   },[]);
 
   return (
-    <AppLayout>
+
+    <Layout>
+      {singlePost &&
       <Form
         layout="horizontal"
         form={form}
         initialValues={{
           layout: 'horizontal',
-        }}
-      >
-        {singlePost &&
-        <Card
-          cover={<PostImages images={singlePost.ProdPostImages}/>}
-          title={singlePost.title}
-        >
-          {singlePost.content}
-        </Card>
+        }}>
+        {singlePost.boardNum === 1  &&
+          <div>
+            {singlePost.ProdPostImages.length > 0 ?
+              (<Card
+                cover={<PostImages images={singlePost.ProdPostImages}/>}
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>) :
+              (
+                <Card
+                  title={singlePost.title}
+                >
+                  {singlePost.content}
+                </Card>
+              )
+            }
+          </div>
+        }
+        {singlePost.boardNum === 2  &&
+        <div>
+          {singlePost.ProdPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.ProdPostImages}/>}
+              title={singlePost.title}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+        </div>
+        }
+        {singlePost.boardNum === 3  &&
+        <div>
+          {singlePost.PowerPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.PowerPostImages}/>}
+              title={singlePost.title}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+        </div>
+        }
+        {singlePost.boardNum === 4  &&
+        <div>
+          {singlePost.PowerPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.PowerPostImages}/>}
+              title={singlePost.title}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+        </div>
+        }
+        {singlePost.boardNum === 5  &&
+        <div>
+          {singlePost.TogetherPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.TogetherPostImages}/>}
+              title={singlePost.title}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+        </div>
         }
       </Form>
+      }
+    </Layout>
 
-    </AppLayout>
   );
 }
 

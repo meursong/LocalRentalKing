@@ -24,7 +24,7 @@ export const initialState = {
   changeNicknameError: null,
   userInfo: null,
   me: null,
-  local: null,
+  local: "없음",
   usersInfo: {},
   signUpData: {},
   loginData: {},

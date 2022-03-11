@@ -271,7 +271,6 @@ function Write() {
             defaultValue={null}
             onChange={onCategory}
           >
-
             {tags5.map((city) => (
               <Option value={city}>{city}</Option>
             ))}
