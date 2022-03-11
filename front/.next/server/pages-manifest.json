@@ -2,6 +2,6 @@
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
   "/_error": "pages/_error.js",
-  "/objectrecieve": "pages/objectrecieve.js",
-  "/cooperate": "pages/cooperate.js"
+  "/": "pages/index.js",
+  "/search/[searchInput]": "pages/search/[searchInput].js"
 }

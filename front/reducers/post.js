@@ -16,7 +16,8 @@ export const initialState = {
   talent_TagsData: ['전체', '미술', '구충', '설치', '코칭', '촬영', '일손', '기타'],
   cooperate_tagsData: ['전체', '1+1', '배달', '공동구매', '기타'],
   play_tagsData: ['전체', '질문', '자유'],
-  local: null,
+  search:null,
+  select:null,
   selectedTag: null,
   category: null,
   searchResultId: null,
@@ -59,6 +60,8 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 };
+
+export const UPDATE_SEARCH = 'UPDATE_SEARCH';
 
 export const LOAD_CHANGE_TAG_REQUEST = 'LOAD_CHANGE_TAG_REQUEST';
 export const LOAD_CHANGE_TAG_SUCCESS = 'LOAD_CHANGE_TAG_SUCCESS';
@@ -149,6 +152,11 @@ export const addComment = (data) => ({
 // (이전상태,액션) => 다음상태
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
+    case UPDATE_SEARCH:
+      console.log(action.data);
+      draft.search = action.data.search;
+      draft.select = action.data.select;
+      break;
     case LOAD_CHANGE_TAG_REQUEST:
       draft.loadPostLoading = true;
       draft.loadPostDone = false;

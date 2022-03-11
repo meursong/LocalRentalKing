@@ -15,12 +15,18 @@ import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import Router from "next/router";
 import Layout from "../components/Layout";
+import PostCard2 from "../components/PostCard2";
 
 
 function ObjectRecieve() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { selectedTag,mainPosts, hasMorePost, loadPostLoading, id , object_TagsData } = useSelector((state) => state.post);
+  const [view, setView] = useState(true);
+
+  const onSwitch = useCallback(() => {
+    setView(!view);
+  }, [view]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -52,10 +58,19 @@ function ObjectRecieve() {
       <Head>
         <title>물건을 빌려줘 | 우리동네 렌탈대장</title>
       </Head>
-      <Layout>
-        <Tags tagsData={object_TagsData} boardNum={1}/>
-        {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </Layout>
+      {view ? (
+        <Layout>
+          <Tags tagsData={object_TagsData} boardNum={1}/>
+          <Button onClick={onSwitch}>전환스위치</Button>
+          {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
+        </Layout>
+      ) : (
+        <Layout>
+          <Tags tagsData={object_TagsData} boardNum={1}/>
+          <Button onClick={onSwitch}>전환스위치</Button>
+          {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+        </Layout>
+      )}
     </>
   );
 }

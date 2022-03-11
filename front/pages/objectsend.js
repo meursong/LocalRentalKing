@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import wrapper from '../store/configureStore';
 import Head from 'next/head';
 import {useDispatch, useSelector} from 'react-redux';
@@ -14,11 +14,18 @@ import PostCard1 from "../components/PostCard1";
 import axios from "axios";
 import Router from "next/router";
 import Layout from "../components/Layout";
+import {Button} from "antd";
+import PostCard2 from "../components/PostCard2";
 
 function ObjectSend() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { selectedTag,object_TagsData, mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
+  const [view, setView] = useState(true);
+
+  const onSwitch = useCallback(() => {
+    setView(!view);
+  }, [view]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -50,10 +57,19 @@ function ObjectSend() {
       <Head>
         <title>물건을 빌려줄게 | 우리동네 렌탈대장</title>
       </Head>
-      <Layout>
-        <Tags tagsData={object_TagsData} boardNum={2}/>
-        {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </Layout>
+      {view ? (
+        <Layout>
+          <Tags tagsData={object_TagsData} boardNum={1}/>
+          <Button onClick={onSwitch}>전환스위치</Button>
+          {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
+        </Layout>
+      ) : (
+        <Layout>
+          <Tags tagsData={object_TagsData} boardNum={1}/>
+          <Button onClick={onSwitch}>전환스위치</Button>
+          {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+        </Layout>
+      )}
     </>
   );
 }

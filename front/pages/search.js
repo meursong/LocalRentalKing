@@ -33,7 +33,7 @@ function Search() {
   }, [searchInput]);
 
   const onClickProfile = useCallback(() => {
-    Router.push(`/profile/${searchInput}`);
+    Router.push('/profile');
   }, [searchInput]);
 
   const style = {

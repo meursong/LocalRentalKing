@@ -13,12 +13,19 @@ import {LOAD_PLAY_POST_REQUEST, LOAD_POST_REQUEST, UPDATE_TAG} from '../reducers
 import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import Layout from "../components/Layout";
+import {Button} from "antd";
+import PostCard2 from "../components/PostCard2";
 
 function Cooperate() {
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
   const { me } = useSelector((state) => state.user);
   const { cooperate_tagsData,selectedTag,mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
+  const [view, setView] = useState(true);
+
+  const onSwitch = useCallback(() => {
+    setView(!view);
+  }, [view]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -50,10 +57,19 @@ function Cooperate() {
       <Head>
         <title>같이 하자 | 우리동네 렌탈대장</title>
       </Head>
-      <Layout>
-        <Tags tagsData={cooperate_tagsData} boardNum={5}/>
-        {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
-      </Layout>
+      {view ? (
+        <Layout>
+          <Tags tagsData={cooperate_tagsData} boardNum={5}/>
+          <Button onClick={onSwitch}>전환스위치</Button>
+          {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
+        </Layout>
+      ) : (
+        <Layout>
+          <Tags tagsData={cooperate_tagsData} boardNum={5}/>
+          <Button onClick={onSwitch}>전환스위치</Button>
+          {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+        </Layout>
+      )}
     </>
   );
 }

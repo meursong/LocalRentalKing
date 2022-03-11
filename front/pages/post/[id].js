@@ -37,7 +37,7 @@ function PostPage() {
           layout: 'horizontal',
         }}
       >
-        {singlePost&&
+        {singlePost &&
         <Card
           cover={<PostImages images={singlePost.ProdPostImages}/>}
           title={singlePost.title}

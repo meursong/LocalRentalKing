@@ -2,6 +2,7 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import AppLayout from '../../components/AppLayout/AppLayout';
+import Layout from "../../components/Layout";
 
 function SearchResult() {
   const dispatch = useDispatch();
@@ -9,6 +10,10 @@ function SearchResult() {
   const { searchInput } = router.query; // [tag].js 파일 명의 [] 부분이 들어간다
   const { mainPosts, hasMorePost, loadPostLoading , local } = useSelector((state) => state.post);
   const { userInfo, me } = useSelector((state) => state.user);
+
+  const categoryAndsearch = searchInput.split('*');
+  const category = categoryAndsearch[0];
+  const search = categoryAndsearch[1];
 
   // useEffect(()=>{
   //   dispatch({ // 검색어를 제목에서 포함하며, 지역이 일치하는 게시물들을 10개씩요청
@@ -38,9 +43,9 @@ function SearchResult() {
   // }, [mainPosts.length, hasMorePost, searchInput, loadPostLoading]);
 
   return (
-    <AppLayout>
+    <Layout>
       {searchInput}
-    </AppLayout>
+    </Layout>
   );
 }
 

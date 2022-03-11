@@ -36,7 +36,10 @@ function Profile() {
       <Head>
         <title>내 프로필 | 우리동네 렌탈대장</title>
       </Head>
+
       <Layout>
+
+        <div><br/></div>
 
         <Card>
           <Card.Meta
@@ -45,7 +48,7 @@ function Profile() {
           />
         </Card>
 
-        <PostCard2/>
+        {/*<PostCard2/>*/}
 
         {/*{usersInfo.map((c) => (*/}
         {/*  <Link href={`/user/${c.id}`} prefetch={false}>*/}
