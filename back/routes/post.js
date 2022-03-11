@@ -26,10 +26,10 @@ try {
 }
 
 // <--------- 게시물 이미지업로드를 위한 multer생성  -------->
-// <--------- 게시물 작성에서도 쓰기위해서 위치는 위로 올려줌 ------->
+// <--------- 게시물 작성에서도 쓰기위해서 위치는 글쓰기보다 위로 ------->
 const upload = multer({
   storage: multer.diskStorage({
-    //어디에 저장할지~ 당장은 컴퓨터 하드디스크에 여기만 나중에 s3로 갈아끼워주면 멀터가 알아서 하드디스크가 아니라 스토리지로 올려줌(배포시)
+    //저장경로. 당장은 컴퓨터 하드디스크에. 여기만 나중에 s3로 갈아끼워주면 멀터가 알아서 하드디스크가 아니라 스토리지로 올려줌(배포시)
     destination(req, file, done) {
       done(null, "uploads");
     },
@@ -405,6 +405,7 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           where: { id: postid, UserId: userid },
         }
       );
+
       res.status(200).json("게시글 수정 완료");
     } catch (error) {
       console.error(error);
