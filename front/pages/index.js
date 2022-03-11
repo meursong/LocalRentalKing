@@ -8,17 +8,18 @@ import {Button, Col, Row} from 'antd';
 import AppLayout from '../components/AppLayout/AppLayout';
 import LoginForm from '../components/LoginForm';
 
-import {LOAD_MY_INFO_REQUEST, logoutRequestAction} from '../reducers/user';
-import {LOAD_POST_REQUEST, TEST, UPDATE_TAG} from '../reducers/post';
+import {LOAD_MY_INFO_REQUEST, logoutRequestAction, UPDATE_LOCAL} from '../reducers/user';
+import {LOAD_POST_REQUEST, TEST, UPDATE_BOARD, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import axios from "axios";
 import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
+import SearchBar from "../components/SearchBar";
 
 function Home() {
   const dispatch = useDispatch();
-  const {me} = useSelector((state) => state.user);
+  const {me, local} = useSelector((state) => state.user);
   const {
     mainPosts,
     hasMorePost,
@@ -33,6 +34,14 @@ function Home() {
   const onSwitch = useCallback(() => {
     setView(!view);
   }, [view]);
+
+  useEffect(()=>{
+    if(me && local==="없음")
+    dispatch({
+      type:UPDATE_LOCAL,
+      data:me.location,
+    })
+  },[me]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -86,6 +95,10 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   context.store.dispatch({
     type: UPDATE_TAG,
     data: "전체",
+  });
+  context.store.dispatch({
+    type: UPDATE_BOARD,
+    data: 1,
   });
   context.store.dispatch({
     type: LOAD_POST_REQUEST,

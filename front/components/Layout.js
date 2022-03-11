@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import styled, {createGlobalStyle} from 'styled-components'
 import {
   UserOutlined,
@@ -11,7 +11,7 @@ import {
   AimOutlined,
 } from '@ant-design/icons';
 import {MenuItems} from './MenuItems';
-import {Menu, Dropdown, Row, Col} from 'antd';
+import {Menu, Dropdown, Row, Col ,Input} from 'antd';
 import logo from './logo2.png';
 import Link from 'next/link';
 import Navbar from 'react-bootstrap/Navbar';
@@ -218,9 +218,24 @@ function Layout({children}) {
   const {me, local} = useSelector((state) => state.user);
   const [isOpen, setMenu] = useState(false);
   const [profile, SetProfile] = useState(false);
-  const [select, SetSelect] = useState("선택");
   const [place, SetPlace] = useState(false);
-  const [search,onSearch,setSearch] = useInput("");
+  const [select, setSelect] = useState("글제목");
+  const [searchword, onSearchWord,setSearchWord] = useInput("");
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="0">
+        <a onClick={() => {
+          setSelect("글제목")
+        }}>글제목</a>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <a onClick={() => {
+          setSelect("글내용")
+        }}>글내용</a>
+      </Menu.Item>
+    </Menu>
+  )
 
   const PlaceClick = () => {
     SetPlace(true);
@@ -235,10 +250,6 @@ function Layout({children}) {
     console.log(profile);
     Router.push('/profile');
   }
-
-  // const onSearch = useCallback(() => {
-  //   Router.push(`/hashtag/${searchInput}`);
-  // }, [searchInput]);
 
   const onWrite = useCallback(() => {
     Router.push('/write');
@@ -256,31 +267,11 @@ function Layout({children}) {
   const onSearching = useCallback(() => {
     dispatch({
       type:UPDATE_SEARCH,
-      select:select,
-      search:search,
+      data:{select:select, searchword:searchword,}
     });
-    Router.push(`/search/${select}*${search}`);
-  }, []);
+    Router.push(`/search/${select}*${searchword}`);
+  }, [select,searchword]);
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="0">
-        <a onClick={() => {
-          SetSelect("닉네임")
-        }}>닉네임</a>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <a onClick={() => {
-          SetSelect("글제목")
-        }}>글제목</a>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <a onClick={() => {
-          SetSelect("글내용")
-        }}>글내용</a>
-      </Menu.Item>
-    </Menu>
-  )
   return (
     <div style={{width: "100%"}}>
       <div style={{position: "relative", width: "100%"}}>
@@ -323,17 +314,17 @@ function Layout({children}) {
                         return (
                           <>
                             {index === 0 &&
-                            <Link href="/objectrecieve"><MenuLi key={index}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/objectrecieve"><MenuLi key={"a"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 1 &&
-                            <Link href="/objectsend"><MenuLi key={index}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/objectsend"><MenuLi key={"b"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 2 &&
-                            <Link href="/talentrecieve"><MenuLi key={index}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/talentrecieve"><MenuLi key={"c"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 3 &&
-                            <Link href="/talentsend"><MenuLi key={index}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/talentsend"><MenuLi key={"d"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 4 &&
-                            <Link href="/cooperate"><MenuLi key={index}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/cooperate"><MenuLi key={"e"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 5 &&
-                            <Link href="/playground"><MenuLi key={index}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/playground"><MenuLi key={"f"}><a>{item.title}</a></MenuLi></Link>}
                           </>
                         )
                       })}
@@ -345,12 +336,12 @@ function Layout({children}) {
                 <SelcectDiv>
                   <SelectDropD>
                     <Dropdown overlay={menu} trigger={['click']}>
-                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      <a className="ant-dropdown-link" >
                         {select} <DownOutlined/>
                       </a>
                     </Dropdown>
                   </SelectDropD>
-                  <Select placeholder={"지역, 상품명 입력"} value={search} onChange={onSearch} onSearch={onSearching}/>
+                  <Select placeholder={"지역, 상품명 입력"} value={searchword} onChange={onSearchWord}/>
                   <div style={{paddingTop: "3px", paddingLeft: "115px"}}>
                     <SearchOutlined onClick={onSearching}/>
                   </div>

@@ -11,6 +11,7 @@ const gridStyle = {
   cursor: 'pointer',
   margin: '10px',
 };
+
 const PostCard1 = ({ post }) => {
   const onPage = useCallback(() => {
     Router.push(`/post/${post.id}*${post.boardNum}`);

@@ -9,7 +9,7 @@ import {useInView} from "react-intersection-observer";
 import AppLayout from '../components/AppLayout/AppLayout';
 
 import {LOAD_MY_INFO_REQUEST} from '../reducers/user';
-import {LOAD_POST_REQUEST, UPDATE_TAG} from '../reducers/post';
+import {LOAD_POST_REQUEST, UPDATE_BOARD, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
 import PostCard1 from "../components/PostCard1";
 import Router from "next/router";
@@ -87,6 +87,10 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   context.store.dispatch({
     type: UPDATE_TAG,
     data:"전체",
+  });
+  context.store.dispatch({
+    type: UPDATE_BOARD,
+    data: 3,
   });
   context.store.dispatch({
     type: LOAD_POST_REQUEST,

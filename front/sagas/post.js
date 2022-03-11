@@ -160,14 +160,14 @@ function* changeTag(action) {
   }
 }
 
-function loadSearchPostAPI(data, lastId , local) {
-  console.log(data);
-  return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&local=${local || "선택안함"}`); // api 서버 요청은 /user/:userId/posts
-}
+function loadSearchPostAPI(select, searchword , local ,boardNum , lastId) {
+  return axios.get(`/posts/search?select=${encodeURIComponent(select)}&local=${encodeURIComponent(local)}
+  &search=${encodeURIComponent(searchword)}&boardNum=${boardNum}&lastId=${lastId||0}`);
+}// api 서버 요청은 GET/posts/search/
 
 function* loadSearchPost(action) {
   try {
-    const result = yield call(loadSearchPostAPI, action.data, action.lastId , action.local);
+    const result = yield call(loadSearchPostAPI, action.select, action.search , action.local ,action.boardNum, action.lastId);
     yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
       type: LOAD_SEARCH_POSTS_SUCCESS,
       data: result.data,
