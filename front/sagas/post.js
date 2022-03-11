@@ -118,14 +118,14 @@ function* removePost(action) {
   }
 }
 
-function loadPostAPI(data, lastId , boardNum) {
+function loadPostAPI(data, lastId , boardNum,local) {
   console.log(data);
-  return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&boardNum=${boardNum || 0}`); // api 서버 요청은 /user/:userId/posts
+  return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&boardNum=${boardNum || 0}&local=${encodeURIComponent(local)}`); // api 서버 요청은 /user/:userId/posts
 }
 
 function* loadPost(action) {
   try {
-    const result = yield call(loadPostAPI, action.data, action.lastId , action.boardNum);
+    const result = yield call(loadPostAPI, action.data, action.lastId , action.boardNum,action.location);
     yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
       type: LOAD_POST_SUCCESS,
       data: result.data,

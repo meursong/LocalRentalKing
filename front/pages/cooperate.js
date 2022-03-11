@@ -15,6 +15,16 @@ import PostCard1 from "../components/PostCard1";
 import Layout from "../components/Layout";
 import {Button} from "antd";
 import PostCard2 from "../components/PostCard2";
+import styled from "styled-components";
+
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  // justify-content:center;
+  
+`;
 
 function Cooperate() {
   const dispatch = useDispatch();
@@ -65,9 +75,11 @@ function Cooperate() {
         </Layout>
       ) : (
         <Layout>
+          <PostCarDiv2>
           <Tags tagsData={cooperate_tagsData} boardNum={5}/>
           <Button onClick={onSwitch}>전환스위치</Button>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+          </PostCarDiv2>
         </Layout>
       )}
     </>

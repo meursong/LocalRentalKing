@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {useRouter} from 'next/router';
+import Router, {useRouter} from 'next/router';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import {LOAD_SPOST_REQUEST} from "../../reducers/post";
-import {Avatar, Card, Form} from "antd";
+import {Avatar, Button, Card, Form} from "antd";
 import PostImages from "../../components/PostImages";
 import Link from 'next/link';
 import Layout from "../../components/Layout";
@@ -18,6 +18,8 @@ function PostPage() {
   const idAndBoardNum = id.split('*');
   const postId = idAndBoardNum[0];
   const postBoardNum = idAndBoardNum[1];
+  const [postId2,setPostId] = useState(postId);
+  const [postBoardNum2,setPostBoardNum] = useState(postBoardNum);
 
   const [form] = Form.useForm();
 
@@ -28,6 +30,24 @@ function PostPage() {
       postBoardNum:postBoardNum,
     });
   },[]);
+
+  const prevPage = useCallback(() => {
+    setPostId((prev)=>prev-1);
+    dispatch({
+      type:LOAD_SPOST_REQUEST,
+      postId:postId2,
+      postBoardNum:postBoardNum2,
+    });
+  }, [postId2,postBoardNum2]);
+
+  const nextPage = useCallback(() => {
+    setPostId((prev)=>prev+1);
+    dispatch({
+      type:LOAD_SPOST_REQUEST,
+      postId:postId2,
+      postBoardNum:postBoardNum2,
+    });
+  }, [postId2,postBoardNum2]);
 
   return (
 
@@ -134,6 +154,10 @@ function PostPage() {
           }
         </div>
         }
+        <div>
+          <Button onClick={prevPage}>이전글</Button>
+          <Button onClick={nextPage}>다음글</Button>
+        </div>
       </Form>
       }
     </Layout>

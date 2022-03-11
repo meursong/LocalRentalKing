@@ -151,7 +151,7 @@ const NavActive = styled.ul`
 `;
 const MenuLi = styled.li`
   text-align: center;
-  padding-bottom: 40px;
+  padding-top: 40px;
   font-weight: 600;
   font-size: 20px;
   transition: all 0.25s ease;
@@ -160,9 +160,6 @@ const MenuLi = styled.li`
     transform: scale(1.3, 1.3);
   }
 
-  :first-child {
-    padding-top: 20px;
-  }
 
   a {
     color: black;
@@ -193,24 +190,32 @@ const MenuA = styled.div`
 `;
 const PlaceDiv = styled.div`
   position: fixed;
-  width: 200px;
+  width: 150px;
   // background:red;
   height: 30px;
   top: 200px;
-  left: 1350px;
-  right: 1485px;
-  bottom: 219px;
-  // border:solid;
+  right:180px;
+  // left:200px;
   text-align: center;
   font-weight: 600;
   font-size: 20px;
-
-  :hover {
-    transform: scale(1.3, 1.3);
-  }
-
+  // :hover {
+  //   transform: scale(1.3, 1.3);
+  // }
+  justify-content:left;
   display: flex;
   flex-wrap: wrap;
+`;
+const PostDiv = styled.div`
+  width:100%;
+  // background:blue;
+`;
+const LocalDiv = styled.div`
+    
+`;
+
+const C = styled.div`
+  width:120px;
 `;
 
 function Layout({children}) {
@@ -238,7 +243,13 @@ function Layout({children}) {
   )
 
   const PlaceClick = () => {
-    SetPlace(true);
+    if(place == false){
+      SetPlace(true);
+      console.log(place);
+    }
+    if(place == true){
+      SetPlace(false);
+    }
   }
 
   const toggleMenu = () => {
@@ -282,8 +293,8 @@ function Layout({children}) {
               {!me ?
                 (<div onClick={onLogIn}>로그인/회원가입</div>) :
                 (<div onClick={onLogOut}>로그아웃</div>)}
-              <div style={{paddingLeft: "20px"}}>
-                내상점
+              <div onClick={goProfile} style={{paddingLeft: "20px"}}>
+                내 프로필
               </div>
             </TopDiv>
           </Topbar>
@@ -361,27 +372,29 @@ function Layout({children}) {
             </NavBarDiv>
           </NavBar>
         </div>
-        <div style={{marginTop: 0, zIndex: 5 , width: '90%'}}>
-          <Row gutter={8}>
-            <Col xs={7} md={7}/>
-            <Col xs={11} md={11}>
-              {children}
-            </Col>
-            <Col xs={6} md={6}/>
-          </Row>
-        </div>
-        <PlaceDiv onClick={PlaceClick}>
-          <div style={{paddingLeft: "4px"}}>
-            <AimOutlined style={{paddingRight: "10px"}}/>
-            동네 설정
+        <PostDiv>
+          <div style={{marginTop: 0, zIndex: 5 , width: '100%'}}>
+            <Row gutter={8}>
+              <Col xs={7} md={6}/>
+              <Col xs={13} md={13}>
+                {children}
+              </Col>
+              <Col xs={6} md={5}/>
+            </Row>
           </div>
-          <SearchLocation/>
-          {local ?
-            <div style={{color: "#15254d", fontSize: "25px", width: "114px", paddingRight: ""}}>
-              {local}
-            </div> :
+        </PostDiv>
+        <PlaceDiv onClick={PlaceClick}>
+          <C>
+            <AimOutlined style={{paddingRight: "10px"}}/>
+            {!place ?
+              <span>동네 설정</span> : <span>재설정</span>}
+          </C>
+          {place ?
             <div>
-            </div>
+              <SearchLocation/></div>:
+            <LocalDiv>
+              {local}
+            </LocalDiv>
           }
         </PlaceDiv>
       </div>

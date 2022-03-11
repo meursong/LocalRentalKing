@@ -2,6 +2,7 @@ import produce from 'immer';
 
 export const initialState = {
   mainPosts: [],
+  searchPosts: [],
   imagePaths: [],
   object_TagsData: ['전체', '공구',
     '의류',
@@ -64,6 +65,8 @@ export const initialState = {
 
 export const UPDATE_SEARCH = 'UPDATE_SEARCH';
 export const UPDATE_BOARD = 'UPDATE_BOARD';
+
+export const UPDATE_CHANGE_TAG_REQUEST = 'UPDATE_CHANGE_TAG_REQUEST';
 
 export const LOAD_CHANGE_TAG_REQUEST = 'LOAD_CHANGE_TAG_REQUEST';
 export const LOAD_CHANGE_TAG_SUCCESS = 'LOAD_CHANGE_TAG_SUCCESS';
@@ -156,6 +159,9 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case UPDATE_BOARD:
       draft.boardNum = action.data;
+      break;
+    case UPDATE_CHANGE_TAG_REQUEST:
+      draft.serchPosts = draft.mainPosts.filter((v) => v.category === action.data);
       break;
     case UPDATE_SEARCH:
       draft.inputSearch = action.data.searchword;

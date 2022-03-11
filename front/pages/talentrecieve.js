@@ -16,6 +16,16 @@ import Router from "next/router";
 import Layout from "../components/Layout";
 import {Button} from "antd";
 import PostCard2 from "../components/PostCard2";
+import styled from "styled-components";
+
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  // justify-content:center;
+  
+`;
 
 function TalentRecieve() {
   const dispatch = useDispatch();
@@ -65,9 +75,11 @@ function TalentRecieve() {
         </Layout>
       ) : (
         <Layout>
+          <PostCarDiv2>
           <Tags tagsData={talent_TagsData} boardNum={3}/>
           <Button onClick={onSwitch}>전환스위치</Button>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+          </PostCarDiv2>
         </Layout>
       )}
     </>

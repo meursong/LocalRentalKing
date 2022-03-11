@@ -2,6 +2,7 @@ import React from 'react';
 import {Card} from 'antd';
 import moment from 'moment';
 import styled, { createGlobalStyle } from "styled-components";
+import logo from "../public/nouser.png";
 const Pdiv = styled.div`
     color:black;
     display:flex;
@@ -30,25 +31,28 @@ const Wdiv = styled.div`
     font-weight:800;
 `;
 moment.locale('ko');
-function ProfileCard() {
-  const userInfo = [
-    {nickname:"김도원", grade:"일반회원",email:"theone",greeting:"안녕하세요 ^^ 많은 거래 해봐요~",createAt:"2020.06.14"},
-    {nickname:"b", grade:"Normal",email:"b@b",greeting:"안녕하세요b"},
-    {nickname:"c", grade:"Normal",email:"c@b",greeting:"안녕하세요c"},
-    {nickname:"root", grade:"admin",email:"d@b",greeting:"안녕하세요r"},
-  ];
-  console.log(userInfo[0].nickname);
+function ProfileCard({userInfo}) {
+
+  let imageUrl = null;
+
+  if(userInfo && userInfo.profileImg){
+    imageUrl = `http://localhost:3065/${userInfo.profileImg}`;
+  }else{
+    imageUrl = logo;
+  }
+
   return (
     <div style={{paddingLeft:""}}>
+      {userInfo &&
       <Card
         hoverable
         style={{ width: 280 }}
-        cover={<img alt="example"src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"/>}
+        cover={<img alt="example"src={imageUrl}/>}
         actions={[
           <Wdiv>
             렌탈
             <br/>
-            14
+            {userInfo.ProdPosts.length+userInfo.PowerPosts.length+userInfo.TogetherPosts.length}
           </Wdiv>,
           <Wdiv>
             게시글
@@ -69,22 +73,22 @@ function ProfileCard() {
       >
         <Pdiv>
           <Pcdiv>
-            {userInfo[0].nickname}
+            {userInfo.nickname}
           </Pcdiv>
           <GradeDiv>
-            {userInfo[0].grade}
+            {userInfo.grade === "Normal" ? "일반회원" : "어드민" }
           </GradeDiv>
           <Cdiv>
-            {userInfo[0].createAt}
+            {userInfo.createAt}
           </Cdiv>
         </Pdiv>
         <div style={{textAlign:"left"}}>
-          <h4>@{userInfo[0].email}</h4>
+          <h4>{userInfo.email}</h4>
         </div>
         <div style={{textAlign:"left"}}>
-          <h4>{userInfo[0].greeting}</h4>
+          <h4>{userInfo.greeting}</h4>
         </div>
-      </Card>
+      </Card>}
     </div>
   );
 }

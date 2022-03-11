@@ -13,6 +13,16 @@ import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
 import {UPDATE_BOARD} from "../reducers/post";
 import ProfileCard from "../components/ProfileCard";
+import styled from "styled-components";
+
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  // justify-content:center;
+  
+`;
 
 function Profile() {
   const { me , usersInfo } = useSelector((state) => state.user);
@@ -38,14 +48,15 @@ function Profile() {
       <Head>
         <title>내 프로필 | 우리동네 렌탈대장</title>
       </Head>
+      { me &&
+        <Layout>
 
-      <Layout>
+          <div><br/></div>
 
-        <div><br/></div>
+          <ProfileCard userInfo={me}/>
 
-        <ProfileCard/>
-
-      </Layout>
+        </Layout>
+      }
     </>
   );
 }
