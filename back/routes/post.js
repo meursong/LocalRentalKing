@@ -379,16 +379,27 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
 //   }
 // });
 
-//        <----- 게시글 내용 수정 ----->
-router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
-  const boardNum = req.query.boardNum;
+//        <----- 게시글 수정 ----->
+router.patch("/edit", upload.none(), async (req, res, next) => {
+  const boardNum = req.body.boardNum;
   const userid = req.body.userid;
   const postid = req.body.id;
+  const rcategory = req.body.category;
+  const rtitle = req.body.title;
+  const rcontent = req.body.content;
+  const rprice = req.body.price;
+  const rlocation = req.body.location;
+  const roriginalPrice = req.body.originalPrice;
+  const rsharedPrice = req.body.sharedPrice;
   if (boardNum == 1 || boardNum == 2) {
     try {
       await ProdPost.update(
         {
-          content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+          category: rcategory,
+          title: rtitle,
+          content: rcontent,
+          price: rprice,
+          user_location: rlocation,
         },
         {
           where: { id: postid, UserId: userid },
@@ -403,7 +414,11 @@ router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
     try {
       await PowerPost.update(
         {
-          content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+          category: rcategory,
+          title: rtitle,
+          content: rcontent,
+          price: rprice,
+          user_location: rlocation,
         },
         {
           where: { id: postid, UserId: userid },
@@ -418,7 +433,12 @@ router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
     try {
       await TogetherPost.update(
         {
-          content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
+          category: rcategory,
+          title: rtitle,
+          content: rcontent,
+          user_location: rlocation,
+          originalPrice: roriginalPrice,
+          sharedPrice: rsharedPrice,
         },
         {
           where: { id: postid, UserId: userid },
@@ -431,112 +451,6 @@ router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
     }
   }
 });
-
-// //        <----- 게시글 내용 수정 ----->
-// router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
-//   const boardNum = req.query.boardNum;
-//   const userid = req.body.userid;
-//   const postid = req.body.id;
-//   if (boardNum == 1 || boardNum == 2) {
-//     try {
-//       await ProdPost.update(
-//         {
-//           content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
-//         },
-//         {
-//           where: { id: postid, UserId: userid },
-//         }
-//       );
-//       res.status(200).json("게시글 수정 완료");
-//     } catch (error) {
-//       console.error(error);
-//       next(error);
-//     }
-//   } else if (boardNum == 3 || boardNum == 4) {
-//     try {
-//       await PowerPost.update(
-//         {
-//           content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
-//         },
-//         {
-//           where: { id: postid, UserId: userid },
-//         }
-//       );
-//       res.status(200).json("게시글 수정 완료");
-//     } catch (error) {
-//       console.error(error);
-//       next(error);
-//     }
-//   } else if (boardNum == 5) {
-//     try {
-//       await TogetherPost.update(
-//         {
-//           content: req.body.content, //프론트와 상의해서 넘겨받을 데이터 설정하기
-//         },
-//         {
-//           where: { id: postid, UserId: userid },
-//         }
-//       );
-//       res.status(200).json("게시글 수정 완료");
-//     } catch (error) {
-//       console.error(error);
-//       next(error);
-//     }
-//   }
-// });
-
-// //        <----- 게시글 가격 수정 ----->
-// router.patch("/contentEdit", isLoggedIn, async (req, res, next) => {
-//   const boardNum = req.query.boardNum;
-//   const userid = req.body.userid;
-//   const postid = req.body.id;
-//   if (boardNum == 1 || boardNum == 2) {
-//     try {
-//       await ProdPost.update(
-//         {
-//           price: req.body.price,
-//         },
-//         {
-//           where: { id: postid, UserId: userid },
-//         }
-//       );
-//       res.status(200).json("게시글 수정 완료");
-//     } catch (error) {
-//       console.error(error);
-//       next(error);
-//     }
-//   } else if (boardNum == 3 || boardNum == 4) {
-//     try {
-//       await PowerPost.update(
-//         {
-//           price: req.body.price,
-//         },
-//         {
-//           where: { id: postid, UserId: userid },
-//         }
-//       );
-//       res.status(200).json("게시글 수정 완료");
-//     } catch (error) {
-//       console.error(error);
-//       next(error);
-//     }
-//   } else if (boardNum == 5) {
-//     try {
-//       await TogetherPost.update(
-//         {
-//           price: req.body.price,
-//         },
-//         {
-//           where: { id: postid, UserId: userid },
-//         }
-//       );
-//       res.status(200).json("게시글 수정 완료");
-//     } catch (error) {
-//       console.error(error);
-//       next(error);
-//     }
-//   }
-// });
 
 //       <----- 게시글 삭제 ----->
 router.delete("/delete", isLoggedIn, async (req, res, next) => {

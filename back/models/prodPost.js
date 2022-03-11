@@ -29,6 +29,10 @@ module.exports = class ProdPost extends Sequelize.Model {
           type: Sequelize.STRING(30),
           allowNull: false,
         },
+        user_location: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
+        },
       },
       {
         modelName: "ProdPost",
