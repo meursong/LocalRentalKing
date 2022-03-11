@@ -24,10 +24,13 @@ export const initialState = {
   changeNicknameError: null,
   userInfo: null,
   me: null,
+  local: "없음",
   usersInfo: {},
   signUpData: {},
   loginData: {},
 };
+
+export const UPDATE_LOCAL = 'UPDATE_LOCAL';
 
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
@@ -72,6 +75,9 @@ export const logoutRequestAction = () => ({
 // (이전상태,액션) => 다음상태
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
+    case UPDATE_LOCAL:
+      draft.local = action.data;
+      break;
     case LOAD_USER_REQUEST:
       draft.loadUserLoading = true;
       draft.loadUserError = null;
@@ -170,7 +176,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.changeNicknameError = action.error;
       break;
     case ADD_POST_TO_ME:
-      draft.me.Posts.unshift({ id: action.data });
+      console.log(action.data);
+      if(action.data.boardNum===1||2) {
+        console.log("1/2");
+        //console.log(draft.me);
+        draft.me.ProdPosts.push({id:action.data.id});
+      }
+      else if(action.data.boardNum===3||4){
+        console.log("3/4");
+        draft.me.PowerPosts.push({id: action.data.id});
+      }
+      else if(action.data.boardNum===5){
+        console.log("5");
+        draft.me.TogetherPosts.push({id: action.data.id});
+      }
       break;
     case REMOVE_POST_OF_ME:
       draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);

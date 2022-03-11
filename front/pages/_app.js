@@ -17,7 +17,7 @@ function LocalRentalKing({ Component }) {
   );
 }
 
-Thewitter.propTypes = {
+LocalRentalKing.propTypes = {
   Component: PropTypes.elementType.isRequired,
 };
 

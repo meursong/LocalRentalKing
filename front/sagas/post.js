@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeLatest, throttle } from 'redux-saga/effects';
+import {all, call, fork, put, takeLatest} from 'redux-saga/effects';
 import axios from 'axios';
 import {
   ADD_COMMENT_FAILURE,
@@ -9,7 +9,7 @@ import {
   ADD_POST_SUCCESS,
   LIKE_POST_FAILURE,
   LIKE_POST_REQUEST,
-  LIKE_POST_SUCCESS,
+  LIKE_POST_SUCCESS, LOAD_CHANGE_TAG_FAILURE, LOAD_CHANGE_TAG_REQUEST, LOAD_CHANGE_TAG_SUCCESS,
   LOAD_HASHTAG_POSTS_FAILURE,
   LOAD_HASHTAG_POSTS_REQUEST,
   LOAD_HASHTAG_POSTS_SUCCESS,
@@ -22,36 +22,24 @@ import {
   LOAD_RELATED_POST_FAILURE,
   LOAD_RELATED_POST_REQUEST,
   LOAD_RELATED_POST_SUCCESS,
-  LOAD_COOP_POST_REQUEST,
-  LOAD_COOP_POST_SUCCESS,
-  LOAD_COOP_POST_FAILURE,
-  LOAD_PLAY_POST_REQUEST,
-  LOAD_PLAY_POST_SUCCESS,
-  LOAD_PLAY_POST_FAILURE,
-  LOAD_O_SEND_POST_REQUEST,
-  LOAD_O_SEND_POST_SUCCESS,
-  LOAD_O_SEND_POST_FAILURE,
-  LOAD_O_RECIEVE_POST_REQUEST,
-  LOAD_O_RECIEVE_POST_SUCCESS,
-  LOAD_O_RECIEVE_POST_FAILURE,
-  LOAD_T_SEND_POST_REQUEST,
-  LOAD_T_SEND_POST_SUCCESS,
-  LOAD_T_SEND_POST_FAILURE,
-  LOAD_T_RECIEVE_POST_REQUEST,
-  LOAD_T_RECIEVE_POST_SUCCESS,
-  LOAD_T_RECIEVE_POST_FAILURE,
+  LOAD_RENTAL_POST_FAILURE,
+  LOAD_RENTAL_POST_REQUEST,
+  LOAD_RENTAL_POST_SUCCESS, LOAD_SEARCH_POSTS_FAILURE, LOAD_SEARCH_POSTS_REQUEST, LOAD_SEARCH_POSTS_SUCCESS,
   LOAD_SPOST_FAILURE,
   LOAD_SPOST_REQUEST,
   LOAD_SPOST_SUCCESS,
   LOAD_USER_POSTS_FAILURE,
   LOAD_USER_POSTS_REQUEST,
   LOAD_USER_POSTS_SUCCESS,
+  LOAD_WRITE_POST_FAILURE,
+  LOAD_WRITE_POST_REQUEST,
+  LOAD_WRITE_POST_SUCCESS,
   MODIFY_POST_FAILURE,
   MODIFY_POST_REQUEST,
   MODIFY_POST_SUCCESS,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
-  REMOVE_POST_SUCCESS,
+  REMOVE_POST_SUCCESS, SEND_DUMMYPOST_FAILURE, SEND_DUMMYPOST_REQUEST, SEND_DUMMYPOST_SUCCESS,
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
@@ -59,7 +47,7 @@ import {
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
 } from '../reducers/post';
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
+import {ADD_POST_TO_ME, REMOVE_POST_OF_ME} from '../reducers/user';
 
 function addPostAPI(data) {
   return axios.post('/post', data); // formdata 전송
@@ -79,6 +67,29 @@ function* addPost(action) {
   } catch (err) {
     yield put({
       type: ADD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function sendDummyPostAPI(data) {
+  return axios.post('/post/write', data); // formdata 전송
+}
+
+function* sendDummyPost(action) {
+  try {
+    const result = yield call(sendDummyPostAPI, action.data);
+    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
+      type: SEND_DUMMYPOST_SUCCESS,
+      data: result.data,
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: SEND_DUMMYPOST_FAILURE,
       error: err.response.data,
     });
   }
@@ -107,18 +118,20 @@ function* removePost(action) {
   }
 }
 
-function loadPostAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
+function loadPostAPI(data, lastId , boardNum) {
+  console.log(data);
+  return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&boardNum=${boardNum || 0}`); // api 서버 요청은 /user/:userId/posts
 }
 
 function* loadPost(action) {
   try {
-    const result = yield call(loadPostAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
+    const result = yield call(loadPostAPI, action.data, action.lastId , action.boardNum);
+    yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
       type: LOAD_POST_SUCCESS,
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_POST_FAILURE,
       error: err.response.data,
@@ -126,13 +139,97 @@ function* loadPost(action) {
   }
 }
 
-function loadSPostAPI(data) {
-  return axios.get(`/post/${data}`);
+function changeTagAPI(data , boardNum) {
+  console.log(data);
+  return axios.get(`/posts/${encodeURIComponent(data)}/tag?boardNum=${boardNum || 0}`); // api 서버 요청은 /user/:userId/posts
+}
+
+function* changeTag(action) {
+  try {
+    const result = yield call(changeTagAPI, action.data , action.boardNum);
+    yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
+      type: LOAD_CHANGE_TAG_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_CHANGE_TAG_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadSearchPostAPI(select, searchword , local ,boardNum , lastId) {
+  return axios.get(`/posts/search?select=${encodeURIComponent(select)}&local=${encodeURIComponent(local)}
+  &search=${encodeURIComponent(searchword)}&boardNum=${boardNum}&lastId=${lastId||0}`);
+}// api 서버 요청은 GET/posts/search/
+
+function* loadSearchPost(action) {
+  try {
+    const result = yield call(loadSearchPostAPI, action.select, action.search , action.local ,action.boardNum, action.lastId);
+    yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
+      type: LOAD_SEARCH_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_SEARCH_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function rentalPostAPI(data, lastId) { // 대상유저 id
+  console.log(data);
+  return axios.get(`/posts/${(data)}/post?lastId=${lastId || 0}`); // api 서버 요청은 /user/:userId/posts
+}
+
+function* rentalPost(action) {
+  try {
+    const result = yield call(rentalPostAPI, action.data, action.lastId );
+    yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
+      type: LOAD_RENTAL_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_RENTAL_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function writePostAPI(data, lastId) { // 대상유저 id
+  console.log(data);
+  return axios.get(`/posts/${(data)}/post?lastId=${lastId || 0}`); // api 서버 요청은 /user/:userId/posts
+}
+
+function* writePost(action) {
+  try {
+    const result = yield call(writePostAPI, action.data, action.lastId );
+    yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
+      type: LOAD_WRITE_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_WRITE_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadSPostAPI(postId,postBoardNum) {
+  return axios.get(`/post/singlepost?postId=${postId}&postBoardNum=${postBoardNum}`);
 }
 
 function* loadSPost(action) {
   try {
-    const result = yield call(loadSPostAPI, action.data);
+    const result = yield call(loadSPostAPI, action.postId,action.postBoardNum);
     yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
       type: LOAD_SPOST_SUCCESS,
       data: result.data,
@@ -323,120 +420,6 @@ function* modifyPost(action) {
   }
 }
 
-function loadCoopPostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
-}
-
-function* loadCoopPosts(action) {
-  try {
-    const result = yield call(loadCoopPostsAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: LOAD_POST_SUCCESS,
-      data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: LOAD_POST_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
-function loadPlayPostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
-}
-
-function* loadPlayPosts(action) {
-  try {
-    const result = yield call(loadPlayPostsAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: LOAD_POST_SUCCESS,
-      data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: LOAD_POST_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
-function loadoSendPostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
-}
-
-function* loadoSendPosts(action) {
-  try {
-    const result = yield call(loadoSendPostsAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: LOAD_POST_SUCCESS,
-      data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: LOAD_POST_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
-function loadoRecievePostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
-}
-
-function* loadoRecievePosts(action) {
-  try {
-    const result = yield call(loadoRecievePostsAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: LOAD_POST_SUCCESS,
-      data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: LOAD_POST_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-function loadtSendPostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
-}
-
-function* loadtSendPosts(action) {
-  try {
-    const result = yield call(loadtSendPostsAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: LOAD_POST_SUCCESS,
-      data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: LOAD_POST_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
-function loadtRecievePostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`);
-}
-
-function* loadtRecievePosts(action) {
-  try {
-    const result = yield call(loadtRecievePostsAPI, action.lastId);
-    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
-      type: LOAD_POST_SUCCESS,
-      data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: LOAD_POST_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
-
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -450,7 +433,7 @@ function* watchAddComment() {
 }
 
 function* watchLoadPost() {
-  yield throttle(2000, LOAD_POST_REQUEST, loadPost);
+  yield takeLatest( LOAD_POST_REQUEST, loadPost);
 }
 
 function* watchLikePost() {
@@ -485,32 +468,28 @@ function* watchLoadRelatedPost() {
   yield takeLatest(LOAD_RELATED_POST_REQUEST, RelatedPost);
 }
 
-function* watchCoopLoadPost() {
-  yield takeLatest(LOAD_COOP_POST_REQUEST, loadCoopPosts);
-}
-
-function* watchPlayLoadPost() {
-  yield takeLatest(LOAD_PLAY_POST_REQUEST, loadPlayPosts);
-}
-
-function* watchoSendLoadPost() {
-  yield takeLatest(LOAD_O_SEND_POST_REQUEST, loadoSendPosts);
-}
-
-function* watchoRecieveLoadPost() {
-  yield takeLatest(LOAD_O_RECIEVE_POST_REQUEST, loadoRecievePosts);
-}
-
-function* watchtSendLoadPost() {
-  yield takeLatest(LOAD_T_SEND_POST_REQUEST, loadtSendPosts);
-}
-
-function* watchtRecieveLoadPost() {
-  yield takeLatest(LOAD_T_RECIEVE_POST_REQUEST, loadtRecievePosts);
-}
-
 function* watchLoadLikedtagPosts() {
   yield takeLatest(LOAD_LIKED_POSTS_REQUEST, loadLikedPosts);
+}
+
+function* watchLoadRentalPost() {
+  yield takeLatest(LOAD_RENTAL_POST_REQUEST, rentalPost);
+}
+
+function* watchLoadWritePost() {
+  yield takeLatest(LOAD_WRITE_POST_REQUEST, writePost);
+}
+
+function* watchLoadSearchPost() {
+  yield takeLatest(LOAD_SEARCH_POSTS_REQUEST, loadSearchPost);
+}
+
+function* watchSendDummyPost() {
+  yield takeLatest(SEND_DUMMYPOST_REQUEST, sendDummyPost);
+}
+
+function* watchLoadChangeTag() {
+  yield takeLatest(LOAD_CHANGE_TAG_REQUEST, changeTag);
 }
 
 export default function* postSaga() {
@@ -528,11 +507,10 @@ export default function* postSaga() {
     fork(watchModifyPost),
     fork(watchAddComment),
     fork(watchUploadImages),
-    fork(watchPlayLoadPost),
-    fork(watchCoopLoadPost),
-    fork(watchoSendLoadPost),
-    fork(watchoRecieveLoadPost),
-    fork(watchtSendLoadPost),
-    fork(watchtRecieveLoadPost),
+    fork(watchLoadRentalPost),
+    fork(watchLoadWritePost),
+    fork(watchLoadSearchPost),
+    fork(watchSendDummyPost),
+    fork(watchLoadChangeTag),
   ]);
 }
