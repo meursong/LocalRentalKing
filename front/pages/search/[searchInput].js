@@ -40,7 +40,7 @@ function SearchResult() {
       boardNum: boardNum,
       // boardNum 게시판의 select 요소를 기준으로 searchword 와 관련된 local 지역의 데이터를 가져온다.
     });
-  }, [local,select,searchword,boardNum]);
+  },[local,select,searchword,boardNum]);
 
   // useEffect(() => {
   //   const onScroll = () => {

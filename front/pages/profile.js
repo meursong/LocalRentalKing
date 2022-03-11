@@ -12,6 +12,7 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
 import {UPDATE_BOARD} from "../reducers/post";
+import ProfileCard from "../components/ProfileCard";
 
 function Profile() {
   const { me , usersInfo } = useSelector((state) => state.user);
@@ -42,28 +43,7 @@ function Profile() {
 
         <div><br/></div>
 
-        <Card>
-          <Card.Meta
-            avatar={<Avatar>{me.nickname[0]}</Avatar>}
-            title={me.nickname}
-          />
-        </Card>
-
-        {/*<PostCard2/>*/}
-
-        {/*{usersInfo.map((c) => (*/}
-        {/*  <Link href={`/user/${c.id}`} prefetch={false}>*/}
-        {/*    <Card style={style}>*/}
-        {/*      <Card.Meta*/}
-        {/*        avatar={(*/}
-        {/*          <a><Avatar>{c.nickname[0]}</Avatar></a>*/}
-        {/*        )}*/}
-        {/*        title={c.nickname}*/}
-        {/*      />*/}
-        {/*      <br />*/}
-        {/*    </Card>*/}
-        {/*  </Link>*/}
-        {/*))}*/}
+        <ProfileCard/>
 
       </Layout>
     </>
