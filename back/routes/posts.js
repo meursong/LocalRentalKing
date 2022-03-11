@@ -12,6 +12,7 @@ const {
   TogetherPostImage,
   TogetherPostComment,
 } = require("../models");
+const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
@@ -19,14 +20,13 @@ const router = express.Router();
 //router.get("/", async (req, res, next) => {
 
 router.get("/:tag/post", async (req, res, next) => {
-  //게시판 처음 들어가면 10개 보여줌 작성자/ 컨텐츠 /이미지도 보여줌
   const boardNum = req.query.boardNum;
   const lastId = req.query.lastId;
   const tag = decodeURIComponent(req.params.tag);
   console.log(lastId);
 
   try {
-    const where = {}; // db에서 프론트가 전송한 아이디를 기반으로 유저id를 찾아낸다
+    const where = {};
     if (tag == "전체") {
       if (parseInt(lastId, 10)) {
         //초기 로딩이 아닐때
@@ -52,23 +52,21 @@ router.get("/:tag/post", async (req, res, next) => {
     }
     {
       if (boardNum == 1 || boardNum == 2) {
-        //들어온 보드넘이 1혹은 2라면
+        //물건빌려줘 or 물건빌려줄게
         const prodposts = await ProdPost.findAll({
-          //ProdPost테이블에서 찾을거임
-
           where,
-          limit: 10, //10개만 가져와라
-          order: [["createdAt", "DESC"]], //생성 시간에 따라서 내림차순
+          limit: 10, //10개씩
+          order: [["createdAt", "DESC"]], //생성시간 기준 내림차순
 
           include: [
             {
-              model: ProdPostImage,
+              model: ProdPostImage, //사진
             },
             {
-              model: ProdPostComment,
+              model: ProdPostComment, //댓글
               include: [
                 {
-                  model: User, //댓글 작성자 정보까지 보내도록 수정했습니다.
+                  model: User, // 댓글 작성 유저
                   attributes: ["id", "nickname"],
                 },
               ],
@@ -78,11 +76,10 @@ router.get("/:tag/post", async (req, res, next) => {
         console.log(prodposts);
         res.status(200).json(prodposts);
       } else if (boardNum == 3 || boardNum == 4) {
-        //보드넘이3 혹은 4라면->힘을빌려줘,힘을 빌려줄게
+        //힘을빌려줘 or 힘을 빌려줄게
         const powerposts = await PowerPost.findAll({
-          //PowerPost테이블에서 찾을거임
           where,
-          limit: 10, //10개만 가져와라
+          limit: 10,
           order: [["createdAt", "DESC"]],
           include: [
             {
@@ -92,7 +89,7 @@ router.get("/:tag/post", async (req, res, next) => {
               model: PowerPostComment,
               include: [
                 {
-                  model: User, //댓글 작성자
+                  model: User,
                   attributes: ["id", "nickname"],
                 },
               ],
@@ -101,11 +98,10 @@ router.get("/:tag/post", async (req, res, next) => {
         });
         res.status(200).json(powerposts);
       } else if (boardNum == 5) {
-        //보드넘이5라면->같이하자
+        //같이하자
         const togetherposts = await TogetherPost.findAll({
-          //같이하자 테이블에서 찾을거임
           where,
-          limit: 10, //10개만 가져와라
+          limit: 10,
           order: [["createdAt", "DESC"]],
           include: [
             {
@@ -115,7 +111,7 @@ router.get("/:tag/post", async (req, res, next) => {
               model: TogetherPostComment,
               include: [
                 {
-                  model: User, //댓글 작성자
+                  model: User,
                   attributes: ["id", "nickname"],
                 },
               ],
@@ -135,7 +131,7 @@ router.get("/:tag/tag", async (req, res, next) => {
   const boardNum = req.query.boardNum;
   const tag = decodeURIComponent(req.params.tag);
   try {
-    const where = {}; // db에서 프론트가 전송한 아이디를 기반으로 유저id를 찾아낸다
+    const where = {};
     if (tag == "전체") {
       // where.user_location = { [Op.eq]: req.body.location };
       where.boardNum = { [Op.eq]: boardNum };
@@ -335,7 +331,6 @@ router.get("/:tag/tag", async (req, res, next) => {
 
 // =========================== 회원 닉네임으로 게시물 조회==============================
 router.get("/postnick", async (req, res, next) => {
-  //게시판 처음 들어가면 10개 보여줌 작성자/ 컨텐츠 /이미지도 보여줌
   const boardNum = req.query.boardNum;
   const nickname = req.query.nickname;
 
@@ -429,113 +424,27 @@ router.get("/postnick", async (req, res, next) => {
   }
 });
 
-// =========================== 글 제목으로 게시물 조회==============================
-router.get("/posttitle", async (req, res, next) => {
-  //게시판 처음 들어가면 10개 보여줌 작성자/ 컨텐츠 /이미지도 보여줌
+// ================  [글제목/글내용] 게시물 조회  ====================
+router.get("/search", isLoggedIn, async (req, res, next) => {
+  const select = decodeURIComponent(req.query.select);
+  const searchword = decodeURIComponent(req.query.searchword);
+  //const local = req.query.local; //원활한 테스트를 위해 임시적으로 지역조건검색은 막아놨습니다.
   const boardNum = req.query.boardNum;
-  const title = req.query.title;
+  //const lastId = req.params.lastId; //원활한 테스트를 위해 임시적으로 인피니트 스크롤방식은 막아놨습니다.
 
   try {
     const where = {};
 
-    where.boardNum = { [Op.eq]: boardNum };
-    where.title = { [Op.substring]: title }; // %like%
-
-    {
-      if (boardNum == 1 || boardNum == 2) {
-        //들어온 보드넘이 1혹은 2라면
-        const prodposts = await ProdPost.findAll({
-          //ProdPost테이블에서 찾을거임
-
-          where,
-          order: [["createdAt", "DESC"]], //생성 시간에 따라서 내림차순
-
-          include: [
-            {
-              model: ProdPostImage,
-            },
-            {
-              model: ProdPostComment,
-              include: [
-                {
-                  model: User, //댓글 작성자
-                  attributes: ["id", "nickname"],
-                },
-              ],
-            },
-          ],
-        });
-        console.log(prodposts);
-        res.status(200).json(prodposts);
-      } else if (boardNum == 3 || boardNum == 4) {
-        //보드넘이3 혹은 4라면->힘을빌려줘,힘을 빌려줄게
-        const powerposts = await PowerPost.findAll({
-          //PowerPost테이블에서 찾을거임
-          where,
-          order: [["createdAt", "DESC"]],
-          include: [
-            {
-              model: PowerPostImage,
-            },
-            {
-              model: PowerPostComment,
-              include: [
-                {
-                  model: User, //댓글 작성자
-                  attributes: ["id", "nickname"],
-                },
-              ],
-            },
-          ],
-        });
-        res.status(200).json(powerposts);
-      } else if (boardNum == 5) {
-        //보드넘이5라면->같이하자
-        const togetherposts = await TogetherPost.findAll({
-          //같이하자 테이블에서 찾을거임
-          where,
-          order: [["createdAt", "DESC"]],
-          include: [
-            {
-              model: TogetherPostImage,
-            },
-            {
-              model: TogetherPostComment,
-              include: [
-                {
-                  model: User, //댓글 작성자
-                  attributes: ["id", "nickname"],
-                },
-              ],
-            },
-          ],
-        });
-        res.status(200).json(togetherposts);
-      }
+    if (select == "글제목") {
+      where.title = { [Op.substring]: searchword }; // Like '%searchword%'
+      //where.local = { [Op.eq]: local };
+    } else if (select == "글내용") {
+      where.content = { [Op.substring]: searchword }; // Like '%searchword%'
+      //where.local = { [Op.eq]: local };
     }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-// =========================== content로 게시물 조회==============================
-router.get("/postcontent", async (req, res, next) => {
-  const boardNum = req.query.boardNum;
-  const content = req.query.content;
-
-  try {
-    const where = {};
-
-    where.boardNum = { [Op.eq]: boardNum };
-    where.content = { [Op.substring]: content };
-
     {
       if (boardNum == 1 || boardNum == 2) {
-        //들어온 보드넘이 1혹은 2라면
         const prodposts = await ProdPost.findAll({
-          //ProdPost테이블에서 찾을거임
-
           where,
           order: [["createdAt", "DESC"]], //생성 시간에 따라서 내림차순
 
@@ -557,9 +466,8 @@ router.get("/postcontent", async (req, res, next) => {
         console.log(prodposts);
         res.status(200).json(prodposts);
       } else if (boardNum == 3 || boardNum == 4) {
-        //보드넘이3 혹은 4라면->힘을빌려줘,힘을 빌려줄게
+        //힘을빌려줘 or 힘을 빌려줄게
         const powerposts = await PowerPost.findAll({
-          //PowerPost테이블에서 찾을거임
           where,
           order: [["createdAt", "DESC"]],
           include: [
@@ -579,9 +487,8 @@ router.get("/postcontent", async (req, res, next) => {
         });
         res.status(200).json(powerposts);
       } else if (boardNum == 5) {
-        //보드넘이5라면->같이하자
+        //같이하자
         const togetherposts = await TogetherPost.findAll({
-          //같이하자 테이블에서 찾을거임
           where,
           order: [["createdAt", "DESC"]],
           include: [
