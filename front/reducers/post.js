@@ -181,7 +181,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.searchPostError = null;
       break;
     case LOAD_SEARCH_POSTS_SUCCESS:
-      draft.mainPosts = draft.mainPosts.concat(action.data);
+      draft.mainPosts = action.data;
       draft.searchPostLoading = false;
       draft.searchPostDone = true;
       draft.hasMorePost = action.data.length === 10;
