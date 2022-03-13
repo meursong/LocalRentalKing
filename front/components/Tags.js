@@ -19,6 +19,7 @@ function Tags({tagsData , boardNum}) {
     dispatch({
       type:LOAD_CHANGE_TAG_REQUEST,
       data:nextSelectedTags[0], // 현재 선택한 태그명
+      boardNum:boardNum,
     })
     dispatch({
       type: UPDATE_TAG,

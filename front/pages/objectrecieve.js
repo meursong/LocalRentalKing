@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
 import wrapper from '../store/configureStore';
 import Head from 'next/head';
 import {useDispatch, useSelector} from 'react-redux';
-import { END } from 'redux-saga';
-import { useInView } from "react-intersection-observer";
+import {END} from 'redux-saga';
+import {useInView} from "react-intersection-observer";
 
 import AppLayout from '../components/AppLayout/AppLayout';
 
-import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
+import {LOAD_MY_INFO_REQUEST} from '../reducers/user';
 import {LOAD_O_RECIEVE_POST_REQUEST, LOAD_POST_REQUEST, UPDATE_BOARD, UPDATE_TAG} from '../reducers/post';
 import {Button} from "antd";
 import Tags from "../components/Tags";
@@ -24,18 +24,45 @@ const PostCarDiv2 = styled.div`
   // background:red;
   flex-wrap: wrap;
   // justify-content:center;
-  
+
 `;
 
 function ObjectRecieve() {
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
-  const { selectedTag,mainPosts, hasMorePost, loadPostLoading, id , object_TagsData } = useSelector((state) => state.post);
+  const {me , location} = useSelector((state) => state.user);
+  const {
+    selectedTag,
+    mainPosts,
+    hasMorePost,
+    loadPostLoading,
+    id,
+    object_TagsData
+  } = useSelector((state) => state.post);
   const [view, setView] = useState(true);
 
   const onSwitch = useCallback(() => {
     setView(!view);
   }, [view]);
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    dispatch({
+      type: UPDATE_TAG,
+      data: "전체",
+    });
+    dispatch({
+      type: UPDATE_BOARD,
+      data: 1,
+    });
+    dispatch({
+      type: LOAD_POST_REQUEST,
+      data: "전체",
+      boardNum: 1,
+      location:location,
+    });
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -45,9 +72,9 @@ function ObjectRecieve() {
           console.log(selectedTag);
           dispatch({
             type: LOAD_POST_REQUEST,
-            data:selectedTag,
-            boardNum:1,
-            lastId:lastId,
+            data: selectedTag,
+            boardNum: 1,
+            lastId: lastId,
           });
         } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
       }
@@ -56,7 +83,7 @@ function ObjectRecieve() {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [ hasMorePost, loadPostLoading , selectedTag]);
+  }, [hasMorePost, loadPostLoading, selectedTag]);
 
   if (!me) {
     return '내 정보 로딩중...';
@@ -76,41 +103,14 @@ function ObjectRecieve() {
       ) : (
         <Layout>
           <PostCarDiv2>
-          <Tags tagsData={object_TagsData} boardNum={1}/>
-          <Button onClick={onSwitch}>전환스위치</Button>
-          {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+            <Tags tagsData={object_TagsData} boardNum={1}/>
+            <Button onClick={onSwitch}>전환스위치</Button>
+            {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
         </Layout>
       )}
     </>
   );
 }
-
-export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = cookie;
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
-    axios.defaults.headers.Cookie = cookie;
-  }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: UPDATE_TAG,
-    data:"전체",
-  });
-  context.store.dispatch({
-    type: UPDATE_BOARD,
-    data: 1,
-  });
-  context.store.dispatch({
-    type: LOAD_POST_REQUEST,
-    data:"전체",
-    boardNum:1,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
 
 export default ObjectRecieve;

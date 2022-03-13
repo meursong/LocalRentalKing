@@ -55,6 +55,7 @@ function LoginForm() {
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
     dispatch(loginRequestAction({email, password}));
+    // Router.push('/',undefined,{ shallow:true });
   }, [email, password]);
 
   const onFinish = (values) => {
@@ -114,6 +115,9 @@ function LoginForm() {
               <Button type="primary" htmlType="submit">
                 로그인
               </Button>
+              <Link href="/signup">
+                  <Button>회원가입</Button>
+              </Link>
             </Form.Item>
           </Form>
         </ContainerDiv>

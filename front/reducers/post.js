@@ -159,6 +159,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case UPDATE_BOARD:
       draft.boardNum = action.data;
+      draft.mainPosts.length = 0 ;
       break;
     case UPDATE_CHANGE_TAG_REQUEST:
       draft.serchPosts = draft.mainPosts.filter((v) => v.category === action.data);
@@ -318,14 +319,17 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_POST_SUCCESS:
       if (draft.mainPosts.length > 0) { // SSR로 처음에 들고오는 경우가 아닐때
         if (draft.mainPosts[0].category !== action.data[0].category //카테고리 , 지역이 일치하지 않을때
-          && draft.mainPosts[0].location !== action.data[0].location) {
+          || draft.mainPosts[0].location !== action.data[0].location) {
           draft.mainPosts = action.data; // 기존 배열 밀어버리고 새롭게 10개씩 넣는다.
+          console.log('밀고 새로넣었음');
           // draft.mainPosts = draft.mainPosts.concat(action.data);
         } else {
+          console.log('쌓는중');
           draft.mainPosts = draft.mainPosts.concat(action.data); // 같은속성의 게시물을 쌓고있는 경우
         }
       }
       else {
+        console.log('SSR OR NEW 10 POSTS');
         draft.mainPosts = draft.mainPosts.concat(action.data); // SSR로 처음에 들고올때
       }
       draft.loadPostLoading = false;

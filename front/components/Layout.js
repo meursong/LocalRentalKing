@@ -220,7 +220,7 @@ const C = styled.div`
 
 function Layout({children}) {
   const dispatch = useDispatch();
-  const {me, local} = useSelector((state) => state.user);
+  const {me, location} = useSelector((state) => state.user);
   const [isOpen, setMenu] = useState(false);
   const [profile, SetProfile] = useState(false);
   const [place, SetPlace] = useState(false);
@@ -259,20 +259,20 @@ function Layout({children}) {
   const goProfile = () => {
     SetProfile(true);
     console.log(profile);
-    Router.push('/profile');
+    Router.push('/profile',undefined,{ shallow:true });
   }
 
   const onWrite = useCallback(() => {
-    Router.push('/write');
+    Router.push('/write',undefined,{ shallow:true });
   }, []);
 
   const onLogIn = useCallback(() => {
-    Router.push('/loginpage');
+    Router.push('/loginpage',undefined,{ shallow:true });
   }, []);
 
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
-    Router.push('/');
+    Router.push('/', undefined, { shallow: true });
   }, []);
 
   const onSearching = useCallback(() => {
@@ -280,7 +280,7 @@ function Layout({children}) {
       type:UPDATE_SEARCH,
       data:{select:select, searchword:searchword,}
     });
-    Router.push(`/search/${select}*${searchword}`);
+    Router.push(`/search/${select}*${searchword}`, null, { shallow: true });
   }, [select,searchword]);
 
   return (
@@ -293,16 +293,18 @@ function Layout({children}) {
               {!me ?
                 (<div onClick={onLogIn}>로그인/회원가입</div>) :
                 (<div onClick={onLogOut}>로그아웃</div>)}
-              <div onClick={goProfile} style={{paddingLeft: "20px"}}>
+              <Link href='/profile'>
+              <div style={{paddingLeft: "20px"}}>
                 내 프로필
               </div>
+              </Link>
             </TopDiv>
           </Topbar>
           <NavBar>
             <NavBarDiv>
               <MenuDiv>
                 <LogoDiv>
-                  <Navbar.Brand href="/">
+                    <Link href='/'>
                     <img
                       alt=""
                       src={logo}
@@ -311,7 +313,7 @@ function Layout({children}) {
                       className="d-inline-block align-top"
                       style={{paddingTop: "10px"}}
                     />
-                  </Navbar.Brand>
+                    </Link>
                 </LogoDiv>
                 <MenuA style={{paddingBottom: "20px"}}>
                   {!isOpen ?
@@ -393,7 +395,7 @@ function Layout({children}) {
             <div>
               <SearchLocation/></div>:
             <LocalDiv>
-              {local}
+              {location}
             </LocalDiv>
           }
         </PlaceDiv>

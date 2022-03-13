@@ -26,7 +26,7 @@ function SearchResult() {
     mainPosts, hasMorePost, loadPostLoading, boardNum, object_TagsData,
     talent_TagsData, cooperate_tagsData, play_tagsData
   } = useSelector((state) => state.post);
-  const {userInfo, me, local} = useSelector((state) => state.user);
+  const {userInfo, me, location} = useSelector((state) => state.user);
 
   const categoryAndsearch = searchInput.split('*');
   const select = categoryAndsearch[0];
@@ -63,19 +63,19 @@ function SearchResult() {
 
 
   useEffect(() => {
-    console.log(local);
+    console.log(location);
     console.log(select);
     console.log(searchword);
     console.log(boardNum);
     dispatch({ // 검색어를 제목에서 포함하며, 지역이 일치하는 게시물들을 10개씩요청
       type: LOAD_SEARCH_POSTS_REQUEST,
-      local: local,
+      location: location,
       select: select,
       searchword: searchword,
       boardNum: boardNum,
       // boardNum 게시판의 select 요소를 기준으로 searchword 와 관련된 local 지역의 데이터를 가져온다.
     });
-  }, [local, select, searchword, boardNum]);
+  }, [location, select, searchword, boardNum]);
 
   // useEffect(() => {
   //   const onScroll = () => {
@@ -83,7 +83,7 @@ function SearchResult() {
   //       if (hasMorePost && !loadPostLoading) {
   //         dispatch({ // 검색어를 제목에서 포함하며, 지역이 일치하는 게시물들을 10개씩요청
   //           type: LOAD_SEARCH_POSTS_REQUEST,
-  //           local: local,
+  //           location: location,
   //           select : select,
   //           search: search,
   //         });

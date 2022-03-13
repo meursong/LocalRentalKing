@@ -70,7 +70,7 @@ useEffect(() => {
       type:UPDATE_SEARCH,
       data:{select:select, searchword:searchword,}
     });
-    Router.push(`/search/${select}*${searchword}`);
+    Router.push(`/search/${select}*${searchword}`,undefined,{ shallow:true });
   }, [select,searchword]);
 
   return (

@@ -5,7 +5,7 @@ import {UPDATE_LOCAL} from "../reducers/user";
 
 const SearchLocation = () => {
   const dispatch = useDispatch();
-  const {local} = useSelector((state)=>state.user);
+  const {location} = useSelector((state)=>state.user);
   const [address, setAddress] = useState("");
 
   const handleComplete = useCallback((data) => {
@@ -25,10 +25,12 @@ const SearchLocation = () => {
     },[address]);
 
   useEffect(() => {
-    dispatch({
-      type: UPDATE_LOCAL,
-      data: address,
-    });
+    if(address !== "") {
+      dispatch({
+        type: UPDATE_LOCAL,
+        data: address,
+      });
+    }
   }, [address]);
 
   return (
@@ -36,7 +38,7 @@ const SearchLocation = () => {
       <DaumPostcode
         onComplete={handleComplete}
         adress={address}/>
-      <h2>{address}</h2>
+      <h2>{location}</h2>
     </>
   );
 

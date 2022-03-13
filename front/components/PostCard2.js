@@ -40,7 +40,7 @@ const PostCardDiv2 = styled.div`
 function PostCard2({post}) {
 
     const onPage = useCallback(() => {
-      Router.push(`/post/${post.id}*${post.boardNum}`);
+      Router.push(`/post/${post.id}*${post.boardNum}`,undefined,{ shallow:true });
     }, [post.id]);
 
   return (

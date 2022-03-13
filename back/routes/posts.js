@@ -23,7 +23,9 @@ router.get("/:tag/post", async (req, res, next) => {
   const boardNum = req.query.boardNum;
   const lastId = req.query.lastId;
   const tag = decodeURIComponent(req.params.tag);
+  const location = decodeURIComponent(req.query.location);
   console.log(lastId);
+  console.log(location);
 
   try {
     const where = {};
@@ -36,6 +38,7 @@ router.get("/:tag/post", async (req, res, next) => {
       } else {
         // where.user_location = { [Op.eq]: req.body.location };
         where.boardNum = { [Op.eq]: boardNum };
+        where.user_location = { [Op.eq]: location };
       }
     } else {
       if (parseInt(lastId, 10)) {
@@ -130,6 +133,10 @@ router.get("/:tag/post", async (req, res, next) => {
 router.get("/:tag/tag", async (req, res, next) => {
   const boardNum = req.query.boardNum;
   const tag = decodeURIComponent(req.params.tag);
+  console.log('일로들어오긴했지만');
+  console.log(tag);
+  console.log(boardNum);
+
   try {
     const where = {};
     if (tag == "전체") {

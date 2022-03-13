@@ -118,14 +118,14 @@ function* removePost(action) {
   }
 }
 
-function loadPostAPI(data, lastId , boardNum,local) {
+function loadPostAPI(data, lastId , boardNum, location) {
   console.log(data);
-  return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&boardNum=${boardNum || 0}&local=${encodeURIComponent(local)}`); // api 서버 요청은 /user/:userId/posts
+  return axios.get(`/posts/${encodeURIComponent(data)}/post?lastId=${lastId || 0}&boardNum=${boardNum || 0}&location=${encodeURIComponent(location)}`); // api 서버 요청은 /user/:userId/posts
 }
 
 function* loadPost(action) {
   try {
-    const result = yield call(loadPostAPI, action.data, action.lastId , action.boardNum,action.location);
+    const result = yield call(loadPostAPI, action.data, action.lastId , action.boardNum, action.location);
     yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
       type: LOAD_POST_SUCCESS,
       data: result.data,
@@ -160,14 +160,14 @@ function* changeTag(action) {
   }
 }
 
-function loadSearchPostAPI(select, searchword , local ,boardNum , lastId) {
-  return axios.get(`/posts/search?select=${encodeURIComponent(select)}&local=${encodeURIComponent(local)}
+function loadSearchPostAPI(select, searchword , location ,boardNum , lastId) {
+  return axios.get(`/posts/search?select=${encodeURIComponent(select)}&location=${encodeURIComponent(location)}
   &searchword=${encodeURIComponent(searchword)}&boardNum=${boardNum}&lastId=${lastId||0}`);
 }// api 서버 요청은 GET/posts/search/
 
 function* loadSearchPost(action) {
   try {
-    const result = yield call(loadSearchPostAPI, action.select, action.searchword , action.local ,action.boardNum, action.lastId);
+    const result = yield call(loadSearchPostAPI, action.select, action.searchword , action.location ,action.boardNum, action.lastId);
     yield put({ // put이 액션을 dispatch하는 역할과 비슷하게 본다
       type: LOAD_SEARCH_POSTS_SUCCESS,
       data: result.data,

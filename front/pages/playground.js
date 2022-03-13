@@ -28,6 +28,25 @@ function PlayGround() {
   }, [me && me.id]);
 
   useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    dispatch({
+      type: UPDATE_TAG,
+      data: "전체",
+    });
+    dispatch({
+      type: UPDATE_BOARD,
+      data: 6,
+    });
+    dispatch({
+      type: LOAD_POST_REQUEST,
+      data: "전체",
+      boardNum: 6,
+    });
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => {
       if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
         if (hasMorePost && !loadPostLoading) {
@@ -64,32 +83,5 @@ function PlayGround() {
     </>
   );
 }
-
-export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = cookie;
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
-    axios.defaults.headers.Cookie = cookie;
-  }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: UPDATE_TAG,
-    data:"전체",
-  });
-  context.store.dispatch({
-    type: UPDATE_BOARD,
-    data: 6,
-  });
-  context.store.dispatch({
-    type: LOAD_POST_REQUEST,
-    data:"전체",
-    boardNum:6,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
 
 export default PlayGround;

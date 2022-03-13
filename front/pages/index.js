@@ -27,9 +27,9 @@ const PostCarDiv2 = styled.div`
   
 `;
 
-function Home() {
+function SSRPAGE() {
   const dispatch = useDispatch();
-  const {me, local} = useSelector((state) => state.user);
+  const {me, location} = useSelector((state) => state.user);
   const {
     mainPosts,
     hasMorePost,
@@ -45,33 +45,48 @@ function Home() {
     setView(!view);
   }, [view]);
 
-  useEffect(()=>{
-    if(me && local==="없음")
-    dispatch({
-      type:UPDATE_LOCAL,
-      data:me.location,
-    })
-  },[me]);
+  useEffect(() => {
+  dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+  }, []);
 
   useEffect(() => {
-    const onScroll = () => {
-      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
-        if (hasMorePost && !loadPostLoading) {
-          const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
-          dispatch({
-            type: LOAD_POST_REQUEST,
-            data: selectedTag,
-            boardNum: 1,
-            lastId: lastId,
-          });
-        } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
-      }
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, [hasMorePost, loadPostLoading]);
+    if(me) {
+      dispatch({
+        type: UPDATE_LOCAL,
+        data: me.location,
+      });
+    }
+  }, [me]);
+
+  // useEffect(()=>{
+  //   dispatch({
+  //     type: LOAD_POST_REQUEST,
+  //     data: "전체",
+  //     boardNum: 1,
+  //   });
+  // },[]);
+
+  // useEffect(() => {
+  //   const onScroll = () => {
+  //     if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
+  //       if (hasMorePost && !loadPostLoading) {
+  //         const lastId = mainPosts[mainPosts.length - 1]?.id; // 인피니트 스크롤 구현을 위해 프론트 서버의 현재 렌더링중인 게시글들중 가장 아래 게시물의 게시넘버를 lastId로
+  //         dispatch({
+  //           type: LOAD_POST_REQUEST,
+  //           data: selectedTag,
+  //           boardNum: 1,
+  //           lastId: lastId,
+  //         });
+  //       } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
+  //     }
+  //   };
+  //   window.addEventListener('scroll', onScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', onScroll);
+  //   };
+  // }, [hasMorePost, loadPostLoading]);
 
   return (
     <div>
@@ -103,9 +118,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     axios.defaults.headers.Cookie = cookie;
   }
   context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
     type: UPDATE_TAG,
     data: "전체",
   });
@@ -122,4 +134,4 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   await context.store.sagaTask.toPromise();
 });
 
-export default Home;
+export default SSRPAGE;

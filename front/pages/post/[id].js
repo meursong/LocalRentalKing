@@ -7,12 +7,14 @@ import {Avatar, Button, Card, Form} from "antd";
 import PostImages from "../../components/PostImages";
 import Link from 'next/link';
 import Layout from "../../components/Layout";
+import Reply from "../../components/DH/Reply";
+import moment from "moment";
 
 function PostPage() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = router.query; // [tag].js 파일 명의 [] 부분이 들어간다
-  const { singlePost,mainPosts, hasMorePost, loadPostLoading , local } = useSelector((state) => state.post);
+  const { singlePost,mainPosts, hasMorePost, loadPostLoading , location } = useSelector((state) => state.post);
   const { userInfo, me } = useSelector((state) => state.user);
 
   const idAndBoardNum = id.split('*');
@@ -29,7 +31,21 @@ function PostPage() {
       postId:postId,
       postBoardNum:postBoardNum,
     });
-  },[]);
+  },[postId,postBoardNum]);
+
+  useEffect(()=>{
+    setTimeout(() => {
+      if(singlePost === null)
+      {
+        setPostId((prev)=>prev-1);
+        dispatch({
+          type:LOAD_SPOST_REQUEST,
+          postId:postId2,
+          postBoardNum:postBoardNum,
+        });
+      }
+    }, 500);
+  },[postId2,postBoardNum2]);
 
   const prevPage = useCallback(() => {
     setPostId((prev)=>prev-1);
@@ -76,6 +92,7 @@ function PostPage() {
                 </Card>
               )
             }
+            <Reply/>
           </div>
         }
         {singlePost.boardNum === 2  &&
@@ -95,6 +112,7 @@ function PostPage() {
               </Card>
             )
           }
+          <Reply/>
         </div>
         }
         {singlePost.boardNum === 3  &&
