@@ -27,7 +27,7 @@ router.post("/", async (req, res, next) => {
     const message = await Message.create({
       title: req.body.title,
       content: req.body.content,
-      isRead: false,
+      isRead: false, // default - 읽지않음
       send_userId: req.body.send_userId,
       receive_userId: req.body.receive_userId,
     });

@@ -32,4 +32,9 @@ module.exports = class Message extends Sequelize.Model {
       }
     );
   }
+  static associate(db) {
+    db.Message.belongsTo(db.ProdPost);
+    db.Message.belongsTo(db.PowerPost);
+    db.Message.belongsTo(db.TogetherPost);
+  }
 };
