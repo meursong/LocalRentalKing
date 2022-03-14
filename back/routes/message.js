@@ -1,0 +1,41 @@
+const express = require("express");
+const {
+  User,
+  ProdPost,
+  ProdPostImage,
+  ProdPostComment,
+  PowerPost,
+  PowerPostImage,
+  PowerPostComment,
+  TogetherPost,
+  TogetherPostImage,
+  TogetherPostComment,
+  Message,
+} = require("../models");
+const { isLoggedIn } = require("./middlewares");
+const router = express.Router();
+
+// <------------ 쪽지 보내기(회원 아이디로 dm) ------------>
+router.post("/", async (req, res, next) => {
+  //   const title = req.body.title;
+  //   const content = req.body.content;
+  //   const isRead = false;
+  //   const send_userId = req.body.send_userId;
+  //   const receive_userId = req.body.receive_userId;
+
+  try {
+    const message = await Message.create({
+      title: req.body.title,
+      content: req.body.content,
+      isRead: false,
+      send_userId: req.body.send_userId,
+      receive_userId: req.body.receive_userId,
+    });
+    res.status(201).json(message);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+module.exports = router;
