@@ -11,7 +11,7 @@ module.exports = class ProdPost extends Sequelize.Model {
         category: {
           //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분 // 글자로
           type: Sequelize.STRING(20),
-          allowNull: true,
+          allowNull: false,
         },
         title: {
           type: Sequelize.STRING(50),
@@ -19,14 +19,18 @@ module.exports = class ProdPost extends Sequelize.Model {
         },
         content: {
           type: Sequelize.STRING(500),
-          allowNull: false,
+          allowNull: true,
         },
         price: {
           type: Sequelize.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         user_nickname: {
           type: Sequelize.STRING(30),
+          allowNull: false,
+        },
+        user_location: {
+          type: Sequelize.STRING(100),
           allowNull: false,
         },
       },

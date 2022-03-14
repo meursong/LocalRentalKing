@@ -16,10 +16,19 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
 import SearchBar from "../components/SearchBar";
+import styled from "styled-components";
 
-function Home() {
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  // justify-content:center;
+`;
+
+function SSRPAGE() {
   const dispatch = useDispatch();
-  const {me, local} = useSelector((state) => state.user);
+  const {me, location} = useSelector((state) => state.user);
   const {
     mainPosts,
     hasMorePost,
@@ -35,13 +44,43 @@ function Home() {
     setView(!view);
   }, [view]);
 
-  useEffect(()=>{
-    if(me && local==="없음")
-    dispatch({
-      type:UPDATE_LOCAL,
-      data:me.location,
-    })
-  },[me]);
+  useEffect(() => {
+  dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+  }, []);
+
+  useEffect(() => {
+    if(me) {
+      dispatch({
+        type: UPDATE_LOCAL,
+        data: me.location,
+      });
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if(me) {
+      dispatch({
+        type: UPDATE_TAG,
+        data: "전체",
+      });
+      dispatch({
+        type: LOAD_POST_REQUEST,
+        data: "전체",
+        boardNum: 1,
+        location: location,
+      });
+    }
+  }, []);
+
+  // useEffect(()=>{
+  //   dispatch({
+  //     type: LOAD_POST_REQUEST,
+  //     data: "전체",
+  //     boardNum: 1,
+  //   });
+  // },[]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -53,6 +92,7 @@ function Home() {
             data: selectedTag,
             boardNum: 1,
             lastId: lastId,
+            location:location,
           });
         } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
       }
@@ -72,10 +112,13 @@ function Home() {
           {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
         </Layout>
       ) : (
+
         <Layout>
+          <PostCarDiv2>
           <Tags tagsData={object_TagsData} boardNum={1}/>
           <Button onClick={onSwitch}>전환스위치</Button>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+        </PostCarDiv2>
         </Layout>
       )}
     </div>
@@ -89,9 +132,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
     axios.defaults.headers.Cookie = cookie;
   }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
   context.store.dispatch({
     type: UPDATE_TAG,
     data: "전체",
@@ -109,4 +149,4 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   await context.store.sagaTask.toPromise();
 });
 
-export default Home;
+export default SSRPAGE;

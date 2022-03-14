@@ -15,6 +15,16 @@ import PostCard1 from "../components/PostCard1";
 import Layout from "../components/Layout";
 import {Button} from "antd";
 import PostCard2 from "../components/PostCard2";
+import styled from "styled-components";
+
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  // justify-content:center;
+  
+`;
 
 function Cooperate() {
   const dispatch = useDispatch();
@@ -26,6 +36,25 @@ function Cooperate() {
   const onSwitch = useCallback(() => {
     setView(!view);
   }, [view]);
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    dispatch({
+      type: UPDATE_TAG,
+      data: "전체",
+    });
+    dispatch({
+      type: UPDATE_BOARD,
+      data: 5,
+    });
+    dispatch({
+      type: LOAD_POST_REQUEST,
+      data: "전체",
+      boardNum: 5,
+    });
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -65,40 +94,15 @@ function Cooperate() {
         </Layout>
       ) : (
         <Layout>
+          <PostCarDiv2>
           <Tags tagsData={cooperate_tagsData} boardNum={5}/>
           <Button onClick={onSwitch}>전환스위치</Button>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+          </PostCarDiv2>
         </Layout>
       )}
     </>
   );
 }
-
-export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = cookie;
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
-    axios.defaults.headers.Cookie = cookie;
-  }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: UPDATE_TAG,
-    data:"전체",
-  });
-  context.store.dispatch({
-    type: UPDATE_BOARD,
-    data: 5,
-  });
-  context.store.dispatch({
-    type: LOAD_POST_REQUEST,
-    data:"전체",
-    boardNum:5,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
 
 export default Cooperate;
