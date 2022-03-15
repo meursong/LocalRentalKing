@@ -130,7 +130,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
               TogetherPostImage.create({ src: image })
             )
           );
-          await togetherPost.addTogetherPosTImages(images);
+          await togetherPost.addTogetherPostImages(images);
         } else {
           //이미지 하나
           const image = await TogetherPostImage.create({ src: req.body.image });
@@ -266,7 +266,7 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
       }
       const comment = await ProdPostComment.create({
         content: req.body.content,
-        PostId: req.body.postId,
+        ProdPostId: req.body.postId,
         UserId: req.body.id,
       });
       const fullComment = await ProdPostComment.findOne({
@@ -293,7 +293,7 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
       }
       const comment = await PowerPostComment.create({
         content: req.body.content,
-        PostId: req.body.postId,
+        PowerPostId: req.body.postId,
         UserId: req.body.id,
       });
       const fullComment = await PowerPostComment.findOne({
@@ -320,7 +320,7 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
       }
       const comment = await TogetherPostComment.create({
         content: req.body.content,
-        PostId: req.body.postId,
+        TogetherPostId: req.body.postId,
         UserId: req.body.id,
       });
       const fullComment = await TogetherPostComment.findOne({
@@ -366,17 +366,18 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
         }
       );
+      const post = await ProdPost.findOne({ where: { id: postid } });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
           //이미지가 여러개
           const images = await Promise.all(
-            req.body.image.map((image) => ProdPostImage.create({ src: image }))
+            req.body.image.map((image) => ProdPostImage.update({ src: image }))
           );
-          await prodPost.addProdPostImages(images);
+          await post.addProdPostImages(images);
         } else {
           //이미지가 하나
-          const image = await ProdPostImage.create({ src: req.body.image });
-          await prodPost.addProdPostImages(image);
+          const image = await ProdPostImage.update({ src: req.body.image });
+          await post.addProdPostImages(image);
         }
       }
       res.status(200).json("게시글 수정 완료");

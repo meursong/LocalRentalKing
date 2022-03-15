@@ -12,8 +12,14 @@ const gridStyle = {
   margin: "10px",
 };
 
-const statusStyle = {
-  backgroundColor: "yellow",
+const tradeDoneGridStyle = {
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  cursor: "pointer",
+  margin: "10px",
+  background: "grey",
+  opacity: "25%",
 };
 
 const PostCard1 = ({ post }) => {
@@ -22,11 +28,8 @@ const PostCard1 = ({ post }) => {
   }, [post.id]);
 
   return (
-    <div
-      onClick={post.status === 2 ? null : onPage}
-      style={post.status === 2 ? statusStyle : null}
-    >
-      <Card.Grid style={gridStyle}>
+    <div onClick={post.status === 2 ? null : onPage}>
+      <Card.Grid style={post.status === 2 ? tradeDoneGridStyle : gridStyle}>
         <div>
           <p style={{ fontSize: "1.05rem" }}>{post.title}</p>
 
