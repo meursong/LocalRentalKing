@@ -47,14 +47,14 @@ const upload = multer({
 router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST / post
   const boardNum = req.body.boardNum;
-  try {
-    if (boardNum == 1 || boardNum == 2) {
-      //1:물건빌려줘, 2:물건 빌려줄게
-      console.log("1번에 걸렸음");
-      console.log(req.body.category);
-      console.log(req.body.title);
-      console.log(req.body.content);
+  if (boardNum == 1 || boardNum == 2) {
+    //1:물건빌려줘, 2:물건 빌려줄게
+    console.log("1번에 걸렸음");
+    console.log(req.body.category);
+    console.log(req.body.title);
+    console.log(req.body.content);
 
+    try {
       const prodPost = await ProdPost.create({
         boardNum: boardNum,
         category: req.body.category, // 공구, 의류, 전자기기, 서적 등등 //
@@ -81,8 +81,13 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
       }
       const fullPost = await ProdPost.findOne({ where: { id: prodPost.id } });
       res.status(201).json(fullPost); //프론트로 돌려줌
-    } else if (boardNum == 3 || boardNum == 4) {
-      //3:힘을빌려줘, 4:힘을 빌려줄게
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 3 || boardNum == 4) {
+    //3:힘을빌려줘, 4:힘을 빌려줄게
+    try {
       const powerPost = await PowerPost.create({
         boardNum: boardNum,
         category: req.body.category, //
@@ -108,8 +113,13 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         }
       }
       res.status(201).json(powerPost);
-    } else if (boardNum == 5) {
-      //5:같이하자
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 5) {
+    //5:같이하자
+    try {
       const togetherPost = await TogetherPost.create({
         boardNum: boardNum,
         category: req.body.category, //
@@ -138,10 +148,10 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         }
       }
       res.status(201).json(togetherPost);
+    } catch (error) {
+      console.error(error);
+      next(error);
     }
-  } catch (error) {
-    console.error(error);
-    next(error);
   }
 });
 
@@ -340,6 +350,38 @@ router.post("/writeComment", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// // <----- 게시글 좋아요 ----->
+// router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+//   // PATCH /post/1/like
+//   try {
+//     const post = await Post.findOne({ where: { id: req.params.postId } });
+//     if (!post) {
+//       return res.status(403).send("게시글이 존재하지 않습니다");
+//     }
+//     await post.addLikers(req.user.id);
+//     res.json({ PostId: post.id, UserId: req.user.id });
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
+
+// // <----- 게시글 좋아요 취소 ----->
+// router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
+//   // DELETE /post/1/like
+//   try {
+//     const post = await Post.findOne({ where: { id: req.params.postId } });
+//     if (!post) {
+//       return res.status(403).send("게시글이 존재하지 않습니다");
+//     }
+//     await post.removeLikers(req.user.id);
+//     res.json({ PostId: post.id, UserId: req.user.id });
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
+
 //        <----- 게시글 수정 ----->
 router.patch("/edit", upload.none(), async (req, res, next) => {
   const boardNum = req.body.boardNum;
@@ -348,29 +390,29 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
   const rcategory = req.body.category;
   const rtitle = req.body.title;
   const rcontent = req.body.content;
-  const rprice = req.body.price;
   const rlocation = req.body.location;
+  const rprice = req.body.price;
   const roriginalPrice = req.body.originalPrice;
   const rsharedPrice = req.body.sharedPrice;
+  const rstatus = req.body.status;
   try {
     if (boardNum == 1 || boardNum == 2) {
       await ProdPost.update(
         {
-          category: rcategory,
           title: rtitle,
           content: rcontent,
           price: rprice,
           user_location: rlocation,
+          status: rstatus,
         },
         {
           where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
         }
       );
+      const post = await ProdPost.findOne({ where: { id: postid } });
       if (req.body.image) {
-        const post = await ProdPost.findOne({ where: { id: postid } });
         await ProdPostImage.destroy({
-          //기존 이미지 삭제
-          where: { ProdPostid: postid },
+          where: { ProdPostId: postid },
         });
         if (Array.isArray(req.body.image)) {
           //이미지가 여러개
@@ -386,32 +428,32 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
       }
       res.status(200).json("게시글 수정 완료");
     } else if (boardNum == 3 || boardNum == 4) {
+      console.log("3,4번 진입");
       await PowerPost.update(
         {
-          category: rcategory,
           title: rtitle,
           content: rcontent,
           price: rprice,
           user_location: rlocation,
+          status: rstatus,
         },
         {
-          where: { PowerPostId: postid, UserId: userid },
+          where: { id: postid, UserId: userid },
         }
       );
+      const post = await PowerPost.findOne({ where: { id: postid } });
       if (req.body.image) {
-        const post = await PowerPost.findOne({ where: { id: postid } });
         await PowerPostImage.destroy({
-          //기존 이미지 삭제
           where: { PowerPostId: postid },
         });
         if (Array.isArray(req.body.image)) {
-          //이미지가 여러개
+          //이미지 여러개
           const images = await Promise.all(
             req.body.image.map((image) => PowerPostImage.create({ src: image }))
           );
           await post.addPowerPostImages(images);
         } else {
-          //이미지가 하나
+          //이미지 하나
           const image = await PowerPostImage.create({ src: req.body.image });
           await post.addPowerPostImages(image);
         }
@@ -420,25 +462,24 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
     } else if (boardNum == 5) {
       await TogetherPost.update(
         {
-          category: rcategory,
           title: rtitle,
           content: rcontent,
           user_location: rlocation,
           originalPrice: roriginalPrice,
           sharedPrice: rsharedPrice,
+          status: rstatus,
         },
         {
           where: { id: postid, UserId: userid },
         }
       );
+      const post = await TogetherPost.findOne({ where: { id: postid } });
       if (req.body.image) {
-        const post = await TogetherPost.findOne({ where: { id: postid } });
         await TogetherPostImage.destroy({
-          //기존 이미지 삭제
           where: { TogetherPostId: postid },
         });
         if (Array.isArray(req.body.image)) {
-          //이미지가 여러개
+          //이미지 여러개
           const images = await Promise.all(
             req.body.image.map((image) =>
               TogetherPostImage.create({ src: image })
@@ -446,7 +487,7 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           );
           await post.addTogetherPostImages(images);
         } else {
-          //이미지가 하나
+          //이미지 하나
           const image = await TogetherPostImage.create({ src: req.body.image });
           await post.addTogetherPostImages(image);
         }
@@ -464,8 +505,8 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
   // DELETE /post / ?
   const boardNum = req.query.boardNum;
   console.log(boardNum);
-  try {
-    if (boardNum == 1 || boardNum == 2) {
+  if (boardNum == 1 || boardNum == 2) {
+    try {
       await ProdPost.destroy({
         where: {
           id: req.query.postId,
@@ -473,7 +514,12 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
         },
       });
       res.status(200).send("삭제 성공");
-    } else if (boardNum == 3 || boardNum == 4) {
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 3 || boardNum == 4) {
+    try {
       await PowerPost.destroy({
         where: {
           id: req.query.postId,
@@ -481,7 +527,12 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
         },
       });
       res.status(200).send("삭제 성공");
-    } else if (boardNum == 5) {
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  } else if (boardNum == 5) {
+    try {
       await TogetherPost.destroy({
         where: {
           id: req.query.postId,
@@ -489,56 +540,93 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
         },
       });
       res.status(200).send("삭제 성공");
+    } catch (error) {
+      console.error(error);
+      next(error);
     }
-  } catch (error) {
-    console.error(error);
-    next(error);
   }
 });
 
-//       <----- 게시글 거래상태 변경 ----->
-router.patch("/status", async (req, res, next) => {
-  const boardNum = req.body.userid;
-  const postid = req.body.boardNum;
-  const userid = req.body.id;
-  const rstatus = req.body.status;
-  console.log(req.body);
-  try {
-    if (boardNum == 1 || boardNum == 2) {
-      await ProdPost.update(
-        {
-          status: rstatus,
-        },
-        {
-          where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
-        }
-      );
-      res.status(200).json("거래상태 변경 완료");
-    } else if (boardNum == 3 || boardNum == 4) {
-      await PowerPost.update(
-        {
-          status: rstatus,
-        },
-        {
-          where: { id: postid, UserId: userid },
-        }
-      );
-      res.status(200).json("거래상태 변경 완료");
-    } else if (boardNum == 5) {
-      await TogetherPost.update(
-        {
-          status: rstatus,
-        },
-        {
-          where: { id: postid, UserId: userid },
-        }
-      );
-      res.status(200).json("거래상태 변경 완료");
-    }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
+// //       <----- 게시글 삭제 ----->
+// router.delete("/delete", isLoggedIn, async (req, res, next) => {
+//   // DELETE /post / ?
+//   const boardNum = req.query.boardNum;
+//   console.log(boardNum);
+//   try {
+//     if (boardNum == 1 || boardNum == 2) {
+//       await ProdPost.destroy({
+//         where: {
+//           id: req.query.postId,
+//           UserId: req.query.id,
+//         },
+//       });
+//       res.status(200).send("삭제 성공");
+//     } else if (boardNum == 3 || boardNum == 4) {
+//       await PowerPost.destroy({
+//         where: {
+//           id: req.query.postId,
+//           UserId: req.query.id,
+//         },
+//       });
+//       res.status(200).send("삭제 성공");
+//     } else if (boardNum == 5) {
+//       await TogetherPost.destroy({
+//         where: {
+//           id: req.query.postId,
+//           UserId: req.query.id,
+//         },
+//       });
+//       res.status(200).send("삭제 성공");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
+
+// //       <----- 게시글 거래상태 변경 ----->
+// router.patch("/status", async (req, res, next) => {
+//   const boardNum = req.body.userid;
+//   const postid = req.body.boardNum;
+//   const userid = req.body.id;
+//   const rstatus = req.body.status;
+//   console.log(req.body);
+//   try {
+//     if (boardNum == 1 || boardNum == 2) {
+//       await ProdPost.update(
+//         {
+//           status: rstatus,
+//         },
+//         {
+//           where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
+//         }
+//       );
+//       res.status(200).json("거래상태 변경 완료");
+//     } else if (boardNum == 3 || boardNum == 4) {
+//       await PowerPost.update(
+//         {
+//           status: rstatus,
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("거래상태 변경 완료");
+//     } else if (boardNum == 5) {
+//       await TogetherPost.update(
+//         {
+//           status: rstatus,
+//         },
+//         {
+//           where: { id: postid, UserId: userid },
+//         }
+//       );
+//       res.status(200).json("거래상태 변경 완료");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// });
 
 module.exports = router;

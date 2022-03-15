@@ -3,6 +3,8 @@ import "antd/dist/antd.css";
 import { Card } from "antd";
 import Router from "next/router";
 import Link from "next/link";
+import wan from "./wan.png";
+import ing from "./ing.png";
 
 const gridStyle = {
   width: "100%",
@@ -19,7 +21,25 @@ const tradeDoneGridStyle = {
   cursor: "pointer",
   margin: "10px",
   background: "grey",
-  opacity: "25%",
+  opacity: "40%",
+  backgroundImage: `url(${wan})`,
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+};
+
+const tradeIng = {
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  cursor: "pointer",
+  margin: "10px",
+  // background: "blue",
+  //opacity: "80%",
+  backgroundImage: `url(${ing})`,
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
 };
 
 const PostCard1 = ({ post }) => {
@@ -28,8 +48,16 @@ const PostCard1 = ({ post }) => {
   }, [post.id]);
 
   return (
-    <div onClick={post.status === 2 ? null : onPage}>
-      <Card.Grid style={post.status === 2 ? tradeDoneGridStyle : gridStyle}>
+    <div onClick={onPage}>
+      <Card.Grid
+        style={
+          post.status === 2
+            ? tradeDoneGridStyle
+            : post.status === 1
+            ? tradeIng
+            : gridStyle
+        }
+      >
         <div>
           <p style={{ fontSize: "1.05rem" }}>{post.title}</p>
 
