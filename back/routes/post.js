@@ -47,14 +47,14 @@ const upload = multer({
 router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST / post
   const boardNum = req.body.boardNum;
-  if (boardNum == 1 || boardNum == 2) {
-    //1:물건빌려줘, 2:물건 빌려줄게
-    console.log("1번에 걸렸음");
-    console.log(req.body.category);
-    console.log(req.body.title);
-    console.log(req.body.content);
+  try {
+    if (boardNum == 1 || boardNum == 2) {
+      //1:물건빌려줘, 2:물건 빌려줄게
+      console.log("1번에 걸렸음");
+      console.log(req.body.category);
+      console.log(req.body.title);
+      console.log(req.body.content);
 
-    try {
       const prodPost = await ProdPost.create({
         boardNum: boardNum,
         category: req.body.category, // 공구, 의류, 전자기기, 서적 등등 //
@@ -81,13 +81,8 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
       }
       const fullPost = await ProdPost.findOne({ where: { id: prodPost.id } });
       res.status(201).json(fullPost); //프론트로 돌려줌
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 3 || boardNum == 4) {
-    //3:힘을빌려줘, 4:힘을 빌려줄게
-    try {
+    } else if (boardNum == 3 || boardNum == 4) {
+      //3:힘을빌려줘, 4:힘을 빌려줄게
       const powerPost = await PowerPost.create({
         boardNum: boardNum,
         category: req.body.category, //
@@ -113,13 +108,8 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         }
       }
       res.status(201).json(powerPost);
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 5) {
-    //5:같이하자
-    try {
+    } else if (boardNum == 5) {
+      //5:같이하자
       const togetherPost = await TogetherPost.create({
         boardNum: boardNum,
         category: req.body.category, //
@@ -148,10 +138,10 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         }
       }
       res.status(201).json(togetherPost);
-    } catch (error) {
-      console.error(error);
-      next(error);
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
