@@ -482,12 +482,12 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
 });
 
 //       <----- 게시글 거래상태 변경 ----->
-router.patch("/status", isLoggedIn, async (req, res, next) => {
-  const boardNum = req.body.boardNum;
-  const userid = req.body.userid;
-  const postid = req.body.id;
+router.patch("/status", async (req, res, next) => {
+  const boardNum = req.body.userid;
+  const postid = req.body.boardNum;
+  const userid = req.body.id;
   const rstatus = req.body.status;
-  console.log(boardNum);
+  console.log(req.body);
   try {
     if (boardNum == 1 || boardNum == 2) {
       await ProdPost.update(
