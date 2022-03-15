@@ -17,6 +17,7 @@ import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
 import SearchBar from "../components/SearchBar";
 import styled from "styled-components";
+import Write from "./write";
 
 const PostCarDiv2 = styled.div`
   width: 100%;
@@ -81,22 +82,7 @@ function SSRPAGE() {
 
   return (
     <div>
-      {view ? (
-        <Layout>
-          <Tags tagsData={object_TagsData} boardNum={1}/>
-          <Button onClick={onSwitch}>전환스위치</Button>
-          {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
-        </Layout>
-      ) : (
-
-        <Layout>
-          <PostCarDiv2>
-          <Tags tagsData={object_TagsData} boardNum={1}/>
-          <Button onClick={onSwitch}>전환스위치</Button>
-          {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
-        </PostCarDiv2>
-        </Layout>
-      )}
+      <Write/>
     </div>
   );
 }

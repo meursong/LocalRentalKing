@@ -11,7 +11,7 @@ module.exports = class PowerPost extends Sequelize.Model {
         category: {
           //화면 오른쪽 공구,의류,전자기기 등의 카테고리 구분 // 글자로
           type: Sequelize.STRING(20),
-          allowNull: false,
+          allowNull: true,
         },
         title: {
           type: Sequelize.STRING(50),
@@ -19,18 +19,19 @@ module.exports = class PowerPost extends Sequelize.Model {
         },
         content: {
           type: Sequelize.STRING(500),
-          allowNull: true,
+          allowNull: false,
         },
         price: {
           type: Sequelize.INTEGER,
-          allowNull: false,
-        },
-        user_nickname: {
-          type: Sequelize.STRING(30),
-          allowNull: false,
+          allowNull: true,
         },
         user_location: {
           type: Sequelize.STRING(100),
+          allowNull: false,
+        },
+        status: {
+          //거래상태
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
       },
@@ -45,19 +46,20 @@ module.exports = class PowerPost extends Sequelize.Model {
   }
   static associate(db) {
     db.PowerPost.belongsTo(db.User); //이건 post의 작성자 //post.addUser(여기서는 s가 안붙어) hasMany나 belongsToMany는 s가 논리적으로 붙지
-    db.PowerPost.belongsToMany(db.User, {
-      through: "Favorite",
-      as: "Favoriters",
-      foreignKey: "PowerPostId",
-    }); //게시글 찜하기 누른 사람들
-    //나중에 as 따라서 post.getFavoriters처럼 게시글 좋아요 누른 사람을 가져오게 된다.
-    //post.addFavoriters, post.removeFavoriters등의 관계형 메서드가 생긴다.
-    // add,get,set,remove -- 관계형 메서드
+    // db.PowerPost.belongsToMany(db.User, {
+    //   through: "Favorite",
+    //   as: "Favoriters",
+    //   foreignKey: "PowerPostId",
+    // }); //게시글 찜하기 누른 사람들
+    // //나중에 as 따라서 post.getFavoriters처럼 게시글 좋아요 누른 사람을 가져오게 된다.
+    // //post.addFavoriters, post.removeFavoriters등의 관계형 메서드가 생긴다.
+    // // add,get,set,remove -- 관계형 메서드
     db.PowerPost.hasMany(db.PowerPostImage, {
       onDelete: "CASCADE",
     });
     db.PowerPost.hasMany(db.PowerPostComment, {
       onDelete: "CASCADE",
     });
+    db.PowerPost.hasMany(db.Message);
   }
 };

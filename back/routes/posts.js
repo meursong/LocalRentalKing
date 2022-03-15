@@ -133,18 +133,22 @@ router.get("/:tag/post", async (req, res, next) => {
 router.get("/:tag/tag", async (req, res, next) => {
   const boardNum = req.query.boardNum;
   const tag = decodeURIComponent(req.params.tag);
+  const location = decodeURIComponent(req.query.location);
   console.log('일로들어오긴했지만');
   console.log(tag);
   console.log(boardNum);
+  console.log(location);
 
   try {
     const where = {};
     if (tag == "전체") {
       // where.user_location = { [Op.eq]: req.body.location };
       where.boardNum = { [Op.eq]: boardNum };
+      where.user_location = { [Op.eq]: location };
     } else {
       where.boardNum = { [Op.eq]: boardNum };
       where.category = { [Op.eq]: tag };
+      where.user_location = { [Op.eq]: location };
     }
 
     {
@@ -435,6 +439,7 @@ router.get("/postnick", async (req, res, next) => {
 router.get("/search", isLoggedIn, async (req, res, next) => {
   const select = decodeURIComponent(req.query.select);
   const searchword = decodeURIComponent(req.query.searchword);
+  const location = decodeURIComponent(req.query.location);
   //const local = req.query.local; //원활한 테스트를 위해 임시적으로 지역조건검색은 막아놨습니다.
   const boardNum = req.query.boardNum;
   //const lastId = req.params.lastId; //원활한 테스트를 위해 임시적으로 인피니트 스크롤방식은 막아놨습니다.
@@ -444,10 +449,118 @@ router.get("/search", isLoggedIn, async (req, res, next) => {
 
     if (select == "글제목") {
       where.title = { [Op.substring]: searchword }; // Like '%searchword%'
-      //where.local = { [Op.eq]: local };
+      where.user_location = { [Op.eq]: location };
     } else if (select == "글내용") {
       where.content = { [Op.substring]: searchword }; // Like '%searchword%'
-      //where.local = { [Op.eq]: local };
+      where.user_location = { [Op.eq]: location };
+    }
+    {
+      if (boardNum == 1 || boardNum == 2) {
+        const prodposts = await ProdPost.findAll({
+          where,
+          order: [["createdAt", "DESC"]], //생성 시간에 따라서 내림차순
+
+          include: [
+            {
+              model: ProdPostImage,
+            },
+            {
+              model: ProdPostComment,
+              include: [
+                {
+                  model: User, //댓글 작성자
+                  attributes: ["id", "nickname"],
+                },
+              ],
+            },
+          ],
+        });
+        console.log(prodposts);
+        res.status(200).json(prodposts);
+      } else if (boardNum == 3 || boardNum == 4) {
+        //힘을빌려줘 or 힘을 빌려줄게
+        const powerposts = await PowerPost.findAll({
+          where,
+          order: [["createdAt", "DESC"]],
+          include: [
+            {
+              model: PowerPostImage,
+            },
+            {
+              model: PowerPostComment,
+              include: [
+                {
+                  model: User, //댓글 작성자
+                  attributes: ["id", "nickname"],
+                },
+              ],
+            },
+          ],
+        });
+        res.status(200).json(powerposts);
+      } else if (boardNum == 5) {
+        //같이하자
+        const togetherposts = await TogetherPost.findAll({
+          where,
+          order: [["createdAt", "DESC"]],
+          include: [
+            {
+              model: TogetherPostImage,
+            },
+            {
+              model: TogetherPostComment,
+              include: [
+                {
+                  model: User, //댓글 작성자
+                  attributes: ["id", "nickname"],
+                },
+              ],
+            },
+          ],
+        });
+        res.status(200).json(togetherposts);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get("/searchTag", isLoggedIn, async (req, res, next) => {
+  const select = decodeURIComponent(req.query.select);
+  const searchword = decodeURIComponent(req.query.searchword);
+  const location = decodeURIComponent(req.query.location);
+  const tag = decodeURIComponent(req.query.tag);
+  //const local = req.query.local; //원활한 테스트를 위해 임시적으로 지역조건검색은 막아놨습니다.
+  const boardNum = req.query.boardNum;
+  //const lastId = req.params.lastId; //원활한 테스트를 위해 임시적으로 인피니트 스크롤방식은 막아놨습니다.
+  console.log(select);
+  console.log(searchword);
+  console.log(location);
+  console.log(tag);
+  console.log(boardNum);
+  try {
+    const where = {};
+
+    if(tag === "전체"){
+      if (select == "글제목") {
+        where.title = { [Op.substring]: searchword }; // Like '%searchword%'
+        where.user_location = { [Op.eq]: location };
+      } else if (select == "글내용") {
+        where.content = { [Op.substring]: searchword }; // Like '%searchword%'
+        where.user_location = { [Op.eq]: location };
+      }
+    }else {
+      if (select == "글제목") {
+        where.title = {[Op.substring]: searchword}; // Like '%searchword%'
+        where.user_location = {[Op.eq]: location};
+        where.category = {[Op.eq]: tag};
+      } else if (select == "글내용") {
+        where.content = {[Op.substring]: searchword}; // Like '%searchword%'
+        where.user_location = {[Op.eq]: location};
+        where.category = {[Op.eq]: tag};
+      }
     }
     {
       if (boardNum == 1 || boardNum == 2) {

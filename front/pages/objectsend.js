@@ -29,7 +29,7 @@ const PostCarDiv2 = styled.div`
 
 function ObjectSend() {
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
+  const { me , location } = useSelector((state) => state.user);
   const { selectedTag,object_TagsData, mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
   const [view, setView] = useState(true);
 
@@ -53,8 +53,9 @@ function ObjectSend() {
       type: LOAD_POST_REQUEST,
       data: "전체",
       boardNum: 2,
+      location:location,
     });
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -67,6 +68,7 @@ function ObjectSend() {
             data:selectedTag,
             boardNum:2,
             lastId:lastId,
+            location:location,
           });
         } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
       }
@@ -75,7 +77,7 @@ function ObjectSend() {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [ hasMorePost, loadPostLoading]);
+  }, [ hasMorePost, loadPostLoading , location]);
 
   if (!me) {
     return '내 정보 로딩중...';
@@ -94,9 +96,9 @@ function ObjectSend() {
         </Layout>
       ) : (
         <Layout>
-          <PostCarDiv2>
           <Tags tagsData={object_TagsData} boardNum={2}/>
           <Button onClick={onSwitch}>전환스위치</Button>
+          <PostCarDiv2>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
         </Layout>

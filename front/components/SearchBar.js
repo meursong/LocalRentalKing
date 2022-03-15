@@ -19,9 +19,6 @@ import {
   SearchOutlined,
   UserOutlined
 } from "@ant-design/icons";
-import {MenuItems} from "../components/MenuItems";
-import Link from "next/link";
-import SearchLocation from "../components/SearchLocation";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -66,11 +63,11 @@ useEffect(() => {
   const dispatch = useDispatch();
 
   const onSearching = useCallback(() => {
-    dispatch({
-      type:UPDATE_SEARCH,
-      data:{select:select, searchword:searchword,}
-    });
-    Router.push(`/search/${select}*${searchword}`,undefined,{ shallow:true });
+    // dispatch({
+    //   type:UPDATE_SEARCH,
+    //   data:{select:select, searchword:searchword,}
+    // });
+    Router.push(`/search/${select}*${searchword}`);
   }, [select,searchword]);
 
   return (

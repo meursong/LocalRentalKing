@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
 import Link from 'next/link';
-import styled from 'styled-components';
+import styled, {createGlobalStyle} from 'styled-components';
 import {useDispatch, useSelector} from 'react-redux';
 import useInput from '../hooks/useInput';
 import {loginRequestAction} from '../reducers/user';
@@ -8,6 +8,7 @@ import Router from "next/router";
 import {Form, Input, Button, Checkbox} from 'antd';
 import logo from './logo2.png';
 import {UserOutlined, CloseOutlined, LockOutlined} from '@ant-design/icons';
+import Swal from 'sweetalert2';
 
 const ContainerDiv = styled.div`
   width: 460px;
@@ -33,6 +34,20 @@ const InputDiv = styled.div`
   padding-top: 8px;
   display: flex;
 `;
+const RegiDiv = styled.div`
+  width:460px;
+  height:50px;
+  border : solid #c6c6c6;
+  border-radius:10px;
+  margin-top:20px;
+  text-align:center;
+  padding-top:13px;
+`;
+const GlobalDiv = createGlobalStyle`
+  div{
+    cursor: pointer;
+  }
+`;
 
 function LoginForm() {
   const dispatch = useDispatch();
@@ -42,13 +57,18 @@ function LoginForm() {
 
   useEffect(() => {
     if (logInError) {
-      alert(logInError);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: logInError,
+        footer: '<a href="">Why do I have this issue?</a>'
+      })
     }
   }, [logInError]); // 로그인 에러 화면처리
 
   useEffect(() => {
     if (logInDone) {
-      Router.push('/');
+      Router.push('/objectreceive');
     }
   }, [logInDone]); // 로그인 에러 화면처리
 
@@ -58,19 +78,14 @@ function LoginForm() {
     // Router.push('/',undefined,{ shallow:true });
   }, [email, password]);
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
 
   return (
     <>
       <div>
         <div style={{paddingLeft: "80px"}}>
+          <Link href="/objectreceive">
           <img src={logo} style={{width: "300px", paddingBottom: "20px"}}/>
+          </Link>
         </div>
         <ContainerDiv>
           <Form
@@ -115,12 +130,15 @@ function LoginForm() {
               <Button type="primary" htmlType="submit">
                 로그인
               </Button>
-              <Link href="/signup">
-                  <Button>회원가입</Button>
-              </Link>
             </Form.Item>
           </Form>
         </ContainerDiv>
+        <RegiDiv>
+          <span>계정이 없으신가요? </span>
+          <Link href="signup">
+            <a>가입하기</a>
+          </Link>
+        </RegiDiv>
       </div>
     </>
   );

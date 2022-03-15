@@ -29,7 +29,7 @@ const PostCarDiv2 = styled.div`
 function Cooperate() {
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
-  const { me } = useSelector((state) => state.user);
+  const { me , location } = useSelector((state) => state.user);
   const { cooperate_tagsData,selectedTag,mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
   const [view, setView] = useState(true);
 
@@ -53,8 +53,9 @@ function Cooperate() {
       type: LOAD_POST_REQUEST,
       data: "전체",
       boardNum: 5,
+      location:location,
     });
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -67,6 +68,7 @@ function Cooperate() {
             data:selectedTag,
             boardNum:5,
             lastId:lastId,
+            location:location,
           });
         } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
       }
@@ -75,7 +77,7 @@ function Cooperate() {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [ hasMorePost, loadPostLoading]);
+  }, [ hasMorePost, loadPostLoading , location]);
 
   if (!me) {
     return '내 정보 로딩중...';
@@ -94,9 +96,9 @@ function Cooperate() {
         </Layout>
       ) : (
         <Layout>
-          <PostCarDiv2>
           <Tags tagsData={cooperate_tagsData} boardNum={5}/>
           <Button onClick={onSwitch}>전환스위치</Button>
+          <PostCarDiv2>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
         </Layout>

@@ -9,9 +9,10 @@ import AppLayout from '../components/AppLayout/AppLayout';
 import {SIGN_UP_REQUEST, UPDATE_LOCAL} from '../reducers/user';
 import Layout from "../components/Layout";
 import SearchLocation from "../components/SearchLocation";
-
+import {SearchOutlined} from "@ant-design/icons";
+import Swal from 'sweetalert2';
 const ErrorMessage = styled.div`
-color:red`;
+  color:red`;
 
 function Signup() {
   const dispatch = useDispatch();
@@ -23,22 +24,21 @@ function Signup() {
   const [password2Error, setPassword2Error] = useState(false);
   const [term, setTerm] = useState(false);
   const [termError, setTermError] = useState(false);
-
-  useEffect(() => {
-    if ((me && me.id)) {
-      Router.replace('/'); // push와 다르게 replace는 이전 기록 자체를 지워버리기에 이자리에 더 적합하다.
-    }
-  }, [me && me.id]);
+  const [place,SetPlace] = useState(false);
 
   useEffect(() => {
     if (signUpDone) {
-      Router.push('/');
+      Router.push('/objectreceive');
     }
   }, [signUpDone]); // signup완료시 signUpDone값의 변화를 체크하여 메인페이지로
 
   useEffect(() => {
     if (signUpError) {
-      alert(signUpError);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: signUpError,
+      })
     }
   }, [signUpError]); // signUpError가 날경우 signUpError값의 변화를 체크하여 에러경고 발생
 
@@ -60,9 +60,11 @@ function Signup() {
       type: SIGN_UP_REQUEST,
       data: { email, password, nickname , location },
     });
-    Router.push('/'); // 임시로 완료된거로 치고 메인으로 돌려보낸다
+    Router.push('/objectreceive'); // 임시로 완료된거로 치고 메인으로 돌려보낸다
   }, [email, password, password2, term, location]);
-
+  const placeHandle = ()=>{
+    SetPlace(true);
+  }
   return (
     <Layout>
       <Head>
@@ -79,10 +81,10 @@ function Signup() {
           <br />
           <Input name="user-nick" value={nickname} onChange={onChangeNickname} required />
         </div>
-        <div>
-          <label htmlFor="user-location">지역</label>
-          <br />
-          <SearchLocation/>
+        <div onClick={placeHandle} style={{paddingTop:"20px",paddingBottom:"20px"}}>
+          {place ?
+            <SearchLocation/> :
+            <div style={{width:"200px",height:"30px", border:"solid #d9d9d9",textAlign:"center",}}>지역 검색  <SearchOutlined/></div>}
           {/*<Input name="user-location" value={location} required />*/}
         </div>
         <div>

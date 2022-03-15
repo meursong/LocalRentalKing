@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+
 module.exports = class User extends Sequelize.Model {
   static init(sequelize) {
     //model은 static init과 static associate 메서드로 나뉘는데 init메서드에서는 테이블에대한 설정을하고
@@ -22,7 +23,7 @@ module.exports = class User extends Sequelize.Model {
         },
         location: {
           type: Sequelize.STRING(100),
-          allowNull: false,
+          allowNull: true,
         },
         greeting: {
           type: Sequelize.STRING(100),
@@ -59,35 +60,37 @@ module.exports = class User extends Sequelize.Model {
     db.User.hasMany(db.PowerPostComment);
     db.User.hasMany(db.ProdPostComment);
 
-    //image는 유저하나당 프로필사진 1개뿐이므로 따로 테이블로 빼지않고 컬럼화
+    //     //쪽지 기능을 위한 재귀적 모델링 (user사이의 m:n)
+    db.User.belongsToMany(db.User, {
+      through: db.Message, //through table
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+      as: "Senders", //부르는 입장에서 불리는 테이블의 알리아스 - 나중에 시퀄라이즈 쿼리문에 사용
+      foreignKey: "ReceiverId", //들어가는 컬럼명
+    });
 
-    db.User.belongsToMany(db.ProdPost, {
-      through: "Favorite",
-      as: "ProdFavorited",
-    }); //유저가 찜하기를 누른 게시물들
-    db.User.belongsToMany(db.PowerPost, {
-      through: "Favorite",
-      as: "PowerFavorited",
-    }); //유저가 찜하기를 누른 게시물들
-    db.User.belongsToMany(db.TogetherPost, {
-      through: "Favorite",
-      as: "TogetherFavorited",
-    }); //유저가 찜하기를 누른 게시물들
-    //유저가 여러개의 게시물에 찜하기를 누를수있고 한 게시글에 여려명이 찜하기를 누를수있으니까 m:n의 관계이다
-    //m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다. //Favorite through테이블이 생성된다.
-    //db.sequelize.models.Favorite 이런식으로 자동으로 만들어진 모델에 접근할수있다.
-    //user끼리 서로 좋아요를 누르는 기능도있으니까 셀프조인도 생각해야할듯. 나중에추가?
-
-    // db.User.belongsToMany(db.User, {
-    //   through: "Follow",
-    //   as: "Followers", //부르는 입장에서 불리는 테이블의 알리아스 - 나중에 시퀄라이즈 쿼리문에 사용
-    //   foreignKey: "FollowingId", //들어가는 컬럼명
-    // }); //m:n관계일때는 반드시 through를 지정해줘야함 - 이 이름으로 through테이블이 데이터베이스에 생성됨
-
-    // db.User.belongsToMany(db.User, {
-    //   through: "Follow",
-    //   as: "Followings",
-    //   foreignKey: "FollowerId",
-    // });
+    db.User.belongsToMany(db.User, {
+      through: db.Message,
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+      as: "Receivers",
+      foreignKey: "SenderId",
+    });
   }
 };
+
+// db.User.belongsToMany(db.ProdPost, {
+//   through: "Favorite",
+//   as: "ProdFavorited",
+// }); //유저가 찜하기를 누른 게시물들
+// db.User.belongsToMany(db.PowerPost, {
+//   through: "Favorite",
+//   as: "PowerFavorited",
+// }); //유저가 찜하기를 누른 게시물들
+// db.User.belongsToMany(db.TogetherPost, {
+//   through: "Favorite",
+//   as: "TogetherFavorited",
+// }); //유저가 찜하기를 누른 게시물들
+//유저가 여러개의 게시물에 찜하기를 누를수있고 한 게시글에 여려명이 찜하기를 누를수있으니까 m:n의 관계이다
+//m:n관계일때는 양쪽의 프라이머리키가 안쪽에 새로운 테이블로 들어가서 포린키가된다. //Favorite through테이블이 생성된다.
+//db.sequelize.models.Favorite 이런식으로 자동으로 만들어진 모델에 접근할수있다.

@@ -8,7 +8,7 @@ import {
   MenuOutlined,
   CloseOutlined,
   DownOutlined,
-  AimOutlined,
+  AimOutlined, EyeOutlined, LeftOutlined, RightOutlined,
 } from '@ant-design/icons';
 import {MenuItems} from './MenuItems';
 import {Menu, Dropdown, Row, Col ,Input} from 'antd';
@@ -189,33 +189,40 @@ const MenuA = styled.div`
   // minwidth:120px;
 `;
 const PlaceDiv = styled.div`
-  position: fixed;
-  width: 150px;
-  // background:red;
+  position : fixed;
+  width: 130px;
   height: 30px;
-  top: 200px;
-  right:180px;
-  // left:200px;
+  bottom: 380px;
+  right:160px;
   text-align: center;
   font-weight: 600;
   font-size: 20px;
-  // :hover {
-  //   transform: scale(1.3, 1.3);
-  // }
   justify-content:left;
   display: flex;
   flex-wrap: wrap;
 `;
 const PostDiv = styled.div`
   width:100%;
+  position:relative;
   // background:blue;
+  ant-card-crid:hover{
+    padding-top:100px;
+  }
 `;
 const LocalDiv = styled.div`
-    
 `;
 
-const C = styled.div`
-  width:120px;
+const RecentView = styled.div`
+  width:90px;
+  text-align:center;
+  height:200px;
+  position : fixed;
+  top: 230px;
+  right:190px;
+  border:solid #eeeeee;
+  border-botton:none;
+  color:#d4d4d4;
+  border-radius:4px;
 `;
 
 function Layout({children}) {
@@ -226,6 +233,7 @@ function Layout({children}) {
   const [place, SetPlace] = useState(false);
   const [select, setSelect] = useState("글제목");
   const [searchword, onSearchWord,setSearchWord] = useInput("");
+  const [rcView,SetRcview]= useState(false);
 
   const menu = (
     <Menu>
@@ -270,17 +278,21 @@ function Layout({children}) {
     Router.push('/loginpage',undefined,{ shallow:true });
   }, []);
 
+  const onTalk = useCallback(() => {
+    Router.push('/modify',undefined,{ shallow:true });
+  }, []);
+
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
-    Router.push('/', undefined, { shallow: true });
+    Router.push('/objectreceive', undefined, { shallow: true });
   }, []);
 
   const onSearching = useCallback(() => {
-    dispatch({
-      type:UPDATE_SEARCH,
-      data:{select:select, searchword:searchword,}
-    });
-    Router.push(`/search/${select}*${searchword}`, null, { shallow: true });
+    // dispatch({
+    //   type:UPDATE_SEARCH,
+    //   data:{select:select, searchword:searchword,}
+    // });
+    Router.replace(`/search/${select}*${searchword}`);
   }, [select,searchword]);
 
   return (
@@ -304,7 +316,7 @@ function Layout({children}) {
             <NavBarDiv>
               <MenuDiv>
                 <LogoDiv>
-                    <Link href='/'>
+                  <Link href="/objectreceive">
                     <img
                       alt=""
                       src={logo}
@@ -327,11 +339,11 @@ function Layout({children}) {
                         return (
                           <>
                             {index === 0 &&
-                            <Link href="/objectrecieve"><MenuLi key={"a"}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/objectreceive"><MenuLi key={"a"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 1 &&
                             <Link href="/objectsend"><MenuLi key={"b"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 2 &&
-                            <Link href="/talentrecieve"><MenuLi key={"c"}><a>{item.title}</a></MenuLi></Link>}
+                            <Link href="/talentreceive"><MenuLi key={"c"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 3 &&
                             <Link href="/talentsend"><MenuLi key={"d"}><a>{item.title}</a></MenuLi></Link>}
                             {index === 4 &&
@@ -364,7 +376,7 @@ function Layout({children}) {
                 <UserDiv onClick={goProfile}>
                   <UserOutlined/> 내프로필
                 </UserDiv>
-                <UserDiv>
+                <UserDiv onClick={onTalk}>
                   <MailOutlined/> 알림톡
                 </UserDiv>
                 <UserDiv onClick={onWrite}>
@@ -384,13 +396,11 @@ function Layout({children}) {
               <Col xs={6} md={5}/>
             </Row>
           </div>
-        </PostDiv>
         <PlaceDiv onClick={PlaceClick}>
-          <C>
-            <AimOutlined style={{paddingRight: "10px"}}/>
+            <AimOutlined style={{paddingRight: "10px" , paddingTop:"5px"
+            }}/>
             {!place ?
               <span>동네 설정</span> : <span>재설정</span>}
-          </C>
           {place ?
             <div>
               <SearchLocation/></div>:
@@ -399,6 +409,20 @@ function Layout({children}) {
             </LocalDiv>
           }
         </PlaceDiv>
+          <RecentView>
+            <div style={{borderBottom:"solid #e8e8e8"}}>
+              최근본상품
+            </div>
+            {!rcView ?
+              <div style={{paddingTop:"30px"}}>
+                <div>
+                  <EyeOutlined style={{fontSize:"20px",color:"#e8e8e8"}}/>
+                </div>
+                최근 본 상품이 없습니다.
+              </div>:
+              <div>있어용!</div>}
+          </RecentView>
+        </PostDiv>
       </div>
     </div>
   )

@@ -137,7 +137,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
               TogetherPostImage.create({ src: image })
             )
           );
-          await togetherPost.addTogetherPosTImages(images);
+          await togetherPost.addTogetherPostImages(images);
         } else {
           //이미지 하나
           const image = await TogetherPostImage.create({ src: req.body.image });
@@ -387,35 +387,45 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
   const rcategory = req.body.category;
   const rtitle = req.body.title;
   const rcontent = req.body.content;
-  const rprice = req.body.price;
   const rlocation = req.body.location;
+  const rprice = req.body.price;
   const roriginalPrice = req.body.originalPrice;
   const rsharedPrice = req.body.sharedPrice;
-  if (boardNum == 1 || boardNum == 2) {
-    try {
-      await ProdPost.update(
+  try {
+    if (boardNum == 1 || boardNum == 2) {
+       await ProdPost.update(
         {
-          category: rcategory,
           title: rtitle,
           content: rcontent,
           price: rprice,
           user_location: rlocation,
         },
         {
-          where: { id: postid, UserId: userid },
+          where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
         }
       );
-
+      const post = await ProdPost.findOne({ where: { id: postid }} );
+      if (req.body.image) {
+        await ProdPostImage.destroy({
+          where: { ProdPostId: postid },
+        });
+        if (Array.isArray(req.body.image)) {
+          //이미지가 여러개
+          const images = await Promise.all(
+            req.body.image.map((image) => ProdPostImage.create({ src: image }))
+          );
+          await post.addProdPostImages(images);
+        } else {
+          //이미지가 하나
+          const image = await ProdPostImage.create({ src: req.body.image });
+          await post.addProdPostImages(image);
+        }
+      }
       res.status(200).json("게시글 수정 완료");
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 3 || boardNum == 4) {
-    try {
+    } else if (boardNum == 3 || boardNum == 4) {
+      console.log("3,4번 진입");
       await PowerPost.update(
         {
-          category: rcategory,
           title: rtitle,
           content: rcontent,
           price: rprice,
@@ -425,16 +435,27 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           where: { id: postid, UserId: userid },
         }
       );
+        const post = await PowerPost.findOne({ where: { id: postid }} );
+      if (req.body.image) {
+        await PowerPostImage.destroy({
+          where: { PowerPostId: postid },
+        });
+        if (Array.isArray(req.body.image)) {
+          //이미지 여러개
+          const images = await Promise.all(
+            req.body.image.map((image) => PowerPostImage.create({ src: image }))
+          );
+          await post.addPowerPostImages(images);
+        } else {
+          //이미지 하나
+          const image = await PowerPostImage.create({ src: req.body.image });
+          await post.addPowerPostImages(image);
+        }
+      }
       res.status(200).json("게시글 수정 완료");
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 5) {
-    try {
+    } else if (boardNum == 5) {
       await TogetherPost.update(
         {
-          category: rcategory,
           title: rtitle,
           content: rcontent,
           user_location: rlocation,
@@ -445,11 +466,30 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           where: { id: postid, UserId: userid },
         }
       );
+        const post = await TogetherPost.findOne({ where: { id: postid }} );
+      if (req.body.image) {
+        await TogetherPostImage.destroy({
+          where: { TogetherPostId: postid },
+        });
+        if (Array.isArray(req.body.image)) {
+          //이미지 여러개
+          const images = await Promise.all(
+            req.body.image.map((image) =>
+              TogetherPostImage.create({ src: image })
+            )
+          );
+          await post.addTogetherPostImages(images);
+        } else {
+          //이미지 하나
+          const image = await TogetherPostImage.create({ src: req.body.image });
+          await post.addTogetherPostImages(image);
+        }
+      }
       res.status(200).json("게시글 수정 완료");
-    } catch (error) {
-      console.error(error);
-      next(error);
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 

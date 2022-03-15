@@ -17,7 +17,7 @@ import Layout from "../components/Layout";
 
 function PlayGround() {
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
+  const { me , location } = useSelector((state) => state.user);
   const { play_tagsData,selectedTag,mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
 
   useEffect(() => {
@@ -43,8 +43,9 @@ function PlayGround() {
       type: LOAD_POST_REQUEST,
       data: "전체",
       boardNum: 6,
+      location:location,
     });
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     const onScroll = () => {

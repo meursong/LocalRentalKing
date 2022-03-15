@@ -23,6 +23,10 @@ function PostPage() {
   const [postId2,setPostId] = useState(postId);
   const [postBoardNum2,setPostBoardNum] = useState(postBoardNum);
 
+  const onPage = useCallback(() => {
+    Router.push(`/modify/${postId}*${postBoardNum}`,undefined,{ shallow:true });
+  }, []);
+
   const [form] = Form.useForm();
 
   useEffect(()=>{
@@ -31,21 +35,21 @@ function PostPage() {
       postId:postId,
       postBoardNum:postBoardNum,
     });
-  },[postId,postBoardNum]);
+  },[]);
 
-  useEffect(()=>{
-    setTimeout(() => {
-      if(singlePost === null)
-      {
-        setPostId((prev)=>prev-1);
-        dispatch({
-          type:LOAD_SPOST_REQUEST,
-          postId:postId2,
-          postBoardNum:postBoardNum,
-        });
-      }
-    }, 500);
-  },[postId2,postBoardNum2]);
+  // useEffect(()=>{
+  //   setTimeout(() => {
+  //     if(singlePost === null)
+  //     {
+  //       setPostId((prev)=>prev-1);
+  //       dispatch({
+  //         type:LOAD_SPOST_REQUEST,
+  //         postId:postId2,
+  //         postBoardNum:postBoardNum,
+  //       });
+  //     }
+  //   }, 500);
+  // },[postId2,postBoardNum2]);
 
   const prevPage = useCallback(() => {
     setPostId((prev)=>prev-1);
@@ -66,7 +70,6 @@ function PostPage() {
   }, [postId2,postBoardNum2]);
 
   return (
-
     <Layout>
       {singlePost &&
       <Form
@@ -175,6 +178,7 @@ function PostPage() {
         <div>
           <Button onClick={prevPage}>이전글</Button>
           <Button onClick={nextPage}>다음글</Button>
+          <Button onClick={onPage}>수정</Button>
         </div>
       </Form>
       }

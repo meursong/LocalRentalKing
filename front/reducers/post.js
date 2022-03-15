@@ -4,6 +4,8 @@ export const initialState = {
   mainPosts: [],
   searchPosts: [],
   imagePaths: [],
+  mainTalks:[],
+  talkUsers:[],
   object_TagsData: ['전체', '공구',
     '의류',
     '전자기기',
@@ -140,6 +142,10 @@ export const LOAD_WRITE_POST_REQUEST = 'LOAD_WRITE_POST_REQUEST';
 export const LOAD_WRITE_POST_SUCCESS = 'LOAD_WRITE_POST_SUCCESS';
 export const LOAD_WRITE_POST_FAILURE = 'LOAD_WRITE_POST_FAILURE';
 
+export const LOAD_SCHANGE_TAG_REQUEST = 'LOAD_SCHANGE_TAG_REQUEST';
+export const LOAD_SCHANGE_TAG_SUCCESS = 'LOAD_SCHANGE_TAG_SUCCESS';
+export const LOAD_SCHANGE_TAG_FAILURE = 'LOAD_SCHANGE_TAG_FAILURE';
+
 export const REMOVE_IMAGE = 'REMOVE_IMAGE';
 
 export const UPDATE_TAG = 'UPDATE_TAG';
@@ -160,13 +166,64 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case UPDATE_BOARD:
       draft.boardNum = action.data;
       draft.mainPosts.length = 0 ;
+      draft.imagePaths.length = 0;
+      draft.searchPostLoading= false;
+      draft.searchPostDone= false;
+      draft.searchPostError= null;
+      draft.loadProfilePostLoading= false;
+      draft.loadProfilePostDone= false;
+      draft.loadProfilePostError= null;
+      draft.upLoadImagesLoading= false;
+      draft.upLoadImagesDone= false;
+      draft.upLoadImagesError= null;
+      draft.likePostLoading= false;
+      draft.likePostDone= false;
+      draft.likePostError= null;
+      draft.unlikePostLoading= false;
+      draft.unlikePostDone= false;
+      draft.unlikePostError= null;
+      draft.loadSPostLoading= false;
+      draft.loadSPostDone=false;
+      draft.loadSPostError= null;
+      draft.loadPostLoading= false;
+      draft.loadPostDone= false;
+      draft.loadPostError= null;
+      draft.loadUserPostsLoading= false;
+      draft.loadUserPostsDone= false;
+      draft.loadUserPostsError= null;
+      draft.addPostLoading= false;
+      draft.addPostDone= false;
+      draft.addPostError= null;
+      draft.removePostLoading= false;
+      draft.removePostDone= false;
+      draft.removePostError= null;
+      draft.modifyPostLoading= false;
+      draft.modifyPostDone= false;
+      draft.modifyPostError= null;
+      draft.addCommentLoading= false;
+      draft.addCommentDone= false;
+      draft.addCommentError= null;
       break;
     case UPDATE_CHANGE_TAG_REQUEST:
-      draft.serchPosts = draft.mainPosts.filter((v) => v.category === action.data);
+      draft.searchPosts = draft.mainPosts.filter((v) => v.category === action.data);
       break;
     case UPDATE_SEARCH:
       draft.inputSearch = action.data.searchword;
       draft.select = action.data.select;
+      break;
+    case LOAD_SCHANGE_TAG_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_SCHANGE_TAG_SUCCESS:
+      draft.mainPosts = action.data; // 기존 배열 밀어버리고 새롭게 10개씩 넣는다.
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      break;
+    case LOAD_SCHANGE_TAG_FAILURE:
+      draft.loadPostError = action.error;
+      draft.loadPostLoading = false;
       break;
     case LOAD_CHANGE_TAG_REQUEST:
       draft.loadPostLoading = true;
@@ -296,6 +353,22 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       break;
     case LOAD_SPOST_SUCCESS:
       draft.singlePost = action.data;
+      if(action.data.boardNum ===1 || action.data.boardNum ===2){
+        const totalPath = action.data.ProdPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      } else if(action.data.boardNum === 3 || action.data.boardNum ===4){
+        const totalPath = action.data.PowerPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      } else if(action.data.boardNum === 5){
+        const totalPath = action.data.TogetherPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      }
       draft.loadSPostLoading = false;
       draft.loadSPostDone = true;
       break;
@@ -382,7 +455,11 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.modifyPostError = null;
       break;
     case MODIFY_POST_SUCCESS:
-      draft.mainPosts.find((v) => v.id === action.data.PostId).content = action.data.content;
+      for (let i = 0; i < draft.mainPosts.length; i++) {
+        if(draft.mainPosts[i].id == action.data.id){
+          draft.mainPosts = draft.mainPosts(i,1,action.data);
+        }
+      }
       draft.modifyPostLoading = false;
       draft.modifyPostDone = true;
       break;

@@ -2,10 +2,12 @@ import React, {useCallback, useState,useEffect} from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import {useDispatch, useSelector} from "react-redux";
 import {UPDATE_LOCAL} from "../reducers/user";
+import {LOAD_CHANGE_TAG_REQUEST} from "../reducers/post";
 
 const SearchLocation = () => {
   const dispatch = useDispatch();
   const {location} = useSelector((state)=>state.user);
+  const {selectedTag,boardNum} = useSelector((state)=>state.post);
   const [address, setAddress] = useState("");
 
   const handleComplete = useCallback((data) => {
@@ -30,6 +32,12 @@ const SearchLocation = () => {
         type: UPDATE_LOCAL,
         data: address,
       });
+      dispatch({
+        type: LOAD_CHANGE_TAG_REQUEST,
+        data: selectedTag,
+        boardNum : boardNum,
+        location : address,
+      })
     }
   }, [address]);
 
