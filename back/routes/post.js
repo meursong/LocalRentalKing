@@ -366,17 +366,21 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
         }
       );
-      const post = await ProdPost.findOne({ where: { id: postid } });
       if (req.body.image) {
+        const post = await ProdPost.findOne({ where: { id: postid } });
+        await ProdPostImage.destroy({
+          //기존 이미지 삭제
+          where: { ProdPostid: postid },
+        });
         if (Array.isArray(req.body.image)) {
           //이미지가 여러개
           const images = await Promise.all(
-            req.body.image.map((image) => ProdPostImage.update({ src: image }))
+            req.body.image.map((image) => ProdPostImage.create({ src: image }))
           );
           await post.addProdPostImages(images);
         } else {
           //이미지가 하나
-          const image = await ProdPostImage.update({ src: req.body.image });
+          const image = await ProdPostImage.create({ src: req.body.image });
           await post.addProdPostImages(image);
         }
       }
@@ -391,20 +395,25 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
           user_location: rlocation,
         },
         {
-          where: { id: postid, UserId: userid },
+          where: { PowerPostId: postid, UserId: userid },
         }
       );
       if (req.body.image) {
+        const post = await PowerPost.findOne({ where: { id: postid } });
+        await PowerPostImage.destroy({
+          //기존 이미지 삭제
+          where: { PowerPostId: postid },
+        });
         if (Array.isArray(req.body.image)) {
-          //이미지 여러개
+          //이미지가 여러개
           const images = await Promise.all(
             req.body.image.map((image) => PowerPostImage.create({ src: image }))
           );
-          await powerPost.addPowerPostImages(images);
+          await post.addPowerPostImages(images);
         } else {
-          //이미지 하나
+          //이미지가 하나
           const image = await PowerPostImage.create({ src: req.body.image });
-          await powerPost.addPowerPostImages(image);
+          await post.addPowerPostImages(image);
         }
       }
       res.status(200).json("게시글 수정 완료");
@@ -423,18 +432,23 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
         }
       );
       if (req.body.image) {
+        const post = await TogetherPost.findOne({ where: { id: postid } });
+        await TogetherPostImage.destroy({
+          //기존 이미지 삭제
+          where: { TogetherPostId: postid },
+        });
         if (Array.isArray(req.body.image)) {
-          //이미지 여러개
+          //이미지가 여러개
           const images = await Promise.all(
             req.body.image.map((image) =>
               TogetherPostImage.create({ src: image })
             )
           );
-          await togetherPost.addTogetherPosTImages(images);
+          await post.addTogetherPostImages(images);
         } else {
-          //이미지 하나
+          //이미지가 하나
           const image = await TogetherPostImage.create({ src: req.body.image });
-          await togetherPost.addPTogetherPostImages(image);
+          await post.addTogetherPostImages(image);
         }
       }
       res.status(200).json("게시글 수정 완료");
