@@ -64,7 +64,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         UserId: req.body.userid,
         user_nickname: req.body.nickname,
         user_location: req.body.location,
-        status:0, // default : 0 - 거래전
+        status: 0, // default : 0 - 거래전
       });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
@@ -97,7 +97,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         UserId: req.body.userid,
         user_nickname: req.body.nickname,
         user_location: req.body.location,
-        status:0, // default : 0 - 거래전
+        status: 0, // default : 0 - 거래전
       });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
@@ -130,7 +130,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         UserId: req.body.userid,
         user_nickname: req.body.nickname,
         user_location: req.body.location,
-        status:0, // default : 0 - 모집중
+        status: 0, // default : 0 - 모집중
       });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
@@ -469,8 +469,8 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
   // DELETE /post / ?
   const boardNum = req.query.boardNum;
   console.log(boardNum);
-  if (boardNum == 1 || boardNum == 2) {
-    try {
+  try {
+    if (boardNum == 1 || boardNum == 2) {
       await ProdPost.destroy({
         where: {
           id: req.query.postId,
@@ -478,12 +478,7 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
         },
       });
       res.status(200).send("삭제 성공");
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 3 || boardNum == 4) {
-    try {
+    } else if (boardNum == 3 || boardNum == 4) {
       await PowerPost.destroy({
         where: {
           id: req.query.postId,
@@ -491,12 +486,7 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
         },
       });
       res.status(200).send("삭제 성공");
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 5) {
-    try {
+    } else if (boardNum == 5) {
       await TogetherPost.destroy({
         where: {
           id: req.query.postId,
@@ -504,13 +494,14 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
         },
       });
       res.status(200).send("삭제 성공");
-    } catch (error) {
-      console.error(error);
-      next(error);
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
+});
 
-  //       <----- 게시글 거래상태 변경 ----->
+//       <----- 게시글 거래상태 변경 ----->
 router.patch("/status", isLoggedIn, async (req, res, next) => {
   const boardNum = req.body.boardNum;
   const userid = req.body.userid;
@@ -518,10 +509,10 @@ router.patch("/status", isLoggedIn, async (req, res, next) => {
   const rstatus = req.body.status;
   console.log(boardNum);
   try {
-  if (boardNum == 1 || boardNum == 2) {
+    if (boardNum == 1 || boardNum == 2) {
       await ProdPost.update(
         {
-          status: rstatus
+          status: rstatus,
         },
         {
           where: { id: postid, UserId: userid }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
@@ -531,32 +522,28 @@ router.patch("/status", isLoggedIn, async (req, res, next) => {
     } else if (boardNum == 3 || boardNum == 4) {
       await PowerPost.update(
         {
-          status: rstatus
+          status: rstatus,
         },
         {
-          where: { id: postid, UserId: userid }, 
+          where: { id: postid, UserId: userid },
         }
       );
       res.status(200).json("거래상태 변경 완료");
     } else if (boardNum == 5) {
       await TogetherPost.update(
         {
-          status: rstatus
+          status: rstatus,
         },
         {
-          where: { id: postid, UserId: userid }, 
+          where: { id: postid, UserId: userid },
         }
       );
       res.status(200).json("거래상태 변경 완료");
-    } 
+    }
   } catch (error) {
     console.error(error);
     next(error);
   }
 });
-
-
-
-
 
 module.exports = router;
