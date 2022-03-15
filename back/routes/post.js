@@ -362,8 +362,8 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
   const rlocation = req.body.location;
   const roriginalPrice = req.body.originalPrice;
   const rsharedPrice = req.body.sharedPrice;
-  if (boardNum == 1 || boardNum == 2) {
-    try {
+  try {
+    if (boardNum == 1 || boardNum == 2) {
       await ProdPost.update(
         {
           category: rcategory,
@@ -390,12 +390,7 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
         }
       }
       res.status(200).json("게시글 수정 완료");
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 3 || boardNum == 4) {
-    try {
+    } else if (boardNum == 3 || boardNum == 4) {
       await PowerPost.update(
         {
           category: rcategory,
@@ -422,12 +417,7 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
         }
       }
       res.status(200).json("게시글 수정 완료");
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  } else if (boardNum == 5) {
-    try {
+    } else if (boardNum == 5) {
       await TogetherPost.update(
         {
           category: rcategory,
@@ -457,10 +447,10 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
         }
       }
       res.status(200).json("게시글 수정 완료");
-    } catch (error) {
-      console.error(error);
-      next(error);
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
