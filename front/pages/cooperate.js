@@ -16,14 +16,25 @@ import Layout from "../components/Layout";
 import {Button} from "antd";
 import PostCard2 from "../components/PostCard2";
 import styled from "styled-components";
+import a1 from "../components/광고1.jpeg";
+import a2 from "../components/광고2.jpg";
+import a3 from "../components/광고3.jpg";
+import a4 from "../components/광고4.jpeg";
+import a5 from "../components/광고5.jpg";
+import {LeftOutlined, RightOutlined} from "@ant-design/icons";
 
 const PostCarDiv2 = styled.div`
   width: 100%;
   display: flex;
   // background:red;
   flex-wrap: wrap;
-  // justify-content:center;
-  
+  justify-content:center;
+`;
+const AdvertisementDiv = styled.div`
+  width:100%;
+  height:297px;
+  // background:blue;
+  position:relative;
 `;
 
 function Cooperate() {
@@ -36,6 +47,42 @@ function Cooperate() {
   const onSwitch = useCallback(() => {
     setView(!view);
   }, [view]);
+
+  const advImg = [
+    {
+      src : a1,
+    },
+    {
+      src : a2,
+    },
+    {
+      src : a3,
+    },
+    {
+      src : a4,
+    },
+    {
+      src : a5,
+    },
+  ];
+
+  const [i, Seti]=useState(0);
+  const [imgSrc, SetImgSrc] = useState(a1);
+  const RchangeImg = () =>{
+    if(i < 5) {
+      Seti(i+1);
+      SetImgSrc(advImg[i].src);
+    }else if(i === 5){
+      Seti(0);
+    }
+  }
+  const LchangImg = () => {
+    if (i > 0) {
+      Seti(i - 1);
+      SetImgSrc(advImg[i - 1].src);
+      console.log(imgSrc);
+    }
+  }
 
   useEffect(() => {
     dispatch({
@@ -90,12 +137,22 @@ function Cooperate() {
       </Head>
       {view ? (
         <Layout>
+          <AdvertisementDiv>
+            <img src={imgSrc} width="100%"height="100%"/>
+            <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+            <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+          </AdvertisementDiv>
           <Tags tagsData={cooperate_tagsData} boardNum={5}/>
           <Button onClick={onSwitch}>전환스위치</Button>
           {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
         </Layout>
       ) : (
         <Layout>
+          <AdvertisementDiv>
+            <img src={imgSrc} width="100%"height="100%"/>
+            <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+            <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+          </AdvertisementDiv>
           <Tags tagsData={cooperate_tagsData} boardNum={5}/>
           <Button onClick={onSwitch}>전환스위치</Button>
           <PostCarDiv2>

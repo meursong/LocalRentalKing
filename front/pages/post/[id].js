@@ -9,6 +9,27 @@ import Link from 'next/link';
 import Layout from "../../components/Layout";
 import Reply from "../../components/DH/Reply";
 import moment from "moment";
+import styled from "styled-components";
+import a1 from "../../components/광고1.jpeg";
+import a2 from "../../components/광고2.jpg";
+import a3 from "../../components/광고3.jpg";
+import a4 from "../../components/광고4.jpeg";
+import a5 from "../../components/광고5.jpg";
+import {LeftOutlined, RightOutlined} from "@ant-design/icons";
+
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  justify-content:center;
+`;
+const AdvertisementDiv = styled.div`
+  width:100%;
+  height:297px;
+  // background:blue;
+  position:relative;
+`;
 
 function PostPage() {
   const dispatch = useDispatch();
@@ -16,6 +37,42 @@ function PostPage() {
   const { id } = router.query; // [tag].js 파일 명의 [] 부분이 들어간다
   const { singlePost,mainPosts, hasMorePost, loadPostLoading , location } = useSelector((state) => state.post);
   const { userInfo, me } = useSelector((state) => state.user);
+
+  const advImg = [
+    {
+      src : a1,
+    },
+    {
+      src : a2,
+    },
+    {
+      src : a3,
+    },
+    {
+      src : a4,
+    },
+    {
+      src : a5,
+    },
+  ];
+
+  const [i, Seti]=useState(0);
+  const [imgSrc, SetImgSrc] = useState(a1);
+  const RchangeImg = () =>{
+    if(i < 5) {
+      Seti(i+1);
+      SetImgSrc(advImg[i].src);
+    }else if(i === 5){
+      Seti(0);
+    }
+  }
+  const LchangImg = () => {
+    if (i > 0) {
+      Seti(i - 1);
+      SetImgSrc(advImg[i - 1].src);
+      console.log(imgSrc);
+    }
+  }
 
   const idAndBoardNum = id.split('*');
   const postId = idAndBoardNum[0];
@@ -71,6 +128,11 @@ function PostPage() {
 
   return (
     <Layout>
+      <AdvertisementDiv>
+        <img src={imgSrc} width="100%"height="100%"/>
+        <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+        <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+      </AdvertisementDiv>
       {singlePost &&
       <Form
         layout="horizontal"

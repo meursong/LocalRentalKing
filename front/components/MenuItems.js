@@ -14,7 +14,4 @@ export const MenuItems = [
     {
         title: '같이 하자'
     },
-    {
-        title: '동네 놀이터'
-    },
 ]

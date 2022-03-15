@@ -72,6 +72,21 @@ function SSRPAGE() {
 
   const [i, Seti]=useState(0);
   const [imgSrc, SetImgSrc] = useState(a1);
+  const RchangeImg = () =>{
+    if(i < 5) {
+      Seti(i+1);
+      SetImgSrc(advImg[i].src);
+    }else if(i === 5){
+      Seti(0);
+    }
+  }
+  const LchangImg = () => {
+    if (i > 0) {
+      Seti(i - 1);
+      SetImgSrc(advImg[i - 1].src);
+      console.log(imgSrc);
+    }
+  }
 
   useEffect(() => {
     dispatch({
@@ -109,21 +124,6 @@ function SSRPAGE() {
     }
   }, []);
 
-  const RchangeImg = () =>{
-    if(i < 5) {
-      Seti(i+1);
-      SetImgSrc(advImg[i].src);
-    }else if(i === 5){
-      Seti(0);
-    }
-  }
-  const LchangImg = () => {
-    if (i > 0) {
-      Seti(i - 1);
-      SetImgSrc(advImg[i - 1].src);
-      console.log(imgSrc);
-    }
-  }
 
   // useEffect(()=>{
   //   dispatch({

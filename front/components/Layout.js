@@ -250,6 +250,13 @@ function Layout({children}) {
     </Menu>
   )
 
+  useEffect(()=>{
+    dispatch({
+      type:UPDATE_LOCAL,
+      data:me.location,
+    });
+  },[me]);
+
   const PlaceClick = () => {
     if(place == false){
       SetPlace(true);
