@@ -14,7 +14,7 @@ const gridStyle = {
   margin: "10px",
 };
 
-const tradeDoneGridStyle = {
+const tradeDone = {
   width: "100%",
   display: "flex",
   justifyContent: "space-between",
@@ -48,11 +48,11 @@ const PostCard1 = ({ post }) => {
   }, [post.id]);
 
   return (
-    <div onClick={onPage}>
+    <div onClick={post.status === 2 ? null : onPage}>
       <Card.Grid
         style={
           post.status === 2
-            ? tradeDoneGridStyle
+            ? tradeDone
             : post.status === 1
             ? tradeIng
             : gridStyle

@@ -17,6 +17,8 @@ const { isLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 // <--------- 게시물 10개씩 렌더링---------->
+//router.get("/", async (req, res, next) => {
+
 router.get("/:tag/post", async (req, res, next) => {
   const boardNum = req.query.boardNum;
   const lastId = req.query.lastId;
@@ -346,7 +348,7 @@ router.get("/postnick", async (req, res, next) => {
   try {
     const nick = await User.findOne({
       where: {
-        nickname: nickname, //nickname을 통해 userId를 가져온다음 그 userId를 통해 유저가쓴 게시물 검색
+        nickname: nickname, // db에서 프론트가 전송한 닉네임을 기반으로 유저를 찾아낸다
       },
     });
 
@@ -357,8 +359,10 @@ router.get("/postnick", async (req, res, next) => {
 
     {
       if (boardNum == 1 || boardNum == 2) {
-        //물건빌려줘 , 물건빌려줄게
+        //들어온 보드넘이 1혹은 2라면
         const prodposts = await ProdPost.findAll({
+          //ProdPost테이블에서 찾을거임
+
           where,
           order: [["createdAt", "DESC"]], //생성 시간에 따라서 내림차순
 
@@ -380,8 +384,9 @@ router.get("/postnick", async (req, res, next) => {
         console.log(prodposts);
         res.status(200).json(prodposts);
       } else if (boardNum == 3 || boardNum == 4) {
-        //힘을빌려줘,힘을 빌려줄게
+        //보드넘이3 혹은 4라면->힘을빌려줘,힘을 빌려줄게
         const powerposts = await PowerPost.findAll({
+          //PowerPost테이블에서 찾을거임
           where,
           order: [["createdAt", "DESC"]],
           include: [
@@ -401,8 +406,9 @@ router.get("/postnick", async (req, res, next) => {
         });
         res.status(200).json(powerposts);
       } else if (boardNum == 5) {
-        //같이하자
+        //보드넘이5라면->같이하자
         const togetherposts = await TogetherPost.findAll({
+          //같이하자 테이블에서 찾을거임
           where,
           order: [["createdAt", "DESC"]],
           include: [
