@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import styled, { createGlobalStyle } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,6 @@ import { Form, Input, Button, Checkbox } from "antd";
 import logo from "./logo2.png";
 import { UserOutlined, CloseOutlined, LockOutlined } from "@ant-design/icons";
 import Swal from "sweetalert2";
-
 const ContainerDiv = styled.div`
   width: 460px;
   height: 310px;
@@ -20,12 +19,10 @@ const ContainerDiv = styled.div`
   display: flex;
   justify-content: center;
   padding: 80px;
-
   .ant-form-item-control-input-content {
     padding-left: 140px;
   }
 `;
-
 const InputDiv = styled.div`
   width: 420px;
   height: 48px;
@@ -48,15 +45,13 @@ const GlobalDiv = createGlobalStyle`
     cursor: pointer;
   }
 `;
-
 function LoginForm() {
   const dispatch = useDispatch();
-  const [email, onChangeEmail] = useInput("");
-  const [password, onChangePassword] = useInput("");
+  const [email, onChangeEmail] = useState();
+  const [password, onChangePassword] = useState("");
   const { logInLoading, logInError, logInDone } = useSelector(
     (state) => state.user
   );
-
   useEffect(() => {
     if (logInError) {
       Swal.fire({
@@ -67,24 +62,40 @@ function LoginForm() {
       });
     }
   }, [logInError]); // 로그인 에러 화면처리
-
   useEffect(() => {
     if (logInDone) {
-      Router.push("/objectreceive");
+      Router.push("/");
     }
   }, [logInDone]); // 로그인 에러 화면처리
-
+  const removeEHandle = () => {
+    onChangeEmail("");
+  };
+  const removePHandle = () => {
+    onChangePassword("");
+  };
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
     dispatch(loginRequestAction({ email, password }));
     // Router.push('/',undefined,{ shallow:true });
   }, [email, password]);
-
+  const emailHandle = (e) => {
+    onChangeEmail(e.target.value);
+  };
+  const passwordHandle = (e) => {
+    onChangePassword(e.target.value);
+  };
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
   return (
     <>
       <div>
+        <GlobalDiv />
         <div style={{ paddingLeft: "80px" }}>
-          <Link href="/objectreceive">
+          <Link href="/">
             <img src={logo} style={{ width: "300px", paddingBottom: "20px" }} />
           </Link>
         </div>
@@ -106,7 +117,7 @@ function LoginForm() {
               <div style={{ width: "280px", textAlign: "start" }}>
                 <input
                   value={email}
-                  onChange={onChangeEmail}
+                  onChange={emailHandle}
                   type="text"
                   style={{ border: "none", width: "250px" }}
                   placeholder="아이디"
@@ -114,6 +125,7 @@ function LoginForm() {
               </div>
               <div style={{ textAlign: "end", width: "70px" }}>
                 <button
+                  onClick={removeEHandle}
                   style={{
                     border: "solid 1px",
                     borderRadius: "14px",
@@ -135,7 +147,7 @@ function LoginForm() {
               <div style={{ width: "280px", textAlign: "start" }}>
                 <input
                   value={password}
-                  onChange={onChangePassword}
+                  onChange={passwordHandle}
                   type="password"
                   style={{ border: "none", width: "250px" }}
                   placeholder="비밀번호"
@@ -143,6 +155,7 @@ function LoginForm() {
               </div>
               <div style={{ textAlign: "end", width: "70px" }}>
                 <button
+                  onClick={removePHandle}
                   style={{
                     border: "solid 1px",
                     borderRadius: "14px",
@@ -155,7 +168,6 @@ function LoginForm() {
                 </button>
               </div>
             </InputDiv>
-
             <Form.Item
               name="remember"
               valuePropName="checked"
@@ -163,7 +175,6 @@ function LoginForm() {
             >
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 로그인
@@ -181,5 +192,4 @@ function LoginForm() {
     </>
   );
 }
-
 export default LoginForm;

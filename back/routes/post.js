@@ -247,7 +247,6 @@ router.get("/singlepost", async (req, res, next) => {
     next(error);
   }
 });
-
 //====================글 거래상태 변경하기===========================
 router.get("/status", async (req, res, next) => {
   const boardNum = req.query.postBoardNum;
@@ -549,14 +548,14 @@ router.patch("/edit", upload.none(), async (req, res, next) => {
 //       <----- 게시글 삭제 ----->
 router.delete("/delete", isLoggedIn, async (req, res, next) => {
   // DELETE /post / ?
-  const boardNum = req.query.boardNum;
+  const postId = req.query.postId;
+  const boardNum = req.query.postBoardNum;
   console.log(boardNum);
   try {
     if (boardNum == 1 || boardNum == 2) {
       await ProdPost.destroy({
         where: {
           id: req.query.postId,
-          UserId: req.query.id,
         },
       });
       res.status(200).send("삭제 성공");
@@ -564,7 +563,6 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
       await PowerPost.destroy({
         where: {
           id: req.query.postId,
-          UserId: req.query.id,
         },
       });
       res.status(200).send("삭제 성공");
@@ -572,7 +570,6 @@ router.delete("/delete", isLoggedIn, async (req, res, next) => {
       await TogetherPost.destroy({
         where: {
           id: req.query.postId,
-          UserId: req.query.id,
         },
       });
       res.status(200).send("삭제 성공");

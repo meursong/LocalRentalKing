@@ -172,8 +172,10 @@ function Cooperate() {
               <RightOutlined style={{ fontSize: "25px", color: "gray" }} />
             </div>
           </AdvertisementDiv>
-          <Tags tagsData={cooperate_tagsData} boardNum={5} />
-          <Button onClick={onSwitch}>전환스위치</Button>
+          <div style={{ textAlign: "center", paddingRight: "80px" }}>
+            <Tags tagsData={cooperate_tagsData} boardNum={5} />
+            <Button onClick={onSwitch}>전환스위치</Button>
+          </div>
           {mainPosts.map((post) => (
             <PostCard1 key={post.id} post={post} />
           ))}
@@ -200,8 +202,10 @@ function Cooperate() {
               <RightOutlined style={{ fontSize: "25px", color: "gray" }} />
             </div>
           </AdvertisementDiv>
-          <Tags tagsData={cooperate_tagsData} boardNum={5} />
-          <Button onClick={onSwitch}>전환스위치</Button>
+          <div style={{ textAlign: "center", paddingRight: "80px" }}>
+            <Tags tagsData={cooperate_tagsData} boardNum={5} />
+            <Button onClick={onSwitch}>전환스위치</Button>
+          </div>
           <PostCarDiv2>
             {mainPosts.map((post) => (
               <PostCard2 key={post.id} post={post} />

@@ -14,6 +14,7 @@ import PostCard2 from "../components/PostCard2";
 import { LOAD_POST_REQUEST, UPDATE_BOARD, UPDATE_TAG } from "../reducers/post";
 import ProfileCard from "../components/ProfileCard";
 import styled from "styled-components";
+import PostCard1 from "../components/PostCard1";
 
 const PostCarDiv2 = styled.div`
   width: 100%;
@@ -60,6 +61,9 @@ function Profile() {
             <br />
           </div>
 
+          <div>
+            <br />
+          </div>
           <ProfileCard userInfo={me} />
         </Layout>
       )}

@@ -37,10 +37,11 @@ const PostCarDiv2 = styled.div`
   justify-content: center;
 `;
 const AdvertisementDiv = styled.div`
-  width: 100%;
+  width: 950px;
   height: 297px;
   // background:blue;
   position: relative;
+  min-width: 950px;
 `;
 
 function SSRPAGE() {

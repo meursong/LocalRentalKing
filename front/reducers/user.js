@@ -201,7 +201,18 @@ const reducer = (state = initialState, action) =>
         }
         break;
       case REMOVE_POST_OF_ME:
-        draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
+        if (action.data.boardNum === 1 || 2)
+          draft.me.ProdPosts = draft.me.ProdPosts.filter(
+            (v) => v.id !== action.data.PostId
+          );
+        if (action.data.boardNum === 3 || 4)
+          draft.me.PowerPosts = draft.me.PowerPosts.filter(
+            (v) => v.id !== action.data.PostId
+          );
+        if (action.data.boardNum === 5)
+          draft.me.TogetherPosts = draft.me.TogetherPosts.filter(
+            (v) => v.id !== action.data.PostId
+          );
         break;
       default:
         break;
