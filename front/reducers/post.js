@@ -130,6 +130,11 @@ export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
+export const STATUS_POST_REQUEST = 'STATUS_POST_REQUEST';
+export const STATUS_POST_SUCCESS = 'STATUS_POST_SUCCESS';
+export const STATUS_POST_FAILURE = 'STATUS_POST_FAILURE';
+
+
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
@@ -345,6 +350,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case UNLIKE_POST_FAILURE:
       draft.unlikePostError = action.error;
       draft.unlikePostLoading = false;
+      break;
+    case STATUS_POST_REQUEST:
+      draft.loadSPostLoading = true;
+      draft.loadSPostDone = false;
+      draft.loadSPostError = null;
+      break;
+    case STATUS_POST_SUCCESS:
+      draft.singlePost.status = action.data.status;
+      draft.loadSPostLoading = false;
+      draft.loadSPostDone = true;
+      break;
+    case STATUS_POST_FAILURE:
+      draft.loadSPostError = action.error;
+      draft.loadSPostLoading = false;
       break;
     case LOAD_SPOST_REQUEST:
       draft.loadSPostLoading = true;

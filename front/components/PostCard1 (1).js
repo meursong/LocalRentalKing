@@ -5,7 +5,6 @@ import Router from "next/router";
 import Link from "next/link";
 import wan from "./wan.png";
 import ing from "./ing.png";
-import moment from 'moment';
 
 const gridStyle = {
   width: "100%",
@@ -49,14 +48,14 @@ const PostCard1 = ({ post }) => {
   }, [post.id]);
 
   return (
-    <div onClick={post.status === 2 ? null : onPage}>
-    <Card.Grid
+    <div onClick={onPage}>
+      <Card.Grid
         style={
           post.status === 2
             ? tradeDoneGridStyle
             : post.status === 1
-              ? tradeIng
-              : gridStyle
+            ? tradeIng
+            : gridStyle
         }
       >
         <div>
@@ -129,7 +128,7 @@ const PostCard1 = ({ post }) => {
         </div>
         <div>
           <p>작성자: {post.user_nickname}</p>
-          <div style={{ float: 'right' }}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
+          <p>{post.createAt || 0}분전</p>
         </div>
       </Card.Grid>
     </div>

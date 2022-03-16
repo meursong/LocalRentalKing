@@ -49,7 +49,7 @@ import {
   REMOVE_POST_SUCCESS,
   SEND_DUMMYPOST_FAILURE,
   SEND_DUMMYPOST_REQUEST,
-  SEND_DUMMYPOST_SUCCESS,
+  SEND_DUMMYPOST_SUCCESS, STATUS_POST_FAILURE, STATUS_POST_REQUEST, STATUS_POST_SUCCESS,
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
@@ -268,6 +268,25 @@ function* loadSPost(action) {
   } catch (err) {
     yield put({
       type: LOAD_SPOST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function updateSPostAPI(postId,postBoardNum,postStatus) {
+  return axios.get(`/post/status?postId=${postId}&postBoardNum=${postBoardNum}&postStatus=${postStatus}`);
+}
+
+function* updateSPost(action) {
+  try {
+    const result = yield call(updateSPostAPI, action.postId,action.postBoardNum,action.postStatus);
+    yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
+      type: STATUS_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: STATUS_POST_FAILURE,
       error: err.response.data,
     });
   }
@@ -527,6 +546,10 @@ function* watchloadChangeSearchPost() {
   yield takeLatest(LOAD_SCHANGE_TAG_REQUEST, loadChangeSearchPost);
 }
 
+function* watchupdateSPost() {
+  yield takeLatest(STATUS_POST_REQUEST, updateSPost);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -548,5 +571,6 @@ export default function* postSaga() {
     fork(watchSendDummyPost),
     fork(watchLoadChangeTag),
     fork(watchloadChangeSearchPost),
+    fork(watchupdateSPost),
   ]);
 }

@@ -7,6 +7,7 @@ import {REMOVE_IMAGE, SEND_DUMMYPOST_REQUEST, UPLOAD_IMAGES_REQUEST} from "../re
 import Router from "next/router";
 import useInput from "../hooks/useInput";
 import Layout from "../components/Layout";
+import {LOAD_MY_INFO_REQUEST} from "../reducers/user";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -29,6 +30,12 @@ function Write() {
   const tags5 = cooperate_tagsData.filter((e,i) => i > 0); // 전체 태그를 제외한 나머지 태그들을 불러옴
   const tags6 = play_tagsData.filter((e,i) => i > 0); // 전체 태그를 제외한 나머지 태그들을 불러옴
   const imageInput = useRef();
+
+  useEffect(()=>{
+    dispatch({
+      type:LOAD_MY_INFO_REQUEST,
+    })
+  },[]);
 
   useEffect(() => {
     if (!(me && me.id)) {

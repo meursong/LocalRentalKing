@@ -64,6 +64,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         UserId: req.body.userid,
         user_nickname: req.body.nickname,
         user_location: req.body.location,
+        status: 0, // default : 0 - 거래전
       });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
@@ -96,6 +97,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         UserId: req.body.userid,
         user_nickname: req.body.nickname,
         user_location: req.body.location,
+        status: 0, // default : 0 - 거래전
       });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
@@ -128,6 +130,7 @@ router.post("/write", isLoggedIn, upload.none(), async (req, res, next) => {
         UserId: req.body.userid,
         user_nickname: req.body.nickname,
         user_location: req.body.location,
+        status: 0, // default : 0 - 거래전
       });
       if (req.body.image) {
         if (Array.isArray(req.body.image)) {
@@ -240,6 +243,56 @@ router.get("/singlepost", async (req, res, next) => {
       res.status(200).json(togetherpost);
     }
   } catch {
+    console.error(error);
+    next(error);
+  }
+});
+
+//====================글 거래상태 변경하기===========================
+router.get("/status", async (req, res, next) => {
+    const boardNum = req.query.postBoardNum;
+    const postId = req.query.postId;
+    const postStatus = req.query.postStatus;
+  console.log('수정진입');
+  console.log(boardNum);
+  console.log(postId);
+  console.log(postStatus);
+  try {
+    if (boardNum == 1 || boardNum == 2) {
+      await ProdPost.update(
+        {
+          status:postStatus
+        },
+        {
+          where: { id: postId }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
+        }
+      );
+      const post = await ProdPost.findOne({ where: { id: postId }} );
+      res.status(200).json(post);
+    } else if (boardNum == 3 || boardNum == 4) {
+      await PowerPost.update(
+        {
+          status:postStatus
+        },
+        {
+          where: { id: postId }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
+        }
+      );
+      const post = await PowerPost.findOne({ where: { id: postId }} );
+      res.status(200).json(post);
+    } else if (boardNum == 5) {
+      await TogetherPost.update(
+        {
+          status:postStatus
+        },
+        {
+          where: { id: postId }, //글쓴이와 게시글의 id가 모두 일치할때만 수정 가능
+        }
+      );
+      const post = await TogetherPost.findOne({ where: { id: postId }} );
+      res.status(200).json(post);
+    }
+  } catch (error) {
     console.error(error);
     next(error);
   }

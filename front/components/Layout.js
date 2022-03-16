@@ -192,7 +192,7 @@ const PlaceDiv = styled.div`
   position : fixed;
   width: 130px;
   height: 30px;
-  bottom: 380px;
+  bottom: 440px;
   right:160px;
   text-align: center;
   font-weight: 600;
@@ -251,10 +251,12 @@ function Layout({children}) {
   )
 
   useEffect(()=>{
-    dispatch({
-      type:UPDATE_LOCAL,
-      data:me.location,
-    });
+    if(me&&!location) {
+      dispatch({
+        type: UPDATE_LOCAL,
+        data: me.location,
+      });
+    }
   },[me]);
 
   const PlaceClick = () => {

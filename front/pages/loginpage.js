@@ -7,7 +7,7 @@ import useInput from '../hooks/useInput';
 import { loginRequestAction } from '../reducers/user';
 import Router from "next/router";
 import LoginForm from "../components/LoginForm";
-
+import loginImg from "../components/로그인배너.jpg";
 const ContainerDiv = styled.div`
   padding-top:200px;
 `;
@@ -16,7 +16,7 @@ function Loginpage() {
   return (
     <Row gutter={8}>
       <Col xs={24} md={10}>
-        <img src="main.png" style={{ height: 950 }}/>
+        <img src={loginImg} style={{ height: 967 }}/>
       </Col>
       <Col xs={24} md={10}>
         <ContainerDiv>

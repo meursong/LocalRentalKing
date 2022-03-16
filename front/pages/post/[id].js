@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import AppLayout from '../../components/AppLayout/AppLayout';
-import {LOAD_SPOST_REQUEST} from "../../reducers/post";
+import {LOAD_SPOST_REQUEST, STATUS_POST_REQUEST} from "../../reducers/post";
 import {Avatar, Button, Card, Form} from "antd";
 import PostImages from "../../components/PostImages";
 import Link from 'next/link';
@@ -16,6 +16,8 @@ import a3 from "../../components/광고3.jpg";
 import a4 from "../../components/광고4.jpeg";
 import a5 from "../../components/광고5.jpg";
 import {LeftOutlined, RightOutlined} from "@ant-design/icons";
+import {LOAD_MY_INFO_REQUEST} from "../../reducers/user";
+import Swal from "sweetalert2";
 
 const PostCarDiv2 = styled.div`
   width: 100%;
@@ -87,6 +89,23 @@ function PostPage() {
   const [form] = Form.useForm();
 
   useEffect(()=>{
+    if(!me){
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: "로그인이 필요합니다!",
+      })
+      Router.push('/loginpage',undefined,{ shallow:true });
+    }
+  },[]);
+
+  useEffect(()=>{
+    dispatch({
+      type:LOAD_MY_INFO_REQUEST,
+    });
+  },[]);
+
+  useEffect(()=>{
     dispatch({
       type:LOAD_SPOST_REQUEST,
       postId:postId,
@@ -126,13 +145,35 @@ function PostPage() {
     });
   }, [postId2,postBoardNum2]);
 
+  const onSale = useCallback(()=>{
+    dispatch({
+      type:STATUS_POST_REQUEST,
+      postId:singlePost.id,
+      postBoardNum:singlePost.boardNum,
+      postStatus:0,
+    });
+  },[singlePost]);
+
+  const onTrade = useCallback(()=>{
+    dispatch({
+      type:STATUS_POST_REQUEST,
+      postId:singlePost.id,
+      postBoardNum:singlePost.boardNum,
+      postStatus:1,
+    });
+  },[singlePost]);
+
+  const onDone = useCallback(()=>{
+    dispatch({
+      type:STATUS_POST_REQUEST,
+      postId:singlePost.id,
+      postBoardNum:singlePost.boardNum,
+      postStatus:2,
+    });
+  },[singlePost]);
+
   return (
     <Layout>
-      <AdvertisementDiv>
-        <img src={imgSrc} width="100%"height="100%"/>
-        <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
-        <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
-      </AdvertisementDiv>
       {singlePost &&
       <Form
         layout="horizontal"
@@ -157,6 +198,11 @@ function PostPage() {
                 </Card>
               )
             }
+            <div>
+              {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+              {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+              {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+            </div>
             <Reply/>
           </div>
         }
@@ -177,6 +223,11 @@ function PostPage() {
               </Card>
             )
           }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
           <Reply/>
         </div>
         }
@@ -197,6 +248,12 @@ function PostPage() {
               </Card>
             )
           }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
+          <Reply/>
         </div>
         }
         {singlePost.boardNum === 4  &&
@@ -216,6 +273,12 @@ function PostPage() {
               </Card>
             )
           }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
+          <Reply/>
         </div>
         }
         {singlePost.boardNum === 5  &&
@@ -235,17 +298,22 @@ function PostPage() {
               </Card>
             )
           }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
+          <Reply/>
         </div>
         }
         <div>
           <Button onClick={prevPage}>이전글</Button>
           <Button onClick={nextPage}>다음글</Button>
-          <Button onClick={onPage}>수정</Button>
+          {singlePost.user_nickname === me.nickname &&<Button onClick={onPage}>수정</Button>}
         </div>
       </Form>
       }
     </Layout>
-
   );
 }
 

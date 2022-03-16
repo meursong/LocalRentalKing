@@ -100,14 +100,14 @@ function SSRPAGE() {
     });
   }, []);
 
-  useEffect(() => {
-    if(me) {
-      dispatch({
-        type: UPDATE_LOCAL,
-        data: me.location,
-      });
-    }
-  }, [me]);
+  // useEffect(() => {
+  //   if(me) {
+  //     dispatch({
+  //       type: UPDATE_LOCAL,
+  //       data: me.location,
+  //     });
+  //   }
+  // }, [me]);
 
   useEffect(() => {
     if(me) {
