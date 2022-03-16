@@ -25,6 +25,10 @@ module.exports = class PowerPost extends Sequelize.Model {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
+        user_nickname: {
+          type: Sequelize.STRING(30),
+          allowNull: false,
+        },
         user_location: {
           type: Sequelize.STRING(100),
           allowNull: false,

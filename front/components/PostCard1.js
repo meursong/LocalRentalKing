@@ -5,6 +5,7 @@ import Router from "next/router";
 import Link from "next/link";
 import wan from "./wan.png";
 import ing from "./ing.png";
+import moment from "moment";
 
 const gridStyle = {
   width: "100%",
@@ -14,7 +15,7 @@ const gridStyle = {
   margin: "10px",
 };
 
-const tradeDone = {
+const tradeDoneGridStyle = {
   width: "100%",
   display: "flex",
   justifyContent: "space-between",
@@ -52,7 +53,7 @@ const PostCard1 = ({ post }) => {
       <Card.Grid
         style={
           post.status === 2
-            ? tradeDone
+            ? tradeDoneGridStyle
             : post.status === 1
             ? tradeIng
             : gridStyle
@@ -128,7 +129,9 @@ const PostCard1 = ({ post }) => {
         </div>
         <div>
           <p>작성자: {post.user_nickname}</p>
-          <p>{post.createAt || 0}분전</p>
+          <div style={{ float: "right" }}>
+            {moment(post.createdAt).format("YYYY.MM.DD")}
+          </div>
         </div>
       </Card.Grid>
     </div>
