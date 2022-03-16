@@ -2,7 +2,10 @@ import produce from 'immer';
 
 export const initialState = {
   mainPosts: [],
+  searchPosts: [],
   imagePaths: [],
+  mainTalks:[],
+  talkUsers:[],
   object_TagsData: ['전체', '공구',
     '의류',
     '전자기기',
@@ -65,6 +68,8 @@ export const initialState = {
 export const UPDATE_SEARCH = 'UPDATE_SEARCH';
 export const UPDATE_BOARD = 'UPDATE_BOARD';
 
+export const UPDATE_CHANGE_TAG_REQUEST = 'UPDATE_CHANGE_TAG_REQUEST';
+
 export const LOAD_CHANGE_TAG_REQUEST = 'LOAD_CHANGE_TAG_REQUEST';
 export const LOAD_CHANGE_TAG_SUCCESS = 'LOAD_CHANGE_TAG_SUCCESS';
 export const LOAD_CHANGE_TAG_FAILURE = 'LOAD_CHANGE_TAG_FAILURE';
@@ -125,6 +130,11 @@ export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
+export const STATUS_POST_REQUEST = 'STATUS_POST_REQUEST';
+export const STATUS_POST_SUCCESS = 'STATUS_POST_SUCCESS';
+export const STATUS_POST_FAILURE = 'STATUS_POST_FAILURE';
+
+
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
@@ -136,6 +146,10 @@ export const LOAD_RENTAL_POST_FAILURE = 'LOAD_RENTAL_POST_FAILURE';
 export const LOAD_WRITE_POST_REQUEST = 'LOAD_WRITE_POST_REQUEST';
 export const LOAD_WRITE_POST_SUCCESS = 'LOAD_WRITE_POST_SUCCESS';
 export const LOAD_WRITE_POST_FAILURE = 'LOAD_WRITE_POST_FAILURE';
+
+export const LOAD_SCHANGE_TAG_REQUEST = 'LOAD_SCHANGE_TAG_REQUEST';
+export const LOAD_SCHANGE_TAG_SUCCESS = 'LOAD_SCHANGE_TAG_SUCCESS';
+export const LOAD_SCHANGE_TAG_FAILURE = 'LOAD_SCHANGE_TAG_FAILURE';
 
 export const REMOVE_IMAGE = 'REMOVE_IMAGE';
 
@@ -156,10 +170,65 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case UPDATE_BOARD:
       draft.boardNum = action.data;
+      draft.mainPosts.length = 0 ;
+      draft.imagePaths.length = 0;
+      draft.searchPostLoading= false;
+      draft.searchPostDone= false;
+      draft.searchPostError= null;
+      draft.loadProfilePostLoading= false;
+      draft.loadProfilePostDone= false;
+      draft.loadProfilePostError= null;
+      draft.upLoadImagesLoading= false;
+      draft.upLoadImagesDone= false;
+      draft.upLoadImagesError= null;
+      draft.likePostLoading= false;
+      draft.likePostDone= false;
+      draft.likePostError= null;
+      draft.unlikePostLoading= false;
+      draft.unlikePostDone= false;
+      draft.unlikePostError= null;
+      draft.loadSPostLoading= false;
+      draft.loadSPostDone=false;
+      draft.loadSPostError= null;
+      draft.loadPostLoading= false;
+      draft.loadPostDone= false;
+      draft.loadPostError= null;
+      draft.loadUserPostsLoading= false;
+      draft.loadUserPostsDone= false;
+      draft.loadUserPostsError= null;
+      draft.addPostLoading= false;
+      draft.addPostDone= false;
+      draft.addPostError= null;
+      draft.removePostLoading= false;
+      draft.removePostDone= false;
+      draft.removePostError= null;
+      draft.modifyPostLoading= false;
+      draft.modifyPostDone= false;
+      draft.modifyPostError= null;
+      draft.addCommentLoading= false;
+      draft.addCommentDone= false;
+      draft.addCommentError= null;
+      break;
+    case UPDATE_CHANGE_TAG_REQUEST:
+      draft.searchPosts = draft.mainPosts.filter((v) => v.category === action.data);
       break;
     case UPDATE_SEARCH:
       draft.inputSearch = action.data.searchword;
       draft.select = action.data.select;
+      break;
+    case LOAD_SCHANGE_TAG_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_SCHANGE_TAG_SUCCESS:
+      draft.mainPosts = action.data; // 기존 배열 밀어버리고 새롭게 10개씩 넣는다.
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      break;
+    case LOAD_SCHANGE_TAG_FAILURE:
+      draft.loadPostError = action.error;
+      draft.loadPostLoading = false;
       break;
     case LOAD_CHANGE_TAG_REQUEST:
       draft.loadPostLoading = true;
@@ -282,6 +351,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.unlikePostError = action.error;
       draft.unlikePostLoading = false;
       break;
+    case STATUS_POST_REQUEST:
+      draft.loadSPostLoading = true;
+      draft.loadSPostDone = false;
+      draft.loadSPostError = null;
+      break;
+    case STATUS_POST_SUCCESS:
+      draft.singlePost.status = action.data.status;
+      draft.loadSPostLoading = false;
+      draft.loadSPostDone = true;
+      break;
+    case STATUS_POST_FAILURE:
+      draft.loadSPostError = action.error;
+      draft.loadSPostLoading = false;
+      break;
     case LOAD_SPOST_REQUEST:
       draft.loadSPostLoading = true;
       draft.loadSPostDone = false;
@@ -289,6 +372,22 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       break;
     case LOAD_SPOST_SUCCESS:
       draft.singlePost = action.data;
+      if(action.data.boardNum ===1 || action.data.boardNum ===2){
+        const totalPath = action.data.ProdPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      } else if(action.data.boardNum === 3 || action.data.boardNum ===4){
+        const totalPath = action.data.PowerPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      } else if(action.data.boardNum === 5){
+        const totalPath = action.data.TogetherPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      }
       draft.loadSPostLoading = false;
       draft.loadSPostDone = true;
       break;
@@ -312,14 +411,17 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_POST_SUCCESS:
       if (draft.mainPosts.length > 0) { // SSR로 처음에 들고오는 경우가 아닐때
         if (draft.mainPosts[0].category !== action.data[0].category //카테고리 , 지역이 일치하지 않을때
-          && draft.mainPosts[0].location !== action.data[0].location) {
+          || draft.mainPosts[0].location !== action.data[0].location) {
           draft.mainPosts = action.data; // 기존 배열 밀어버리고 새롭게 10개씩 넣는다.
+          console.log('밀고 새로넣었음');
           // draft.mainPosts = draft.mainPosts.concat(action.data);
         } else {
+          console.log('쌓는중');
           draft.mainPosts = draft.mainPosts.concat(action.data); // 같은속성의 게시물을 쌓고있는 경우
         }
       }
       else {
+        console.log('SSR OR NEW 10 POSTS');
         draft.mainPosts = draft.mainPosts.concat(action.data); // SSR로 처음에 들고올때
       }
       draft.loadPostLoading = false;
@@ -372,7 +474,11 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.modifyPostError = null;
       break;
     case MODIFY_POST_SUCCESS:
-      draft.mainPosts.find((v) => v.id === action.data.PostId).content = action.data.content;
+      for (let i = 0; i < draft.mainPosts.length; i++) {
+        if(draft.mainPosts[i].id == action.data.id){
+          draft.mainPosts = draft.mainPosts(i,1,action.data);
+        }
+      }
       draft.modifyPostLoading = false;
       draft.modifyPostDone = true;
       break;

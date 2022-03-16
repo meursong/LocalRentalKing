@@ -8,18 +8,21 @@ function Tags({tagsData , boardNum}) {
 
   const { CheckableTag } = Tag;
 
+  const {location} = useSelector((state)=>state.user);
+
   const dispatch = useDispatch();
 
   const [selectedTags,setSelectedTags] =useState([]);
 
   const handleChange = useCallback((tag, checked) => {
-    const nextSelectedTags = checked ? [ tag,...selectedTags,] : selectedTags.filter(t => t !== tag);
+    const nextSelectedTags = checked ? [ tag] : selectedTags.filter(t => t !== tag);
     setSelectedTags([...nextSelectedTags]);
 
     dispatch({
       type:LOAD_CHANGE_TAG_REQUEST,
       data:nextSelectedTags[0], // 현재 선택한 태그명
-      boardNum:boardNum, // 현재 렌더링중인 게시판 고유번호
+      boardNum:boardNum,
+      location: location,
     })
     dispatch({
       type: UPDATE_TAG,
@@ -28,7 +31,7 @@ function Tags({tagsData , boardNum}) {
 
     console.log('You are interested in: ', nextSelectedTags);
     console.log('You are interested in: ', nextSelectedTags[0]);
-    },[]);
+    },[location]);
 
   useEffect(()=>{
     setSelectedTags(['전체']);

@@ -23,16 +23,16 @@ function AppLayout({ children }) {
   };
 
   const onSearch = useCallback(() => {
-    Router.push(`/hashtag/${searchInput}`);
+    Router.push(`/hashtag/${searchInput}`,undefined,{ shallow:true });
   }, [searchInput]);
 
   const onWrite = useCallback(() => {
-    Router.push('/write');
+    Router.push('/write',undefined,{ shallow:true });
   }, []);
 
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
-    Router.push('/');
+    Router.push('/',undefined,{ shallow:true });
   }, []);
 
   return (
@@ -56,7 +56,7 @@ function AppLayout({ children }) {
                     <a> 우리동네 렌탈대장</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/objectrecieve">
+                <Link href="/objectreceive">
                   <SidebarLi>
                     <a> 물건을 빌려줘</a>
                   </SidebarLi>
@@ -66,7 +66,7 @@ function AppLayout({ children }) {
                     <a> 물건을 빌려줄게</a>
                   </SidebarLi>
                 </Link>
-                <Link href="/talentrecieve">
+                <Link href="/talentreceive">
                   <SidebarLi>
                     <a> 힘을 빌려줘</a>
                   </SidebarLi>

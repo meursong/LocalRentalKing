@@ -4,10 +4,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useInView} from 'react-intersection-observer';
 import {END} from 'redux-saga';
 import {Button, Col, Row} from 'antd';
-
-import AppLayout from '../components/AppLayout/AppLayout';
-import LoginForm from '../components/LoginForm';
-
+import {LeftOutlined,RightOutlined} from '@ant-design/icons';
+import a3  from "../components/광고3.jpg";
+import a1  from "../components/광고1.jpeg";
+import a2  from "../components/광고2.jpg";
+import a4  from "../components/광고4.jpeg";
+import a5  from "../components/광고5.jpg";
 import {LOAD_MY_INFO_REQUEST, logoutRequestAction, UPDATE_LOCAL} from '../reducers/user';
 import {LOAD_POST_REQUEST, TEST, UPDATE_BOARD, UPDATE_TAG} from '../reducers/post';
 import Tags from "../components/Tags";
@@ -16,10 +18,26 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import PostCard2 from "../components/PostCard2";
 import SearchBar from "../components/SearchBar";
+import styled from "styled-components";
 
-function Home() {
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  justify-content:center;
+`;
+const AdvertisementDiv = styled.div`
+  width:950px;
+  height:297px;
+  // background:blue;
+  position:relative;
+  min-width:950px;
+`;
+
+function SSRPAGE() {
   const dispatch = useDispatch();
-  const {me, local} = useSelector((state) => state.user);
+  const {me, location} = useSelector((state) => state.user);
   const {
     mainPosts,
     hasMorePost,
@@ -35,13 +53,86 @@ function Home() {
     setView(!view);
   }, [view]);
 
-  useEffect(()=>{
-    if(me && local==="없음")
+  const advImg = [
+    {
+      src : a1,
+    },
+    {
+      src : a2,
+    },
+    {
+      src : a3,
+    },
+    {
+      src : a4,
+    },
+    {
+      src : a5,
+    },
+  ];
+
+  const [i, Seti]=useState(0);
+  const [imgSrc, SetImgSrc] = useState(a1);
+  const RchangeImg = () =>{
+    if(i < 5) {
+      Seti(i+1);
+      SetImgSrc(advImg[i].src);
+    }else if(i === 5){
+      Seti(0);
+    }
+  }
+  const LchangImg = () => {
+    if (i > 0) {
+      Seti(i - 1);
+      SetImgSrc(advImg[i - 1].src);
+      console.log(imgSrc);
+    }
+  }
+
+  useEffect(() => {
     dispatch({
-      type:UPDATE_LOCAL,
-      data:me.location,
-    })
-  },[me]);
+      type: LOAD_MY_INFO_REQUEST,
+    });
+  }, []);
+
+  useEffect(() => {
+  dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   if(me) {
+  //     dispatch({
+  //       type: UPDATE_LOCAL,
+  //       data: me.location,
+  //     });
+  //   }
+  // }, [me]);
+
+  useEffect(() => {
+    if(me) {
+      dispatch({
+        type: UPDATE_TAG,
+        data: "전체",
+      });
+      dispatch({
+        type: LOAD_POST_REQUEST,
+        data: "전체",
+        boardNum: 1,
+        location: location,
+      });
+    }
+  }, []);
+
+
+  // useEffect(()=>{
+  //   dispatch({
+  //     type: LOAD_POST_REQUEST,
+  //     data: "전체",
+  //     boardNum: 1,
+  //   });
+  // },[]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -53,6 +144,7 @@ function Home() {
             data: selectedTag,
             boardNum: 1,
             lastId: lastId,
+            location:location,
           });
         } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
       }
@@ -67,15 +159,31 @@ function Home() {
     <div>
       {view ? (
         <Layout>
-          <Tags tagsData={object_TagsData} boardNum={1}/>
-          <Button onClick={onSwitch}>전환스위치</Button>
+          <AdvertisementDiv>
+            <img src={imgSrc} width="100%"height="100%"/>
+            <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+            <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+          </AdvertisementDiv>
+          <div style={{textAlign:"center"}}>
+            <Tags tagsData={object_TagsData} boardNum={1}/>
+            <Button onClick={onSwitch}>전환스위치</Button>
+          </div>
           {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
         </Layout>
       ) : (
         <Layout>
+          <AdvertisementDiv>
+            <img src={imgSrc} width="100%"height="100%"/>
+            <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+            <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+          </AdvertisementDiv>
+          <div style={{textAlign:"center"}}>
           <Tags tagsData={object_TagsData} boardNum={1}/>
           <Button onClick={onSwitch}>전환스위치</Button>
-          {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+          </div>
+          <PostCarDiv2>
+            {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+          </PostCarDiv2>
         </Layout>
       )}
     </div>
@@ -89,9 +197,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
     axios.defaults.headers.Cookie = cookie;
   }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
   context.store.dispatch({
     type: UPDATE_TAG,
     data: "전체",
@@ -109,4 +214,4 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   await context.store.sagaTask.toPromise();
 });
 
-export default Home;
+export default SSRPAGE;

@@ -16,16 +16,93 @@ import Router from "next/router";
 import Layout from "../components/Layout";
 import {Button} from "antd";
 import PostCard2 from "../components/PostCard2";
+import styled from "styled-components";
+import a1 from "../components/광고1.jpeg";
+import a2 from "../components/광고2.jpg";
+import a3 from "../components/광고3.jpg";
+import a4 from "../components/광고4.jpeg";
+import a5 from "../components/광고5.jpg";
+import {LeftOutlined, RightOutlined} from "@ant-design/icons";
+
+const PostCarDiv2 = styled.div`
+  width: 100%;
+  display: flex;
+  // background:red;
+  flex-wrap: wrap;
+  justify-content:center;
+`;
+const AdvertisementDiv = styled.div`
+  width:100%;
+  height:297px;
+  // background:blue;
+  position:relative;
+`;
 
 function ObjectSend() {
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
+  const { me , location } = useSelector((state) => state.user);
   const { selectedTag,object_TagsData, mainPosts, hasMorePost, loadPostLoading, id } = useSelector((state) => state.post);
   const [view, setView] = useState(true);
 
   const onSwitch = useCallback(() => {
     setView(!view);
   }, [view]);
+
+  const advImg = [
+    {
+      src : a1,
+    },
+    {
+      src : a2,
+    },
+    {
+      src : a3,
+    },
+    {
+      src : a4,
+    },
+    {
+      src : a5,
+    },
+  ];
+
+  const [i, Seti]=useState(0);
+  const [imgSrc, SetImgSrc] = useState(a1);
+  const RchangeImg = () =>{
+    if(i < 5) {
+      Seti(i+1);
+      SetImgSrc(advImg[i].src);
+    }else if(i === 5){
+      Seti(0);
+    }
+  }
+  const LchangImg = () => {
+    if (i > 0) {
+      Seti(i - 1);
+      SetImgSrc(advImg[i - 1].src);
+      console.log(imgSrc);
+    }
+  }
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    dispatch({
+      type: UPDATE_TAG,
+      data: "전체",
+    });
+    dispatch({
+      type: UPDATE_BOARD,
+      data: 2,
+    });
+    dispatch({
+      type: LOAD_POST_REQUEST,
+      data: "전체",
+      boardNum: 2,
+      location:location,
+    });
+  }, [location]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -38,6 +115,7 @@ function ObjectSend() {
             data:selectedTag,
             boardNum:2,
             lastId:lastId,
+            location:location,
           });
         } // 지역변수를 건드려봣자 어차피 렌더링이 되지 않는다. 실제 동작으로 테스트 해야할듯
       }
@@ -46,7 +124,7 @@ function ObjectSend() {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [ hasMorePost, loadPostLoading]);
+  }, [ hasMorePost, loadPostLoading , location]);
 
   if (!me) {
     return '내 정보 로딩중...';
@@ -59,46 +137,35 @@ function ObjectSend() {
       </Head>
       {view ? (
         <Layout>
-          <Tags tagsData={object_TagsData} boardNum={1}/>
+          <AdvertisementDiv>
+            <img src={imgSrc} width="100%"height="100%"/>
+            <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+            <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+          </AdvertisementDiv>
+          <div style={{textAlign:'center'}}>
+          <Tags tagsData={object_TagsData} boardNum={2}/>
           <Button onClick={onSwitch}>전환스위치</Button>
+          </div>
           {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
         </Layout>
       ) : (
         <Layout>
-          <Tags tagsData={object_TagsData} boardNum={1}/>
+          <AdvertisementDiv>
+            <img src={imgSrc} width="100%"height="100%"/>
+            <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+            <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
+          </AdvertisementDiv>
+          <div style={{textAlign:'center'}}>
+          <Tags tagsData={object_TagsData} boardNum={2}/>
           <Button onClick={onSwitch}>전환스위치</Button>
+          </div>
+          <PostCarDiv2>
           {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
+          </PostCarDiv2>
         </Layout>
       )}
     </>
   );
 }
-
-export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = cookie;
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
-    axios.defaults.headers.Cookie = cookie;
-  }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: UPDATE_TAG,
-    data:"전체",
-  });
-  context.store.dispatch({
-    type: UPDATE_BOARD,
-    data: 2,
-  });
-  context.store.dispatch({
-    type: LOAD_POST_REQUEST,
-    data:"전체",
-    boardNum:2, // 물건을 빌려줄게
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
 
 export default ObjectSend;

@@ -7,6 +7,7 @@ import {REMOVE_IMAGE, SEND_DUMMYPOST_REQUEST, UPLOAD_IMAGES_REQUEST} from "../re
 import Router from "next/router";
 import useInput from "../hooks/useInput";
 import Layout from "../components/Layout";
+import {LOAD_MY_INFO_REQUEST} from "../reducers/user";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -30,15 +31,21 @@ function Write() {
   const tags6 = play_tagsData.filter((e,i) => i > 0); // 전체 태그를 제외한 나머지 태그들을 불러옴
   const imageInput = useRef();
 
+  useEffect(()=>{
+    dispatch({
+      type:LOAD_MY_INFO_REQUEST,
+    })
+  },[]);
+
   useEffect(() => {
     if (!(me && me.id)) {
-      Router.push('/');
+      Router.push('/objectreceive',undefined,{ shallow:true });
     }
   }, [me && me.id]);
 
   useEffect(() => {
     if (addPostDone) {
-      Router.push('/');
+      Router.push('/objectreceive',undefined,{ shallow:true });
     }
   }, [addPostDone]);
 
@@ -98,9 +105,9 @@ function Write() {
     if(!sharedPrice)setSharedPrice(0);
 
     const formData = new FormData();
-    imagePaths.forEach((i) => {
-      formData.append('image', i);
-    });
+    // imagePaths.forEach((i) => {
+    //   formData.append('image', i);
+    // });
     formData.append('content', content);
     formData.append('userid', me.id);
     formData.append('location', me.location);
@@ -125,7 +132,7 @@ function Write() {
   }, [content, imagePaths]);
 
   const onCancel = useCallback(() => {
-    Router.push('/');
+    Router.push('/objectreceive',undefined,{ shallow:true });
   }, []);
 
   return (
@@ -139,7 +146,6 @@ function Write() {
         }}
         onFinish={onSubmit}
       >
-
         <Form.Item>
           <Input.Group compact >
             <Input style={{width: '69%'}} placeholder="제목을 입력해주세요." value={title} onChange={onTitle}/>{' '}
