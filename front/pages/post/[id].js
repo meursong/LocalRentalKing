@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import AppLayout from '../../components/AppLayout/AppLayout';
-import {LOAD_SPOST_REQUEST, STATUS_POST_REQUEST} from "../../reducers/post";
+import {LOAD_SPOST_REQUEST, REMOVE_POST_REQUEST, STATUS_POST_REQUEST} from "../../reducers/post";
 import {Avatar, Button, Card, Form} from "antd";
 import PostImages from "../../components/PostImages";
 import Link from 'next/link';
@@ -172,6 +172,15 @@ function PostPage() {
     });
   },[singlePost]);
 
+  const onRemove = useCallback(()=>{
+    dispatch({
+      type:REMOVE_POST_REQUEST,
+      postId:singlePost.id,
+      postBoardNum:singlePost.boardNum,
+    });
+    Router.push('/objectreceive',undefined,{shallow:true});
+  },[singlePost]);
+
   return (
     <Layout>
       {singlePost &&
@@ -310,6 +319,7 @@ function PostPage() {
           <Button onClick={prevPage}>이전글</Button>
           <Button onClick={nextPage}>다음글</Button>
           {singlePost.user_nickname === me.nickname &&<Button onClick={onPage}>수정</Button>}
+          {singlePost.user_nickname === me.nickname &&<Button onClick={onRemove}>삭제</Button>}
         </div>
       </Form>
       }

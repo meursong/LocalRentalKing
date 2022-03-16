@@ -3,6 +3,8 @@ import {Card} from 'antd';
 import moment from 'moment';
 import styled, { createGlobalStyle } from "styled-components";
 import logo from "../public/nouser.png";
+import PostCard1 from "./PostCard1";
+import {useDispatch, useSelector} from "react-redux";
 const Pdiv = styled.div`
   color:black;
   display:flex;
@@ -38,6 +40,9 @@ const MyPostDiv =styled.div`
 `;
 moment.locale('ko');
 function ProfileCard({userInfo}) {
+  const { mainPosts } = useSelector((state) => state.post);
+  const dispatch = useDispatch();
+
   let imageUrl = null;
   if(userInfo && userInfo.profileImg){
     imageUrl = `http://localhost:3065/${userInfo.profileImg}`;
@@ -56,23 +61,13 @@ function ProfileCard({userInfo}) {
             <Wdiv>
               렌탈
               <br/>
-              {userInfo.ProdPosts.length+userInfo.PowerPosts.length+userInfo.TogetherPosts.length}
+              {userInfo.ProdPosts.length+userInfo.PowerPosts.length}
             </Wdiv>,
             <Wdiv>
-              게시글
+              쉐어
               <br/>
-              14
+              {userInfo.TogetherPosts.length}
             </Wdiv>,
-            <Wdiv>
-              추천
-              <br/>
-              14
-            </Wdiv>,
-            <Wdiv>
-              비추천
-              <br/>
-              14
-            </Wdiv>
           ]}
         >
           <Pdiv>
@@ -95,66 +90,7 @@ function ProfileCard({userInfo}) {
         </Card>}</div>
       {userInfo &&
       <MyPostDiv>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ<br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
-        <br/>
-        ㅇㅇ
+        {mainPosts.map((post) => <PostCard1 key={post.id} post={post} />)}
       </MyPostDiv>}
     </div>
   );

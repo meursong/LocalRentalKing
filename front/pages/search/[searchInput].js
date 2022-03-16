@@ -146,8 +146,10 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center"}}>
             <SearchTags boardNum={1} tagsData={object_TagsData} select={select} search={searchword}/>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
             {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
           </>
         ) : (
@@ -157,9 +159,11 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center"}}>
             <SearchTags boardNum={1} tagsData={object_TagsData}/>
-          <PostCarDiv2>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
+          <PostCarDiv2>
             {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
           </>
@@ -174,8 +178,10 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
-            <SearchTags boardNum={1} tagsData={object_TagsData}/>
+            <div style={{textAlign:"center"}}>
+            <SearchTags boardNum={2} tagsData={object_TagsData}/>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
             {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
           </>
         ) : (
@@ -185,9 +191,11 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center"}}>
             <SearchTags boardNum={2} tagsData={object_TagsData}/>
-          <PostCarDiv2>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
+          <PostCarDiv2>
             {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
           </>
@@ -202,8 +210,10 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center",paddingRight:"80px"}}>
             <SearchTags boardNum={3} tagsData={talent_TagsData}/>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
             {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
           </>
         ) : (
@@ -213,9 +223,11 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center",paddingRight:"80px"}}>
             <SearchTags boardNum={3} tagsData={talent_TagsData}/>
-          <PostCarDiv2>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
+          <PostCarDiv2>
             {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
           </>
@@ -230,8 +242,10 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center",paddingRight:"80px"}}>
             <SearchTags boardNum={4} tagsData={talent_TagsData}/>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
             {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
           </>
         ) : (
@@ -241,9 +255,11 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center",paddingRight:"80px"}}>
             <SearchTags boardNum={4} tagsData={talent_TagsData}/>
-          <PostCarDiv2>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
+          <PostCarDiv2>
             {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
           </>
@@ -258,8 +274,10 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center",paddingRight:"80px"}}>
             <SearchTags boardNum={5} tagsData={cooperate_tagsData}/>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
             {mainPosts.map((post) => <PostCard1 key={post.id} post={post}/>)}
           </>
         ) : (
@@ -269,9 +287,11 @@ function SearchResult() {
               <div style={{position:"absolute",top:"130px",width:"50px"}} onClick={LchangImg}><LeftOutlined style={{fontSize:"25px",color:"gray"}}/></div>
               <div style={{position:"absolute",top:"130px",left:"900px",width:"50px"}} onClick={RchangeImg}><RightOutlined style={{fontSize:"25px",color:"gray"}}/></div>
             </AdvertisementDiv>
+            <div style={{textAlign:"center",paddingRight:"80px"}}>
             <SearchTags boardNum={5} tagsData={cooperate_tagsData}/>
-          <PostCarDiv2>
             <Button onClick={onSwitch}>전환스위치</Button>
+            </div>
+          <PostCarDiv2>
             {mainPosts.map((post) => <PostCard2 key={post.id} post={post}/>)}
           </PostCarDiv2>
           </>

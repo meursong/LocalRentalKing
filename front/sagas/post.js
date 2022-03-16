@@ -105,13 +105,13 @@ function* sendDummyPost(action) {
   }
 }
 
-function removePostAPI(data) {
-  return axios.delete(`/post/${data}`); // delete는 데이터를 가져갈 수 없다 data는 postId
+function removePostAPI(postId , postBoardNum) {
+  return axios.delete(`/post/delete?postId=${postId}&postBoardNum=${postBoardNum}`); // delete는 데이터를 가져갈 수 없다 data는 postId
 }
 
 function* removePost(action) {
   try {
-    const result = yield call(removePostAPI, action.data);
+    const result = yield call(removePostAPI, action.postId , action.postBoardNum);
     yield put({ // put이 액션을 dispatch하는 역할과 빗슷하게 본다
       type: REMOVE_POST_SUCCESS,
       data: result.data,
