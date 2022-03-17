@@ -442,6 +442,8 @@ router.get("/search", isLoggedIn, async (req, res, next) => {
   const location = decodeURIComponent(req.query.location);
   //const local = req.query.local; //원활한 테스트를 위해 임시적으로 지역조건검색은 막아놨습니다.
   const boardNum = req.query.boardNum;
+  const locationSplit = location.split(" ");
+  console.log(locationSplit[0] + "Sdasfasfasfmkdsgmldakmgkdsgladsk");
   //const lastId = req.params.lastId; //원활한 테스트를 위해 임시적으로 인피니트 스크롤방식은 막아놨습니다.
 
   try {
@@ -449,11 +451,14 @@ router.get("/search", isLoggedIn, async (req, res, next) => {
 
     if (select == "글제목") {
       where.title = { [Op.substring]: searchword }; // Like '%searchword%'
-      where.user_location = { [Op.eq]: location };
+      //where.local = { [Op.eq]: local };
+      where.user_location = { [Op.substring]: locationSplit[0] };
     } else if (select == "글내용") {
       where.content = { [Op.substring]: searchword }; // Like '%searchword%'
-      where.user_location = { [Op.eq]: location };
+      //where.local = { [Op.eq]: local };
+      where.user_location = { [Op.substring]: locationSplit[0] };
     }
+
     {
       if (boardNum == 1 || boardNum == 2) {
         const prodposts = await ProdPost.findAll({

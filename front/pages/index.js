@@ -95,12 +95,6 @@ function SSRPAGE() {
     });
   }, []);
 
-  useEffect(() => {
-  dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-  }, []);
-
   // useEffect(() => {
   //   if(me) {
   //     dispatch({
