@@ -3,6 +3,7 @@ import {Button, Card} from 'antd';
 import styled, {createGlobalStyle} from 'styled-components';
 import logo from './logo2.png';
 import Router from "next/router";
+import moment from 'moment';
 
 const PoastDiv = styled.div`
   width: 200px;
@@ -57,7 +58,7 @@ function PostCard2({post}) {
             <PoastDiv>
               <TextDiv>{post.title}</TextDiv>
               <PriceDiv>{post.price}원</PriceDiv>
-              <TimeDiv>{post.createdAt}</TimeDiv>
+              <TimeDiv>{moment(post.createdAt).format('YYYY.MM.DD')}</TimeDiv>
             </PoastDiv>
             </Card>
           }
@@ -71,7 +72,7 @@ function PostCard2({post}) {
             <PoastDiv>
               <TextDiv>{post.title}</TextDiv>
               <PriceDiv>{post.price}원</PriceDiv>
-              <TimeDiv>{post.createdAt}</TimeDiv>
+              <TimeDiv>{moment(post.createdAt).format('YYYY.MM.DD')}</TimeDiv>
             </PoastDiv>
           </Card>
           }
@@ -85,7 +86,7 @@ function PostCard2({post}) {
             <PoastDiv>
               <TextDiv>{post.title}</TextDiv>
               <PriceDiv>{post.price}원</PriceDiv>
-              <TimeDiv>{post.createdAt}</TimeDiv>
+              <TimeDiv>{moment(post.createdAt).format('YYYY.MM.DD')}</TimeDiv>
             </PoastDiv>
           </Card>
           }
@@ -99,7 +100,7 @@ function PostCard2({post}) {
             <PoastDiv>
               <TextDiv>{post.title}</TextDiv>
               <PriceDiv>{post.price}원</PriceDiv>
-              <TimeDiv>{post.createdAt}</TimeDiv>
+              <TimeDiv>{moment(post.createdAt).format('YYYY.MM.DD')}</TimeDiv>
             </PoastDiv>
           </Card>
           }
@@ -113,7 +114,7 @@ function PostCard2({post}) {
             <PoastDiv>
               <TextDiv>{post.title}</TextDiv>
               <PriceDiv>{post.originalPrice}원</PriceDiv>
-              <TimeDiv>{post.createdAt}</TimeDiv>
+              <TimeDiv>{moment(post.createdAt).format('YYYY.MM.DD')}</TimeDiv>
             </PoastDiv>
           </Card>
           }

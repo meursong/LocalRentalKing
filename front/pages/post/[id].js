@@ -18,6 +18,9 @@ import a5 from "../../components/광고5.jpg";
 import {LeftOutlined, RightOutlined} from "@ant-design/icons";
 import {LOAD_MY_INFO_REQUEST} from "../../reducers/user";
 import Swal from "sweetalert2";
+import wrapper from "../../store/configureStore";
+import axios from "axios";
+import {END} from "redux-saga";
 
 const PostCarDiv2 = styled.div`
   width: 100%;
@@ -195,7 +198,7 @@ function PostPage() {
             {singlePost.ProdPostImages.length > 0 ?
               (<Card
                 cover={<PostImages images={singlePost.ProdPostImages}/>}
-                title={singlePost.title}
+                title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
               >
                 {singlePost.content}
               </Card>) :
@@ -220,7 +223,7 @@ function PostPage() {
           {singlePost.ProdPostImages.length > 0 ?
             (<Card
               cover={<PostImages images={singlePost.ProdPostImages}/>}
-              title={singlePost.title}
+              title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
             >
               {singlePost.content}
             </Card>) :
@@ -245,7 +248,7 @@ function PostPage() {
           {singlePost.PowerPostImages.length > 0 ?
             (<Card
               cover={<PostImages images={singlePost.PowerPostImages}/>}
-              title={singlePost.title}
+              title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
             >
               {singlePost.content}
             </Card>) :
@@ -270,7 +273,7 @@ function PostPage() {
           {singlePost.PowerPostImages.length > 0 ?
             (<Card
               cover={<PostImages images={singlePost.PowerPostImages}/>}
-              title={singlePost.title}
+              title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
             >
               {singlePost.content}
             </Card>) :
@@ -326,5 +329,17 @@ function PostPage() {
     </Layout>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = cookie;
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
+
 
 export default PostPage;

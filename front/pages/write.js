@@ -105,9 +105,9 @@ function Write() {
     if(!sharedPrice)setSharedPrice(0);
 
     const formData = new FormData();
-    // imagePaths.forEach((i) => {
-    //   formData.append('image', i);
-    // });
+    imagePaths.forEach((i) => {
+      formData.append('image', i);
+    });
     formData.append('content', content);
     formData.append('userid', me.id);
     formData.append('location', me.location);
