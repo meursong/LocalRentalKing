@@ -122,6 +122,7 @@ function Write() {
     if (!sharedPrice) setSharedPrice(0);
 
     const formData = new FormData();
+<<<<<<< HEAD
     // imagePaths.forEach((i) => {
     //   formData.append('image', i);
     // });
@@ -134,6 +135,20 @@ function Write() {
     formData.append("originalPrice", originalPrice);
     formData.append("sharedPrice", sharedPrice);
     formData.append("price", price);
+=======
+    imagePaths.forEach((i) => {
+      formData.append('image', i);
+    });
+    formData.append('content', content);
+    formData.append('userid', me.id);
+    formData.append('location', me.location);
+    formData.append('nickname', me.nickname);
+    formData.append('category', category);
+    formData.append('title', title);
+    formData.append('originalPrice', originalPrice);
+    formData.append('sharedPrice', sharedPrice);
+    formData.append('price', price);
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
 
     if (board == provinceData[0]) formData.append("boardNum", 1);
     else if (board == provinceData[1]) formData.append("boardNum", 2);

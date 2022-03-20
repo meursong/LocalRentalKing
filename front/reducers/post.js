@@ -177,6 +177,7 @@ export const addComment = (data) => ({
 });
 
 // (이전상태,액션) => 다음상태
+<<<<<<< HEAD
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -306,6 +307,306 @@ const reducer = (state = initialState, action) =>
         } else {
           // 주제가 다른 게시물 덩어리를 가져올 경우
           draft.mainPosts = action.data;
+=======
+const reducer = (state = initialState, action) => produce(state, (draft) => {
+  switch (action.type) {
+    case UPDATE_BOARD:
+      draft.boardNum = action.data;
+      draft.mainPosts.length = 0 ;
+      draft.imagePaths.length = 0;
+      draft.searchPostLoading= false;
+      draft.searchPostDone= false;
+      draft.searchPostError= null;
+      draft.loadProfilePostLoading= false;
+      draft.loadProfilePostDone= false;
+      draft.loadProfilePostError= null;
+      draft.upLoadImagesLoading= false;
+      draft.upLoadImagesDone= false;
+      draft.upLoadImagesError= null;
+      draft.likePostLoading= false;
+      draft.likePostDone= false;
+      draft.likePostError= null;
+      draft.unlikePostLoading= false;
+      draft.unlikePostDone= false;
+      draft.unlikePostError= null;
+      draft.loadSPostLoading= false;
+      draft.loadSPostDone=false;
+      draft.loadSPostError= null;
+      draft.loadPostLoading= false;
+      draft.loadPostDone= false;
+      draft.loadPostError= null;
+      draft.loadUserPostsLoading= false;
+      draft.loadUserPostsDone= false;
+      draft.loadUserPostsError= null;
+      draft.addPostLoading= false;
+      draft.addPostDone= false;
+      draft.addPostError= null;
+      draft.removePostLoading= false;
+      draft.removePostDone= false;
+      draft.removePostError= null;
+      draft.modifyPostLoading= false;
+      draft.modifyPostDone= false;
+      draft.modifyPostError= null;
+      draft.addCommentLoading= false;
+      draft.addCommentDone= false;
+      draft.addCommentError= null;
+      break;
+    case UPDATE_CHANGE_TAG_REQUEST:
+      draft.searchPosts = draft.mainPosts.filter((v) => v.category === action.data);
+      break;
+    case UPDATE_SEARCH:
+      draft.inputSearch = action.data.searchword;
+      draft.select = action.data.select;
+      break;
+    case LOAD_SCHANGE_TAG_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_SCHANGE_TAG_SUCCESS:
+      draft.mainPosts = action.data; // 기존 배열 밀어버리고 새롭게 10개씩 넣는다.
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      break;
+    case LOAD_SCHANGE_TAG_FAILURE:
+      draft.loadPostError = action.error;
+      draft.loadPostLoading = false;
+      break;
+    case LOAD_CHANGE_TAG_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_CHANGE_TAG_SUCCESS:
+      draft.hasMorePost = true;
+      draft.mainPosts = action.data; // 기존 배열 밀어버리고 새롭게 10개씩 넣는다.
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      break;
+    case LOAD_CHANGE_TAG_FAILURE:
+      draft.loadPostError = action.error;
+      draft.loadPostLoading = false;
+      break;
+    case LOAD_SEARCH_POSTS_REQUEST:
+      draft.searchPostLoading = true;
+      draft.searchPostDone = false;
+      draft.searchPostError = null;
+      break;
+    case LOAD_SEARCH_POSTS_SUCCESS:
+      draft.mainPosts = action.data;
+      draft.searchPostLoading = false;
+      draft.searchPostDone = true;
+      draft.hasMorePost = action.data.length === 10;
+      break;
+    case LOAD_SEARCH_POSTS_FAILURE:
+      draft.searchPostError = action.error;
+      draft.searchPostLoading = false;
+      break;
+    case LOAD_RENTAL_POST_REQUEST:
+      draft.loadProfilePostLoading = true;
+      draft.loadProfilePostDone = false;
+      draft.loadProfilePostError = null;
+      break;
+    case LOAD_RENTAL_POST_SUCCESS: {
+      if (action.data[0].board_boardnum === 1 || 2 || 3 || 4) { // 렌탈 게시물이 쌓이고 있는경우
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+      } else { // 주제가 다른 게시물 덩어리를 가져올 경우
+        draft.mainPosts = action.data;
+      }
+      draft.loadProfilePostLoading = false;
+      draft.loadProfilePostDone = true;
+      break;
+    }
+    case LOAD_RENTAL_POST_FAILURE:
+      draft.loadProfilePostError = action.error;
+      draft.loadProfilePostLoading = false;
+      break;
+    case LOAD_WRITE_POST_REQUEST:
+      draft.loadProfilePostLoading = true;
+      draft.loadProfilePostDone = false;
+      draft.loadProfilePostError = null;
+      break;
+    case LOAD_WRITE_POST_SUCCESS: {
+      if (action.data[0].boardNum === 5 || 6) { // 렌탈 게시물이 쌓이고 있는경우
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+      } else { // 주제가 다른 게시물 덩어리를 가져올 경우
+        draft.mainPosts = action.data;
+      }
+      draft.loadProfilePostLoading = false;
+      draft.loadProfilePostDone = true;
+      break;
+    }
+    case LOAD_WRITE_POST_FAILURE:
+      draft.loadProfilePostError = action.error;
+      draft.loadProfilePostLoading = false;
+      break;
+    case UPDATE_TAG:
+      draft.selectedTag = action.data;
+      draft.hasMorePost = true;
+      break;
+    case REMOVE_IMAGE:
+      draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+      break;
+    case UPLOAD_IMAGES_REQUEST:
+      draft.upLoadImagesLoading = true;
+      draft.upLoadImagesDone = false;
+      draft.upLoadImagesError = null;
+      break;
+    case UPLOAD_IMAGES_SUCCESS: {
+      draft.imagePaths = action.data;
+      draft.upLoadImagesLoading = false;
+      draft.upLoadImagesDone = true;
+      break;
+    }
+    case UPLOAD_IMAGES_FAILURE:
+      draft.upLoadImagesError = action.error;
+      draft.upLoadImagesLoading = false;
+      break;
+    case LIKE_POST_REQUEST:
+      draft.likePostLoading = true;
+      draft.likePostDone = false;
+      draft.likePostError = null;
+      break;
+    case LIKE_POST_SUCCESS: {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      post.Likers.push({id: action.data.UserId});
+      draft.likePostLoading = false;
+      draft.likePostDone = true;
+      break;
+    }
+    case LIKE_POST_FAILURE:
+      draft.likePostError = action.error;
+      draft.likePostLoading = false;
+      break;
+    case UNLIKE_POST_REQUEST:
+      draft.unlikePostLoading = true;
+      draft.unlikePostDone = false;
+      draft.unlikePostError = null;
+      break;
+    case UNLIKE_POST_SUCCESS: {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+      draft.unlikePostLoading = false;
+      draft.unlikePostDone = true;
+      break;
+    }
+    case UNLIKE_POST_FAILURE:
+      draft.unlikePostError = action.error;
+      draft.unlikePostLoading = false;
+      break;
+    case STATUS_POST_REQUEST:
+      draft.loadSPostLoading = true;
+      draft.loadSPostDone = false;
+      draft.loadSPostError = null;
+      break;
+    case STATUS_POST_SUCCESS:
+      draft.singlePost.status = action.data.status;
+      draft.loadSPostLoading = false;
+      draft.loadSPostDone = true;
+      break;
+    case STATUS_POST_FAILURE:
+      draft.loadSPostError = action.error;
+      draft.loadSPostLoading = false;
+      break;
+    case LOAD_SPOST_REQUEST:
+      draft.loadSPostLoading = true;
+      draft.loadSPostDone = false;
+      draft.loadSPostError = null;
+      break;
+    case LOAD_SPOST_SUCCESS:
+      draft.singlePost = action.data;
+      if(action.data.boardNum ===1 || action.data.boardNum ===2){
+        const totalPath = action.data.ProdPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      } else if(action.data.boardNum === 3 || action.data.boardNum ===4){
+        const totalPath = action.data.PowerPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      } else if(action.data.boardNum === 5){
+        const totalPath = action.data.TogetherPostImages.map((v)=> draft.imagePaths.concat(v.src.toString()));
+        for (let i = 0; i < totalPath.length; i++) {
+          draft.imagePaths=draft.imagePaths.concat(totalPath[i][0]);
+        }
+      }
+      draft.loadSPostLoading = false;
+      draft.loadSPostDone = true;
+      break;
+    case LOAD_SPOST_FAILURE:
+      draft.loadSPostError = action.error;
+      draft.loadSPostLoading = false;
+      break;
+    case LOAD_LIKED_POSTS_REQUEST:
+    case LOAD_RELATED_POST_REQUEST:
+    case LOAD_USER_POSTS_REQUEST:
+    case LOAD_HASHTAG_POSTS_REQUEST:
+    case LOAD_POST_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_LIKED_POSTS_SUCCESS:
+    case LOAD_RELATED_POST_SUCCESS:
+    case LOAD_USER_POSTS_SUCCESS:
+    case LOAD_HASHTAG_POSTS_SUCCESS:
+    case LOAD_POST_SUCCESS:
+      draft.mainPosts = draft.mainPosts.concat(action.data); // 같은속성의 게시물을 쌓고있는 경우
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      draft.hasMorePost = action.data.length === 10;
+      break;
+    case LOAD_LIKED_POSTS_FAILURE:
+    case LOAD_RELATED_POST_FAILURE:
+    case LOAD_USER_POSTS_FAILURE:
+    case LOAD_HASHTAG_POSTS_FAILURE:
+    case LOAD_POST_FAILURE:
+      draft.loadPostError = action.error;
+      draft.loadPostLoading = false;
+      break;
+    case SEND_DUMMYPOST_REQUEST:
+    case ADD_POST_REQUEST:
+      draft.addPostLoading = true;
+      draft.addPostDone = false;
+      draft.addPostError = null;
+      break;
+    case SEND_DUMMYPOST_SUCCESS:
+    case ADD_POST_SUCCESS:
+      draft.mainPosts.unshift(action.data);
+      draft.addPostLoading = false;
+      draft.addPostDone = true;
+      draft.imagePaths = [];
+      break;
+    case SEND_DUMMYPOST_FAILURE:
+    case ADD_POST_FAILURE:
+      draft.addPostError = action.error;
+      draft.addPostLoading = false;
+      break;
+    case REMOVE_POST_REQUEST:
+      draft.removePostLoading = true;
+      draft.removePostDone = false;
+      draft.removePostError = null;
+      break;
+    case REMOVE_POST_SUCCESS:
+      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId);
+      draft.removePostLoading = false;
+      draft.removePostDone = true;
+      break;
+    case REMOVE_POST_FAILURE:
+      draft.removePostError = action.error;
+      draft.removePostLoading = false;
+      break;
+    case MODIFY_POST_REQUEST:
+      draft.modifyPostLoading = true;
+      draft.modifyPostDone = false;
+      draft.modifyPostError = null;
+      break;
+    case MODIFY_POST_SUCCESS:
+      for (let i = 0; i < draft.mainPosts.length; i++) {
+        if(draft.mainPosts[i].id == action.data.id){
+          draft.mainPosts = draft.mainPosts(i,1,action.data);
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
         }
         draft.loadProfilePostLoading = false;
         draft.loadProfilePostDone = true;

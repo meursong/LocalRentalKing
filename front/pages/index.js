@@ -104,12 +104,15 @@ function SSRPAGE() {
     });
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {
     dispatch({
       type: LOAD_MY_INFO_REQUEST,
     });
   }, []);
 
+=======
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
   // useEffect(() => {
   //   if(me) {
   //     dispatch({

@@ -22,6 +22,9 @@ import a5 from "../../components/광고5.jpg";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import Swal from "sweetalert2";
+import wrapper from "../../store/configureStore";
+import axios from "axios";
+import {END} from "redux-saga";
 
 const PostCarDiv2 = styled.div`
   width: 100%;
@@ -190,6 +193,7 @@ function PostPage() {
 
   return (
     <Layout>
+<<<<<<< HEAD
       {singlePost && (
         <Form
           layout="horizontal"
@@ -201,6 +205,25 @@ function PostPage() {
           {singlePost.boardNum === 1 && (
             <div>
               {singlePost.ProdPostImages.length > 0 ? (
+=======
+      {singlePost &&
+      <Form
+        layout="horizontal"
+        form={form}
+        initialValues={{
+          layout: 'horizontal',
+        }}>
+        {singlePost.boardNum === 1  &&
+          <div>
+            {singlePost.ProdPostImages.length > 0 ?
+              (<Card
+                cover={<PostImages images={singlePost.ProdPostImages}/>}
+                title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
+              >
+                {singlePost.content}
+              </Card>) :
+              (
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
                 <Card
                   cover={<PostImages images={singlePost.ProdPostImages} />}
                   title={singlePost.title}
@@ -223,6 +246,7 @@ function PostPage() {
               </div>
               <Reply />
             </div>
+<<<<<<< HEAD
           )}
           {singlePost.boardNum === 2 && (
             <div>
@@ -328,6 +352,28 @@ function PostPage() {
               <Reply />
             </div>
           )}
+=======
+            <Reply/>
+          </div>
+        }
+        {singlePost.boardNum === 2  &&
+        <div>
+          {singlePost.ProdPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.ProdPostImages}/>}
+              title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
           <div>
             <Button onClick={prevPage}>이전글</Button>
             <Button onClick={nextPage}>다음글</Button>
@@ -338,10 +384,111 @@ function PostPage() {
               <Button onClick={onRemove}>삭제</Button>
             )}
           </div>
+<<<<<<< HEAD
         </Form>
       )}
+=======
+          <Reply/>
+        </div>
+        }
+        {singlePost.boardNum === 3  &&
+        <div>
+          {singlePost.PowerPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.PowerPostImages}/>}
+              title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
+          <Reply/>
+        </div>
+        }
+        {singlePost.boardNum === 4  &&
+        <div>
+          {singlePost.PowerPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.PowerPostImages}/>}
+              title={<h2>{singlePost.title}  렌탈료: {singlePost.price}</h2>}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
+          <Reply/>
+        </div>
+        }
+        {singlePost.boardNum === 5  &&
+        <div>
+          {singlePost.TogetherPostImages.length > 0 ?
+            (<Card
+              cover={<PostImages images={singlePost.TogetherPostImages}/>}
+              title={singlePost.title}
+            >
+              {singlePost.content}
+            </Card>) :
+            (
+              <Card
+                title={singlePost.title}
+              >
+                {singlePost.content}
+              </Card>
+            )
+          }
+          <div>
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onSale}>판매중</Button>}
+            {singlePost.user_nickname === me.nickname &&<Button onClick={onTrade}>거래중</Button>}
+            {singlePost.user_nickname === me.nickname && <Button onClick={onDone}>거래완료</Button>}
+          </div>
+          <Reply/>
+        </div>
+        }
+        <div>
+          <Button onClick={prevPage}>이전글</Button>
+          <Button onClick={nextPage}>다음글</Button>
+          {singlePost.user_nickname === me.nickname &&<Button onClick={onPage}>수정</Button>}
+          {singlePost.user_nickname === me.nickname &&<Button onClick={onRemove}>삭제</Button>}
+        </div>
+      </Form>
+      }
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
     </Layout>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = cookie;
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
+
 
 export default PostPage;

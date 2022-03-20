@@ -2,7 +2,14 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Form, Input, Select} from "antd";
 import 'antd/dist/antd.css';
-import {MODIFY_POST_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST} from "../../reducers/post";
+import {
+  LOAD_POST_REQUEST,
+  MODIFY_POST_REQUEST,
+  REMOVE_IMAGE,
+  UPDATE_BOARD,
+  UPDATE_TAG,
+  UPLOAD_IMAGES_REQUEST
+} from "../../reducers/post";
 import Router, {useRouter} from "next/router";
 import useInput from "../../hooks/useInput";
 import Layout from "../../components/Layout"
@@ -14,6 +21,9 @@ import a3 from "../../components/광고3.jpg";
 import a4 from "../../components/광고4.jpeg";
 import a5 from "../../components/광고5.jpg";
 import {LeftOutlined, RightOutlined} from "@ant-design/icons";
+import wrapper from "../../store/configureStore";
+import axios from "axios";
+import {END} from "redux-saga";
 const PostCarDiv2 = styled.div`
   width: 100%;
   display: flex;
@@ -303,5 +313,16 @@ function Modify() {
     </Layout>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = cookie;
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
 
 export default Modify;

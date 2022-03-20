@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { ADD_COMMENT_REQUEST } from '../../reducers/post';
 // import { post } from '../../../back/routes/post';
 const { TextArea } = Input;
+
 const CommentList = ({ comments }) => (
   <List
     dataSource={comments}
@@ -46,6 +47,7 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
     </Form.Item>
   </Form>
 );
+
 function Reply() {
   const [comments, setComments] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -67,7 +69,6 @@ function Reply() {
           avatar: logo,
           content: <p>{value}</p>,
           datetime: moment().fromNow(),
-          // actions: [<span key="comment-nested-reply-to">답글</span>],
         },
       ]);
     }, 500);

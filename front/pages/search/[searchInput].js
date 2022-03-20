@@ -20,7 +20,14 @@ import a2 from "../../components/광고2.jpg";
 import a3 from "../../components/광고3.jpg";
 import a4 from "../../components/광고4.jpeg";
 import a5 from "../../components/광고5.jpg";
+<<<<<<< HEAD
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+=======
+import {LeftOutlined, RightOutlined} from "@ant-design/icons";
+import wrapper from "../../store/configureStore";
+import axios from "axios";
+import {END} from "redux-saga";
+>>>>>>> 784189f3ec8b510e0cde9460e6425d5fdadc39c7
 
 const PostCarDiv2 = styled.div`
   width: 100%;
@@ -487,5 +494,17 @@ function SearchResult() {
     </div>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = cookie;
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) { // 타 유저간 쿠키가 공유되는 문제를 방지하기 위함
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
+
 
 export default SearchResult;
