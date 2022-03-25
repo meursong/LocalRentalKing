@@ -6,9 +6,8 @@ import post from './post';
 // (이전상태,액션) => 다음상태
 const rootReducer = (state, action) => {
   switch (action.type) {
-    case HYDRATE:
-      console.log('HYDRATE', action);
-      return action.payload;
+    // case HYDRATE:
+    //   return {...state,...action.payload};
     default: {
       const combinedReducer = combineReducers({
         user,

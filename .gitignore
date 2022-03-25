@@ -1,2 +1,9 @@
-.idea
+/back/.env
+/front/node_modules
+/back/node_modules
 node_modules
+.next
+/front/.next
+/front/build/
+.idea
+/uploads
