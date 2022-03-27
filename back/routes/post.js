@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer"); //멀터는 폼마다 형식들이 다르기 때문에 멀터미들웨어를 사용해서 라우터마다 다르게 세팅필요
 const path = require("path"); //노드에서 제공하는 모듈 http처럼, 설치가 필요없는 모듈
-const fs = require("fs"); //file system을 조작할수있는 모듈. 폴더같은 걸 만들어줄수도있음
+const fs = require("fs"); //file system contrll
 const {
   User,
   ProdPost,
