@@ -1,27 +1,15 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import AppLayout from '../components/AppLayout/AppLayout';
-import {Button, Col, Dropdown, Form, Input, Menu, Row, Select} from "antd";
+import React, {useCallback, useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {Dropdown, Input, Menu} from "antd";
 import 'antd/dist/antd.css';
-import {REMOVE_IMAGE, SEND_DUMMYPOST_REQUEST, UPDATE_SEARCH, UPLOAD_IMAGES_REQUEST} from "../reducers/post";
 import Router from "next/router";
 import useInput from "../hooks/useInput";
-import Layout from "../components/Layout";
-import Navbar from "react-bootstrap/Navbar";
-import logo from "../components/logo2.png";
 import {
-  AimOutlined,
-  CloseOutlined,
   DownOutlined,
-  FormOutlined,
-  MailOutlined,
-  MenuOutlined,
   SearchOutlined,
-  UserOutlined
 } from "@ant-design/icons";
 
 const {TextArea} = Input;
-const {Option} = Select;
 
 
 function SearchBar(){

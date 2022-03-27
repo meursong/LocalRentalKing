@@ -1,22 +1,19 @@
-import React, { useCallback } from 'react';
-import 'antd/dist/antd.css';
-import { Card } from 'antd';
-import Router from 'next/router';
-import Link from 'next/link';
+import React from "react";
+import "antd/dist/antd.css";
+import { Card } from "antd";
 
 const gridStyle = {
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'space-between',
-  cursor: 'pointer',
-  margin: '10px',
-  backgroundColor:'yellow',
+  width: "100%",
+  display: "flex",
+  justifyContent: "space-between",
+  cursor: "pointer",
+  margin: "10px",
+  backgroundColor: "yellow",
 };
 
 const TalkCard2 = ({ talk }) => {
-
   return (
-    <div >
+    <div>
       <Card.Grid style={gridStyle}>
         <div>
           <p>{talk.send_userId}</p>

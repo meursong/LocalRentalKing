@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Tag , Button } from 'antd';
+import { Tag} from 'antd';
 import {useDispatch, useSelector} from "react-redux";
 import {LOAD_SCHANGE_TAG_REQUEST,UPDATE_CHANGE_TAG_REQUEST, LOAD_POST_REQUEST, UPDATE_TAG, LOAD_SEARCH_POSTS_REQUEST} from "../reducers/post";
 
