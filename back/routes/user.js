@@ -3,7 +3,7 @@ const multer = require("multer");
 const passport = require("passport");
 const bcrypt = require("bcrypt"); //해쉬화 알고리즘
 const fs = require("fs");
-const { User, ProdPost, PowerPost, TogetherPost } = require("../models"); //User model require 26번라인 User.create를 사용하기위해서 '구조분해할당'
+const { User, ProdPost, PowerPost, TogetherPost } = require("../models"); //구조분해할당
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 //원래 db.User로 접근해야 하는데 {User}해놓으면 그냥 유저로 접근 가능
@@ -53,12 +53,12 @@ router.get("/", async (req, res, next) => {
             attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
           },
           {
-            model: PowerPost, //내가 쓴 게시물들
-            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+            model: PowerPost,
+            attributes: ["id"],
           },
           {
-            model: TogetherPost, //내가 쓴 게시물들
-            attributes: ["id"], //내가 쓴 게시물들 숫자만 알면되고 나머지 정보는 불필요
+            model: TogetherPost,
+            attributes: ["id"],
           },
         ],
       });

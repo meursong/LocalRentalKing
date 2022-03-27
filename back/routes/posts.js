@@ -134,10 +134,6 @@ router.get("/:tag/tag", async (req, res, next) => {
   const boardNum = req.query.boardNum;
   const tag = decodeURIComponent(req.params.tag);
   const location = decodeURIComponent(req.query.location);
-  console.log("일로들어오긴했지만");
-  console.log(tag);
-  console.log(boardNum);
-  console.log(location);
 
   try {
     const where = {};
