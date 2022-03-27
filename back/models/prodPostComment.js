@@ -21,6 +21,6 @@ module.exports = class ProdPostComment extends Sequelize.Model {
     db.ProdPostComment.belongsTo(db.ProdPost, {
       onDelete: "CASCADE",
     });
-    db.ProdPostComment.belongsTo(db.User); //comments 테이블의 로우를 불러올 때 연결된 users 테이블의 로우를 가져온다.
+    db.ProdPostComment.belongsTo(db.User);
   }
 };
